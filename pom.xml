@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.awakeyo</groupId>
+    <artifactId>justloseit</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>justloseit</name>
+
+    <!--
+    父级项目中的pom.xml文件使用的packaging配置一定为pom
+    父级的pom文件只作项目的子模块的整合，在maven install时不会生成jar/war压缩包。
+    -->
+
+    <packaging>pom</packaging>
+
+    <description>Project for Game Server</description>
+
+    <!-- 没有用<dependencyManagement>来管理这个root，是为了让下面的module不依赖于任何parent，复制出来就可以用 -->
+    <!-- 聚合，把下面的几个module一起打包，packaging必须为pom -->
+    <modules>
+        <module>event</module>
+    </modules>
+
+
+    <properties>
+        <justloseit.event.version>3.0</justloseit.event.version>
+
+        <!-- spring and spring boot -->
+        <spring.version>5.3.19</spring.version>
+        <spring.boot.version>2.6.7</spring.boot.version>
+        <junit.version>4.12</junit.version>
+
+        <java.version>1.8</java.version>
+        <!-- 日志 -->
+        <slf4j.version>1.7.30</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <!-- 字节码增强 -->
+        <javassist.version>3.27.0-GA</javassist.version>
+
+        <!-- network framework -->
+        <netty.version>4.1.84.Final</netty.version>
+        <jprotobuf.version>2.4.17</jprotobuf.version>
+
+
+        <!-- maven core plugin(maven核心插件) -->
+        <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+        <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
+    </properties>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
