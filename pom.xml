@@ -13,15 +13,14 @@
     父级项目中的pom.xml文件使用的packaging配置一定为pom
     父级的pom文件只作项目的子模块的整合，在maven install时不会生成jar/war压缩包。
     -->
-
     <packaging>pom</packaging>
 
     <description>Project for Game Server</description>
 
-    <!-- 没有用<dependencyManagement>来管理这个root，是为了让下面的module不依赖于任何parent，复制出来就可以用 -->
     <!-- 聚合，把下面的几个module一起打包，packaging必须为pom -->
     <modules>
         <module>event</module>
+        <module>thread</module>
     </modules>
 
 

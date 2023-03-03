@@ -38,7 +38,6 @@ public class EventRegisterProcessor implements BeanPostProcessor {
         Class<?> clazz = target.getClass();
         Method[] sourceMethods = clazz.getDeclaredMethods();
         for (Method m : sourceMethods) {
-            m.setAccessible(true);
             if (m.isAnnotationPresent(EventReceiver.class)) {
                 Class<?>[] paramClazzs = m.getParameterTypes();
                 if (null == paramClazzs || paramClazzs.length != 1) {
@@ -46,7 +45,7 @@ public class EventRegisterProcessor implements BeanPostProcessor {
                     throw new RuntimeException();
                 }
                 Class<?> paramClazz = paramClazzs[0];
-                    if (!paramClazz.isAssignableFrom(IEvent.class)) {
+                if (!paramClazz.isAssignableFrom(IEvent.class)) {
                     logger.error("eventBus注册事件：方法参数不是事件类");
                     throw new RuntimeException();
                 }
