@@ -21,11 +21,15 @@
     <modules>
         <module>event</module>
         <module>thread</module>
+        <module>util</module>
     </modules>
 
 
     <properties>
-        <justloseit.event.version>3.0</justloseit.event.version>
+
+        <justloseit.util.version>0.0.1-SNAPSHOT</justloseit.util.version>
+        <justloseit.event.version>0.0.1-SNAPSHOT</justloseit.event.version>
+        <justloseit.thread.version>0.0.1-SNAPSHOT</justloseit.thread.version>
 
         <!-- spring and spring boot -->
         <spring.version>5.3.19</spring.version>
