@@ -2,9 +2,11 @@ package com.awakeyo.event.manger;
 
 import com.awakeyo.event.model.IEvent;
 import com.awakeyo.event.enhance.IEventReceiver;
+import com.awakeyo.thread.SingleTaskQueueActorPool;
+import com.awakeyo.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
+
 import java.util.*;
 
 
@@ -19,7 +21,61 @@ public class EventBus {
 
     private static final Logger logger = LoggerFactory.getLogger(EventBus.class);
 
-    private static final Map<Class<? extends IEvent>, List<IEventReceiver>> receiverMap = new HashMap<>();
+    /**
+     * EN: The size of the thread pool. Event's thread pool is often used to do time-consuming operations, so set it a little bigger
+     * CN: 线程池的大小. event的线程池经常用来做一些耗时的操作，所以要设置大一点
+     */
+    public static final int EXECUTORS_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+
+    private static final SingleTaskQueueActorPool executors = new SingleTaskQueueActorPool();
+
+    /**
+     * Synchronous event mapping, synchronize observers
+     */
+    private static final Map<Class<? extends IEvent>, List<IEventReceiver>> receiverMapSync = new HashMap<>();
+    /**
+     * Asynchronous event mapping, asynchronous observer
+     */
+    private static final Map<Class<? extends IEvent>, List<IEventReceiver>> receiverMapAsync = new HashMap<>();
+
+    /**
+     * 发布事件
+     *
+     * @param event
+     */
+    public static void publicEvent(IEvent event) {
+        if (event == null) {
+            return;
+        }
+        Class<? extends IEvent> clazz = event.getClass();
+        List<IEventReceiver> listSync = receiverMapSync.get(clazz);
+        if (!CollectionUtils.isEmpty(listSync)) {
+            for (IEventReceiver receiver : listSync) {
+                try {
+                    receiver.invoke(event);
+                } catch (Exception e) {
+                    logger.error("eventBus sync event [{}] unknown exception", clazz.getSimpleName(), e);
+                } catch (Throwable t) {
+                    logger.error("eventBus sync event [{}] unknown error", clazz.getSimpleName(), t);
+                }
+            }
+        }
+
+        List<IEventReceiver> listAsync = receiverMapAsync.get(clazz);
+        if (CollectionUtils.isNotEmpty(listAsync)) {
+            for (IEventReceiver receiver : listAsync) {
+                executors.execute(event.executorHash(), () -> {
+                    try {
+                        receiver.invoke(event);
+                    } catch (Exception e) {
+                        logger.error("eventBus async event [{}] unknown exception", clazz.getSimpleName(), e);
+                    } catch (Throwable t) {
+                        logger.error("eventBus async event [{}] unknown error", clazz.getSimpleName(), t);
+                    }
+                });
+            }
+        }
+    }
 
 
     /**
@@ -28,7 +84,7 @@ public class EventBus {
      * @param event 需要抛出的事件
      */
     public static void syncSubmit(IEvent event) {
-        List<IEventReceiver> list = receiverMap.get(event.getClass());
+        List<IEventReceiver> list = receiverMapSync.get(event.getClass());
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
@@ -56,8 +112,12 @@ public class EventBus {
     /**
      * 注册事件及其对应观察者
      */
-    public static void registerEventReceiver(Class<? extends IEvent> eventType, IEventReceiver receiver) {
-        receiverMap.computeIfAbsent(eventType, it -> new ArrayList<>()).add(receiver);
+    public static void registerEventReceiver(Class<? extends IEvent> eventType, IEventReceiver receiver, boolean asyncFlag) {
+        if (asyncFlag) {
+            receiverMapAsync.computeIfAbsent(eventType, it -> new ArrayList<>(1)).add(receiver);
+        } else {
+            receiverMapSync.computeIfAbsent(eventType, it -> new ArrayList<>(1)).add(receiver);
+        }
     }
 
 }

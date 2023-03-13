@@ -18,7 +18,7 @@ public class BagSystem {
 
     // 事件会被当前线程立刻执行，注意日志打印的线程号
     @EventReceiver
-    public void handleLogin(LoginEvent event) {
+    public void onLoginEvent(LoginEvent event) {
         logger.info("BagSystem:同步执行登录事件：玩家id:{}, 登录时间:{}" , event.getRoleId(),event.getLoginTime());
     }
 }
