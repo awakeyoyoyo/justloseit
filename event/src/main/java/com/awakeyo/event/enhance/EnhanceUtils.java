@@ -73,7 +73,7 @@ public class EnhanceUtils {
         // 释放缓存
         enhanceClazz.detach();
 
-        Class<?> resultClazz = enhanceClazz.toClass(IEventReceiver.class);
+        Class<IEventReceiver> resultClazz = enhanceClazz.toClass();
         Constructor<?> resultConstructor = resultClazz.getConstructor(bean.getClass());
         IEventReceiver receiver = (IEventReceiver) resultConstructor.newInstance(bean);
         return receiver;

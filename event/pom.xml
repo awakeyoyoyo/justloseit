@@ -17,6 +17,12 @@
     <description>event module for justloseit</description>
 
     <dependencies>
+        <!-- 动态生成二进制字节码的javassist类库 -->
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>${javassist.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.awakeyo</groupId>
