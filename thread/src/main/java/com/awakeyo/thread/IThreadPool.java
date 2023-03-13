@@ -1,6 +1,8 @@
 package com.awakeyo.thread;
 
 
+import com.awakeyo.util.RandomUtils;
+
 /**
  * @version : 1.0
  * @ClassName: ThreadPool
@@ -8,14 +10,14 @@ package com.awakeyo.thread;
  * @Auther: awake
  * @Date: 2023/3/7 16:40
  **/
-public interface ThreadPool {
+public interface IThreadPool {
 
     /**
      * 执行任务
+     *
      * @param taskExecutorHash
      * @param runnable
      */
     void execute(int taskExecutorHash, Runnable runnable);
-
 
 }
