@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 /**
  * @version : 1.0
  * @ClassName: EventContext
- * @Description: 事件上下文
+ * @Description: 事件上下文  用于关闭事件系统的线程
  * @Auther: awake
  * @Date: 2023/3/10 16:42
  **/
