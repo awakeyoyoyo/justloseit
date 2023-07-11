@@ -2,7 +2,8 @@ package com.awakeyo.event.manger;
 
 import com.awakeyo.event.model.IEvent;
 import com.awakeyo.event.enhance.IEventReceiver;
-import com.awakeyo.thread.pool.model.ThreadActorPoolModel;
+import com.awakeyo.thread.SingleTaskQueueActorPool;
+import com.awakeyo.thread.SingleThreadActorPool;
 import com.awakeyo.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class EventBus {
      */
     public static final int EXECUTORS_SIZE = Runtime.getRuntime().availableProcessors() * 2;
 
-    private static final ThreadActorPoolModel executors = new ThreadActorPoolModel(EXECUTORS_SIZE);
+    private static final SingleThreadActorPool executors = new SingleThreadActorPool(EXECUTORS_SIZE);
 
     /**
      * Synchronous event mapping, synchronize observers

@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
 /**
  * @version : 1.0
  * @ClassName: EventDefinitionParser
- * @Description: 用于解析<event>
+ * @Description: TODO
  * @Auther: awake
  * @Date: 2023/3/3 17:27
  **/
