@@ -1,5 +1,6 @@
-package com.awakeyo.thread;
+package com.awakeyo.thread.pool.model;
 
+import com.awakeyo.thread.anno.SafeRunnable;
 import com.awakeyo.util.StringUtils;
 import com.awakeyo.util.ThreadUtils;
 import com.sun.org.slf4j.internal.Logger;
@@ -18,16 +19,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Auther: awake
  * @Date: 2023/3/10 11:24
  **/
-public class SingleThreadActorPool implements IThreadPool {
+public class ThreadActorPoolModel implements IThreadPoolModel {
 
-    private static final Logger logger = LoggerFactory.getLogger(SingleThreadActorPool.class);
+    private static final Logger logger = LoggerFactory.getLogger(ThreadActorPoolModel.class);
 
     private ExecutorService[] executors;
 
     public int executorsSize;
 
 
-    public SingleThreadActorPool(int executorsSize) {
+    public ThreadActorPoolModel(int executorsSize) {
         this.executorsSize = executorsSize;
         executors = new ExecutorService[executorsSize];
         for (int i = 0; i < executorsSize; i++) {

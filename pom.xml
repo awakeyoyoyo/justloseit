@@ -22,6 +22,7 @@
         <module>event</module>
         <module>thread</module>
         <module>util</module>
+        <module>net</module>
     </modules>
 
 
@@ -51,6 +52,8 @@
         <!-- maven core plugin(maven核心插件) -->
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
+        <!-- zookeeper -->
+        <curator.version>5.3.0</curator.version>
     </properties>
 
 

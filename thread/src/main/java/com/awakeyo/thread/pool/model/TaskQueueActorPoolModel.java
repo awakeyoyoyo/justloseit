@@ -1,4 +1,4 @@
-package com.awakeyo.thread;
+package com.awakeyo.thread.pool.model;
 
 /**
  * @version : 1.0
@@ -7,7 +7,7 @@ package com.awakeyo.thread;
  * @Auther: awake
  * @Date: 2023/3/10 11:24
  **/
-public class SingleTaskQueueActorPool implements IThreadPool{
+public class TaskQueueActorPoolModel implements IThreadPoolModel {
     //todo
     @Override
     public void execute(int taskExecutorHash, Runnable runnable) {

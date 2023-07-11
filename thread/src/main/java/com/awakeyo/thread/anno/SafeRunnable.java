@@ -1,4 +1,4 @@
-package com.awakeyo.thread;
+package com.awakeyo.thread.anno;
 
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;

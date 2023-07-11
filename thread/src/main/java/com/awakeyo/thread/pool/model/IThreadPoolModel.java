@@ -1,4 +1,4 @@
-package com.awakeyo.thread;
+package com.awakeyo.thread.pool.model;
 
 
 import com.awakeyo.util.RandomUtils;
@@ -10,7 +10,7 @@ import com.awakeyo.util.RandomUtils;
  * @Auther: awake
  * @Date: 2023/3/7 16:40
  **/
-public interface IThreadPool {
+public interface IThreadPoolModel {
 
     /**
      * 执行任务

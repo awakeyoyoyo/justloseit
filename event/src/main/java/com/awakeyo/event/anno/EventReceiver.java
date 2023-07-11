@@ -13,5 +13,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface EventReceiver {
+    /**
+     * 是否异步
+     * @return
+     */
     boolean async() default false;
 }
