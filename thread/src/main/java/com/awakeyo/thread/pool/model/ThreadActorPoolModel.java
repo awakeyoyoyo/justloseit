@@ -55,7 +55,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
         @Override
         public Thread newThread(Runnable runnable) {
-            String threadName = StringUtils.format("SingleTaskActor-p{}-t{}", poolNumber + 1, threadNumber.getAndIncrement());
+            String threadName = StringUtils.format("ThreadActorPoolModel-p{}-t{}", poolNumber + 1, threadNumber.getAndIncrement());
             Thread thread = new FastThreadLocalThread(group, runnable, threadName);
             thread.setDaemon(false);
             thread.setPriority(Thread.NORM_PRIORITY);
