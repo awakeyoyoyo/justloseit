@@ -10,7 +10,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  * @Date: 2023/3/3 17:25
  **/
 public class NamespaceHandler extends NamespaceHandlerSupport {
-
+    // 配置标签名称
     public static final String EVENT = "event";
 
     @Override
