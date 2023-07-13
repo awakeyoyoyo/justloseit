@@ -17,6 +17,18 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.awakeyo</groupId>
+            <artifactId>event</artifactId>
+            <version>${justloseit.event.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.awakeyo</groupId>
+            <artifactId>util</artifactId>
+            <version>${justloseit.util.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
@@ -37,16 +49,12 @@
 
         <dependency>
             <groupId>org.apache.curator</groupId>
-            <artifactId>curator-recipes</artifactId>
+            <artifactId>curator-framework</artifactId>
             <version>${curator.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>netty-transport-native-epoll</artifactId>
-                    <groupId>io.netty</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>netty-handler</artifactId>
-                    <groupId>io.netty</groupId>
+                    <groupId>netty-all</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>guava</artifactId>
