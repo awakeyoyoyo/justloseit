@@ -1,10 +1,10 @@
 package com.awakeyo.event.enhance;
 
 import com.awakeyo.event.model.IEvent;
-import com.awakeyo.event.shcema.NamespaceHandler;
 import com.awakeyo.util.IdUtils;
 import com.awakeyo.util.StringUtils;
 import javassist.*;
+import org.springframework.beans.factory.xml.NamespaceHandler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +23,7 @@ public class EnhanceUtils {
     static {
         // 适配Tomcat，因为Tomcat不是用的默认的类加载器，而Javaassist用的是默认的加载器
         // Tomcat有公共资源的classloader来加载class,而javassist使用默认的加载器,搜索不到公共目录下IEventReceiver.class IEvent.class
-         Class[] classArray = new Class<?>[]{
+        Class[] classArray = new Class<?>[]{
                 IEventReceiver.class,
                 IEvent.class
         };
@@ -49,7 +49,7 @@ public class EnhanceUtils {
         Class<?> clazz = definition.getEventClazz();
 
         // 定义类名称
-        CtClass enhanceClazz = classPool.makeClass(EnhanceUtils.class.getCanonicalName() + StringUtils.capitalize(NamespaceHandler.EVENT) + IdUtils.getLocalIntId());
+        CtClass enhanceClazz = classPool.makeClass(EnhanceUtils.class.getCanonicalName() + "event" + IdUtils.getLocalIntId());
         enhanceClazz.addInterface(classPool.get(IEventReceiver.class.getCanonicalName()));
 
         // 定义类中的一个成员

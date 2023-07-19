@@ -1,4 +1,4 @@
-package com.awakeyo.event.shcema;
+package com.awakeyo.event.processor;
 
 
 import com.awakeyo.event.anno.EventReceiver;
@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,6 +26,7 @@ import java.lang.reflect.Modifier;
  * @Auther: awake
  * @Date: 2022/9/8 17:03
  **/
+@Component
 public class EventRegisterProcessor implements BeanPostProcessor {
     private static final Logger logger = LoggerFactory.getLogger(EventRegisterProcessor.class);
 
