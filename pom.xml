@@ -47,7 +47,8 @@
         <!-- network framework -->
         <netty.version>4.1.84.Final</netty.version>
         <jprotobuf.version>2.4.17</jprotobuf.version>
-
+        <!--lombok-->
+        <lombok.version>1.18.10</lombok.version>
 
         <!-- maven core plugin(maven核心插件) -->
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>

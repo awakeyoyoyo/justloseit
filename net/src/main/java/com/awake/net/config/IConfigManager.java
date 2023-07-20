@@ -1,4 +1,4 @@
-package com.awakeyo.net.config;
+package com.awake.net.config;
 
 /**
  * @version : 1.0

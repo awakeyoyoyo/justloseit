@@ -1,6 +1,5 @@
-package com.awakeyo;
+package com.awake;
 
-import com.awakeyo.net.config.IConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -9,6 +8,7 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
 
 /**
  * @version : 1.0
@@ -17,6 +17,7 @@ import org.springframework.core.Ordered;
  * @Auther: awake
  * @Date: 2023/7/12 15:23
  **/
+@Component
 public class NetContext implements ApplicationListener<ApplicationContextEvent>, Ordered {
     private static final Logger logger = LoggerFactory.getLogger(NetContext.class);
 

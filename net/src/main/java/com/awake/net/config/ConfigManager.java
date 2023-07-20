@@ -1,6 +1,6 @@
-package com.awakeyo.net.config;
+package com.awake.net.config;
 
-import com.awakeyo.net.config.model.ZookeeperConfig;
+import com.awake.net.config.model.ZookeeperRegistryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ public class ConfigManager implements IConfigManager {
     /**
      * zookeeper配置
      */
-    private ZookeeperConfig zookeeperConfig;
+    private ZookeeperRegistryProperties zookeeperConfig;
 
 
 }
