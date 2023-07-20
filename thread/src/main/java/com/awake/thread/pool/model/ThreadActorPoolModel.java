@@ -3,9 +3,9 @@ package com.awake.thread.pool.model;
 import com.awake.thread.anno.SafeRunnable;
 import com.awake.util.StringUtils;
 import com.awake.util.ThreadUtils;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
 import io.netty.util.concurrent.FastThreadLocalThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
