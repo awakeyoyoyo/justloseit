@@ -1,9 +1,8 @@
 package com.awake.event;
 
-import com.awakeyo.event.manger.EventBus;
+import com.awake.event.manger.EventBus;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version : 1.0

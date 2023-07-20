@@ -1,6 +1,6 @@
 package com.awake.event;
 
-import com.awakeyo.event.model.IEvent;
+import com.awake.event.model.IEvent;
 
 /**
  * @version : 1.0

@@ -1,7 +1,6 @@
 package com.awake.event;
 
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -12,6 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * @Date: 2023/7/19 21:12
  **/
 @Configuration
-@ComponentScan({"com.awakeyo.event","com.awake.event"})
+@ComponentScan("com.awake.event")
 public class EventTestConfiguration {
 }

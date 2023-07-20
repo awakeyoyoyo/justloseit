@@ -1,6 +1,6 @@
 package com.awake.event;
 
-import com.awakeyo.event.anno.EventReceiver;
+import com.awake.event.anno.EventReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
