@@ -2,7 +2,6 @@ package com.awake.zookeeper;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.TestPropertySource;
 
 /**
  * @version : 1.0
