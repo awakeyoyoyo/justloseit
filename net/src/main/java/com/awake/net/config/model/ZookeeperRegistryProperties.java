@@ -28,7 +28,7 @@ public class ZookeeperRegistryProperties {
     private int elapsedTimeMs;
     private int sessionTimeoutMs;
     private int connectionTimeoutMs;
-    private List<String> address;
+    private String connectionAddress;
 
     public int getRetryCount() {
         return retryCount;
