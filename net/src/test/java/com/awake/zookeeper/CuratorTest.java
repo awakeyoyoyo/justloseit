@@ -3,6 +3,9 @@ package com.awake.zookeeper;
 import com.awake.net.config.model.ZookeeperRegistryProperties;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.cache.CuratorCache;
+import org.apache.curator.framework.recipes.cache.CuratorCache.Options;
+import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.zookeeper.CreateMode;
 import org.junit.Test;
@@ -99,6 +102,14 @@ public class CuratorTest {
     @Test
     public void testAddNodeListener() throws Exception {
         CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+
+        //客户端 某个节点
+        CuratorCache curatorCache = CuratorCache.build(curatorFramework, "/awake", Options.SINGLE_NODE_CACHE);
+        CuratorCacheListener listener=CuratorCacheListener.builder().forAll(new ZookeeperAllTypeListener()).build();
+        curatorCache.listenable().addListener(listener);
+        curatorCache.start();
+
+        System.in.read();
     }
 
 }
