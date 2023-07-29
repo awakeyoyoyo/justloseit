@@ -1,4 +1,4 @@
-package com.awake.zookeeper;
+package com.awake.zookeeper.curator;
 
 import com.awake.net.config.model.ZookeeperRegistryProperties;
 import org.apache.curator.framework.CuratorFramework;
@@ -24,6 +24,8 @@ public class CuratorTest {
 
     private final ZookeeperRegistryProperties zookeeperRegistryProperties = new ZookeeperRegistryProperties();
 
+    private static final String CONNECT_STRING = "127.0.0.1:2181";
+
     private CuratorFramework initCuratorFramework(String s) {
         zookeeperRegistryProperties.setRetryCount(5);
         zookeeperRegistryProperties.setSessionTimeoutMs(60000);
@@ -43,14 +45,14 @@ public class CuratorTest {
 
     @Test
     public void testCurator() throws IOException {
-        CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+        CuratorFramework curatorFramework = initCuratorFramework(CONNECT_STRING);
         System.out.println(curatorFramework.getState());
         System.in.read();
     }
 
     @Test
     public void testCreateNode() throws Exception {
-        CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+        CuratorFramework curatorFramework = initCuratorFramework(CONNECT_STRING);
         //添加持久节点
         String path = curatorFramework.create().forPath("/curator-node");
         //添加临时序号节点
@@ -65,7 +67,7 @@ public class CuratorTest {
 
     @Test
     public void testGetData() throws Exception {
-        CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+        CuratorFramework curatorFramework = initCuratorFramework(CONNECT_STRING);
 
         byte[] bytes = curatorFramework.getData().forPath("/curator-node");
         System.out.println("curator-node message:" + new String(bytes));
@@ -74,7 +76,7 @@ public class CuratorTest {
 
     @Test
     public void testSetData() throws Exception {
-        CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+        CuratorFramework curatorFramework = initCuratorFramework(CONNECT_STRING);
 
         curatorFramework.setData().forPath("/curator-node", "just lose it".getBytes());
         byte[] bytes = curatorFramework.getData().forPath("/curator-node");
@@ -83,7 +85,7 @@ public class CuratorTest {
 
     @Test
     public void testCreateWithParent() throws Exception {
-        CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+        CuratorFramework curatorFramework = initCuratorFramework(CONNECT_STRING);
 
         String pathWithParent = "/node-parent/sub-node-1";
         String path = curatorFramework.create().creatingParentsIfNeeded().forPath(pathWithParent);
@@ -92,7 +94,7 @@ public class CuratorTest {
 
     @Test
     public void testDelete() throws Exception {
-        CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+        CuratorFramework curatorFramework = initCuratorFramework(CONNECT_STRING);
 
         String pathWithParent = "/node-parent";
 
@@ -101,7 +103,7 @@ public class CuratorTest {
 
     @Test
     public void testAddNodeListener() throws Exception {
-        CuratorFramework curatorFramework = initCuratorFramework("127.0.0.1:2181");
+        CuratorFramework curatorFramework = initCuratorFramework(CONNECT_STRING);
 
         //客户端 某个节点
         CuratorCache curatorCache = CuratorCache.build(curatorFramework, "/awake", Options.SINGLE_NODE_CACHE);

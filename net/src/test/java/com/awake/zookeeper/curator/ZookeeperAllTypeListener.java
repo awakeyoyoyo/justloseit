@@ -1,4 +1,4 @@
-package com.awake.zookeeper;
+package com.awake.zookeeper.curator;
 
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.CuratorCacheListener;

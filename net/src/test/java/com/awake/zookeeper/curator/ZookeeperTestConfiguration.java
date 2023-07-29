@@ -1,4 +1,4 @@
-package com.awake.zookeeper;
+package com.awake.zookeeper.curator;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
