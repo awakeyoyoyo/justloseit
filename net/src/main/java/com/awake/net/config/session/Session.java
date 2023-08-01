@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
  **/
 @Data
 public class Session  implements Closeable {
+
     public static final AttributeKey<Session> SESSION_KEY = AttributeKey.valueOf("session");
 
     private static final AtomicLong ATOMIC_LONG = new AtomicLong(0);
@@ -39,9 +40,9 @@ public class Session  implements Closeable {
 
     /**
      * EN:Session extra parameters
-     * CN:Session附带的属性参数，消费者的属性
+     * CN:Session附带的属性参数，连接上的服务提供者的属性
      */
-    private RegisterVo consumerAttribute = null;
+    private RegisterVo providerAttribute = null;
 
     public Session(Channel channel) {
         if (channel == null) {

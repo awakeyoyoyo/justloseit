@@ -59,8 +59,12 @@ public class SessionManager implements ISessionManager{
             logger.error("[session:{}] does not exist", SessionUtils.sessionInfo(session));
             return;
         }
-        try (session) {
+        try {
             serverSessionMap.remove(session.getSid());
+            session.close();
+        } catch (IOException e) {
+            logger.error("[session:{}] remove exception", e);
+            e.printStackTrace();
         }
         serverSessionChangeId = SERVER_ATOMIC.incrementAndGet();
     }

@@ -1,5 +1,7 @@
 package com.awake.net.config.registry;
 
+import com.awake.net.config.model.ConsumerConfig;
+import com.awake.net.config.model.InstanceConfig;
 import com.awake.util.IdUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,7 @@ public class RegisterVo {
     private String id;
 
     // 服务提供者配置
-    private ProviderConfig providerConfig;
+    private InstanceConfig instanceConfig;
     // 服务消费者配置
     private ConsumerConfig consumerConfig;
 }
