@@ -1,7 +1,7 @@
 package com.awake.util;
 
 
-
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,5 +56,20 @@ public class ThreadUtils {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void shutdownEventLoopGracefully(String executorGroupName, EventExecutorGroup executor) {
+        if (executor == null) {
+            return;
+        }
+        try {
+            if (!executor.isTerminated()) {
+                executor.shutdownGracefully();
+            }
+        } catch (Exception e) {
+            logger.error("[{}] is failed to shutdown! ", executorGroupName, e);
+            return;
+        }
+        logger.info("[{}] shutdown gracefully.", executorGroupName);
     }
 }
