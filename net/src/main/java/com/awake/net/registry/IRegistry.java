@@ -1,4 +1,4 @@
-package com.awake.net.config.registry;
+package com.awake.net.registry;
 
 import org.apache.zookeeper.CreateMode;
 import org.springframework.lang.Nullable;

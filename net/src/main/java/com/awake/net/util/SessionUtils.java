@@ -1,21 +1,22 @@
-package com.awake.net.config.util;
+package com.awake.net.util;
 
-import com.awake.net.config.session.Session;
+import com.awake.net.session.Session;
 import com.awake.util.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.Attribute;
-
-import static com.awake.net.config.session.Session.SESSION_KEY;
+import io.netty.util.AttributeKey;
 
 /**
  * @version : 1.0
  * @ClassName: SessionUtils
- * @Description: TODO
+ * @Description: 操作session工具类
  * @Auther: awake
  * @Date: 2023/7/31 11:12
  **/
 public class SessionUtils {
+    public static final AttributeKey<Session> SESSION_KEY = AttributeKey.valueOf("session");
+
     private static final String CHANNEL_INFO_TEMPLATE = "[ip:{}][sid:{}][uid:{}]";
 
     private static final String CHANNEL_SIMPLE_INFO_TEMPLATE = "[sid:{}][uid:{}]";
@@ -73,4 +74,14 @@ public class SessionUtils {
         return StringUtils.format(CHANNEL_SIMPLE_INFO_TEMPLATE, session.getSid(), session.getUid());
     }
 
+    public static Session initChannel(Channel channel) {
+        Attribute<Session> sessionAttr = channel.attr(SESSION_KEY);
+        Session session = new Session(channel);
+        boolean setSuccessful = sessionAttr.compareAndSet(null, session);
+        if (!setSuccessful) {
+            channel.close();
+            throw new RuntimeException(StringUtils.format("The properties of the session[channel:{}] cannot be set", channel));
+        }
+        return session;
+    }
 }

@@ -1,4 +1,4 @@
-package com.awake.net.config.registry;
+package com.awake.net.registry;
 
 import com.awake.net.config.model.ConsumerConfig;
 import com.awake.net.config.model.InstanceConfig;

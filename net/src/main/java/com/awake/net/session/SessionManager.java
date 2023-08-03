@@ -1,6 +1,6 @@
-package com.awake.net.config.session;
+package com.awake.net.session;
 
-import com.awake.net.config.util.SessionUtils;
+import com.awake.net.util.SessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

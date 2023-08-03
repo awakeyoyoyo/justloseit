@@ -1,6 +1,8 @@
 package com.awake.net.config;
 
+import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ZookeeperRegistryProperties;
+import com.awake.net.registry.IRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,4 +23,18 @@ public class ConfigManager implements IConfigManager {
     private ZookeeperRegistryProperties zookeeperConfig;
 
 
+    @Override
+    public NetConfig getLocalConfig() {
+        return null;
+    }
+
+    @Override
+    public void initRegistry() {
+
+    }
+
+    @Override
+    public IRegistry getRegistry() {
+        return null;
+    }
 }

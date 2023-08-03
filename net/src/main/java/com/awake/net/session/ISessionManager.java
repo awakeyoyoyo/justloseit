@@ -1,4 +1,4 @@
-package com.awake.net.config.session;
+package com.awake.net.session;
 
 import java.util.function.Consumer;
 

@@ -1,6 +1,6 @@
-package com.awake.net.config.core;
+package com.awake.net.server;
 
-import com.awake.net.config.session.Session;
+import com.awake.net.session.Session;
 
 /**
  * @version : 1.0

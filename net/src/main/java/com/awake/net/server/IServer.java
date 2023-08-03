@@ -1,4 +1,4 @@
-package com.awake.net.config.core;
+package com.awake.net.server;
 
 /**
  * @version : 1.0

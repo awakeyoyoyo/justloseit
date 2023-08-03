@@ -1,5 +1,8 @@
 package com.awake;
 
+import com.awake.net.config.IConfigManager;
+import com.awake.net.session.ISessionManager;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -18,10 +21,15 @@ import org.springframework.stereotype.Component;
  * @Date: 2023/7/12 15:23
  **/
 @Component
+@Data
 public class NetContext implements ApplicationListener<ApplicationContextEvent>, Ordered {
     private static final Logger logger = LoggerFactory.getLogger(NetContext.class);
 
     private static NetContext instance;
+
+    private ISessionManager sessionManager;
+
+    private IConfigManager configManager;
 
     private ApplicationContext applicationContext;
 
@@ -34,10 +42,16 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
              */
             NetContext.instance = this;
             instance.applicationContext = event.getApplicationContext();
+            instance.sessionManager = applicationContext.getBean(ISessionManager.class);
+            instance.configManager = applicationContext.getBean(IConfigManager.class);
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();
         }
+    }
+
+    public static NetContext getNetContext() {
+        return instance;
     }
 
     @Override

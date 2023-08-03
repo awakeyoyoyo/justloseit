@@ -1,6 +1,6 @@
-package com.awake.net.config.session;
+package com.awake.net.session;
 
-import com.awake.net.config.registry.RegisterVo;
+import com.awake.net.registry.RegisterVo;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.Data;
