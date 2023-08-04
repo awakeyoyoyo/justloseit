@@ -9,6 +9,6 @@ package com.awake.net.packet;
  **/
 public interface IPacket {
 
-    short protocolId();
+    int protocolId();
 
 }

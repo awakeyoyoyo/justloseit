@@ -9,7 +9,7 @@ import com.awake.net.packet.common.AttachmentType;
  * @Auther: awake
  * @Date: 2023/8/3 19:42
  **/
-public interface IAttachment {
+public interface IAttachment extends IPacket{
 
     AttachmentType packetType();
 }

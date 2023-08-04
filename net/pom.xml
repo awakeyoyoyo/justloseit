@@ -29,6 +29,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.baidu</groupId>
+            <artifactId>jprotobuf-precompile-plugin</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.awakeyo</groupId>
             <artifactId>event</artifactId>
             <version>${justloseit.event.version}</version>

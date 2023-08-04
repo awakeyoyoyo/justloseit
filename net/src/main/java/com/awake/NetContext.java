@@ -1,6 +1,7 @@
 package com.awake;
 
 import com.awake.net.config.IConfigManager;
+import com.awake.net.protocol.IProtocolManager;
 import com.awake.net.session.ISessionManager;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -31,6 +32,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private IConfigManager configManager;
 
+    private IProtocolManager protocolManager;
+
     private ApplicationContext applicationContext;
 
     @Override
@@ -44,6 +47,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             instance.applicationContext = event.getApplicationContext();
             instance.sessionManager = applicationContext.getBean(ISessionManager.class);
             instance.configManager = applicationContext.getBean(IConfigManager.class);
+            instance.protocolManager = applicationContext.getBean(IProtocolManager.class);
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();
