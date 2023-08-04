@@ -11,5 +11,5 @@ import com.awake.net.packet.common.AttachmentType;
  **/
 public interface IAttachment extends IPacket{
 
-    AttachmentType packetType();
+    AttachmentType attachmentType();
 }

@@ -18,7 +18,7 @@ public class Heartbeat implements IPacket {
     public static final short PROTOCOL_ID = 102;
 
     @Override
-    public short protocolId() {
+    public int protocolId() {
         return PROTOCOL_ID;
     }
 

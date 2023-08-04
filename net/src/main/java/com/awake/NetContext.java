@@ -3,16 +3,16 @@ package com.awake;
 import com.awake.net.config.IConfigManager;
 import com.awake.net.protocol.IProtocolManager;
 import com.awake.net.session.ISessionManager;
-import lombok.Data;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
 
 /**
  * @version : 1.0
@@ -21,8 +21,7 @@ import org.springframework.stereotype.Component;
  * @Auther: awake
  * @Date: 2023/7/12 15:23
  **/
-@Component
-@Data
+@Getter
 public class NetContext implements ApplicationListener<ApplicationContextEvent>, Ordered {
     private static final Logger logger = LoggerFactory.getLogger(NetContext.class);
 
@@ -32,6 +31,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private IConfigManager configManager;
 
+    @Autowired
     private IProtocolManager protocolManager;
 
     private ApplicationContext applicationContext;
@@ -45,9 +45,9 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
              */
             NetContext.instance = this;
             instance.applicationContext = event.getApplicationContext();
-            instance.sessionManager = applicationContext.getBean(ISessionManager.class);
-            instance.configManager = applicationContext.getBean(IConfigManager.class);
-            instance.protocolManager = applicationContext.getBean(IProtocolManager.class);
+//            instance.sessionManager = applicationContext.getBean(ISessionManager.class);
+//            instance.configManager = applicationContext.getBean(IConfigManager.class);
+//            instance.protocolManager = applicationContext.getBean(IProtocolManager.class);
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();
