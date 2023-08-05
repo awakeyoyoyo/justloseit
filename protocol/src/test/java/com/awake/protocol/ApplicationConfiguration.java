@@ -1,6 +1,7 @@
 package com.awake.protocol;
 
-import com.awake.NetContext;
+
+import com.awake.ProtocolContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  **/
 //application配置
 @Configuration
-@ComponentScans(@ComponentScan("com.awake.net"))
+@ComponentScans(@ComponentScan("com.awake.protocol"))
 public class ApplicationConfiguration {
 
 
@@ -25,8 +26,8 @@ public class ApplicationConfiguration {
         //引入模块
         @Bean
         @ConditionalOnMissingBean
-        public NetContext netContext() {
-            return new NetContext();
+        public ProtocolContext netContext() {
+            return new ProtocolContext();
         }
     }
 

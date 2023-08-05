@@ -23,6 +23,7 @@
         <module>thread</module>
         <module>util</module>
         <module>net</module>
+        <module>protocol</module>
     </modules>
 
 
@@ -31,7 +32,8 @@
         <justloseit.util.version>0.0.1-SNAPSHOT</justloseit.util.version>
         <justloseit.event.version>0.0.1-SNAPSHOT</justloseit.event.version>
         <justloseit.thread.version>0.0.1-SNAPSHOT</justloseit.thread.version>
-
+        <justloseit.net.version>0.0.1-SNAPSHOT</justloseit.net.version>
+        <justloseit.protocol.version>0.0.1-SNAPSHOT</justloseit.protocol.version>
         <!-- spring and spring boot -->
         <spring.version>5.3.19</spring.version>
         <spring.boot.version>2.6.7</spring.boot.version>

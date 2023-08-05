@@ -1,7 +1,6 @@
 package com.awake.protocol;
 
-import com.awake.NetContext;
-import com.awake.net.protocol.ProtocolManager;
+import com.awake.ProtocolContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +19,7 @@ public class ProtocolTest {
     @Autowired
     private ApplicationConfiguration applicationConfiguration;
     @Autowired
-    private NetContext netContext;
+    private ProtocolContext protocolContext;
     @Autowired
     private ProtocolManager protocolManager;
     @Test

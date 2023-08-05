@@ -1,8 +1,8 @@
-package com.awake.net.protocol.autoConfiguration;
+package com.awake.protocol.autoConfiguration;
 
-import com.awake.NetContext;
-import com.awake.net.protocol.ProtocolManager;
-import com.awake.net.protocol.properties.ProtocolProperties;
+import com.awake.ProtocolContext;
+import com.awake.protocol.ProtocolManager;
+import com.awake.protocol.properties.ProtocolProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties(ProtocolProperties.class)
-@ConditionalOnBean(NetContext.class)
+@ConditionalOnBean(ProtocolContext.class)
 public class ProtocolAutoConfiguration {
 
     @Bean

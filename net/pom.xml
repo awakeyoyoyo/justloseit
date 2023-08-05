@@ -42,6 +42,12 @@
 
         <dependency>
             <groupId>com.awakeyo</groupId>
+            <artifactId>protocol</artifactId>
+            <version>${justloseit.protocol.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.awakeyo</groupId>
             <artifactId>util</artifactId>
             <version>${justloseit.util.version}</version>
         </dependency>
@@ -106,6 +112,12 @@
                     <groupId>com.google.guava</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.awakeyo</groupId>
+            <artifactId>protocol</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

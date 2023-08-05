@@ -1,6 +1,5 @@
-package com.awake.net.protocol.definition;
+package com.awake.protocol.definition;
 
-import com.awake.net.packet.IPacket;
 import lombok.Data;
 
 /**
@@ -17,5 +16,5 @@ public class ProtocolDefinition<T> {
 
     private byte module;
 
-    private Class<? extends IPacket> protocolClass;
+    private Class protocolClass;
 }

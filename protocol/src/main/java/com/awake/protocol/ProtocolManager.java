@@ -1,8 +1,9 @@
-package com.awake.net.protocol;
+package com.awake.protocol;
 
-import com.awake.net.protocol.definition.ProtocolDefinition;
-import com.awake.net.protocol.properties.ProtocolProperties;
+import com.awake.protocol.definition.ProtocolDefinition;
+import com.awake.protocol.properties.ProtocolProperties;
 import lombok.Data;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.util.HashMap;
 
@@ -14,7 +15,7 @@ import java.util.HashMap;
  * @Date: 2023/8/3 21:10
  **/
 @Data
-public class ProtocolManager implements IProtocolManager {
+public class ProtocolManager implements IProtocolManager, InitializingBean {
 
     private ProtocolProperties protocolProperties;
 
@@ -27,5 +28,11 @@ public class ProtocolManager implements IProtocolManager {
     @Override
     public ProtocolDefinition getProtocol(int protocolId) {
         return null;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        String scanProtocolPacket = protocolProperties.getScanProtocolPacket();
+        //TODO 扫描出所有协议包
     }
 }

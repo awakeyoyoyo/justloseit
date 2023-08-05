@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 
 @SpringBootApplication
-@ComponentScans({@ComponentScan("com.awake.net")})
+@ComponentScans({@ComponentScan("com.awake.net"),@ComponentScan("com.awake.protocol")})
 public class GameApplication {
 
     public static void main(String[] args) {
