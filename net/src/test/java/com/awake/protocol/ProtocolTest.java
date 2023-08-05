@@ -1,6 +1,7 @@
 package com.awake.protocol;
 
 import com.awake.NetContext;
+import com.awake.net.protocol.ProtocolManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,14 +15,17 @@ import org.springframework.boot.test.context.SpringBootTest;
  **/
 
 
-@SpringBootTest(classes = {ProtocolConfiguration.class})
+@SpringBootTest(classes = {ApplicationConfiguration.class})
 public class ProtocolTest {
-
+    @Autowired
+    private ApplicationConfiguration applicationConfiguration;
     @Autowired
     private NetContext netContext;
+    @Autowired
+    private ProtocolManager protocolManager;
     @Test
     public void testProtocol() {
-        System.out.println(netContext.toString());
+        System.out.println(protocolManager);
     }
 
 }
