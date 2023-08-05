@@ -4,6 +4,7 @@ import com.awake.NetContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -13,13 +14,20 @@ import org.springframework.context.annotation.Configuration;
  * @Auther: awake
  * @Date: 2023/8/4 16:13
  **/
+//application配置
 @Configuration
-@ComponentScan("com.awake.net")
-public class ProtocolConfiguration {
+@ComponentScans(@ComponentScan("com.awake.net"))
+public class ApplicationConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    public NetContext netContext( ) {
-        return new NetContext();
+
+    @Configuration
+    public static class ProtocolConfig {
+        //引入模块
+        @Bean
+        @ConditionalOnMissingBean
+        public NetContext netContext() {
+            return new NetContext();
+        }
     }
+
 }
