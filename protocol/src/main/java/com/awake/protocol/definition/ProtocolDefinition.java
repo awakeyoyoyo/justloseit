@@ -14,7 +14,12 @@ public class ProtocolDefinition<T> {
 
     private int protocolId;
 
-    private byte module;
+    private Class<T> protocolClass;
 
-    private Class protocolClass;
+    public static ProtocolDefinition valueOf(int protocolId, Class clazz) {
+        ProtocolDefinition bean=new ProtocolDefinition();
+        bean.setProtocolId(protocolId);
+        bean.setProtocolClass(clazz);
+        return bean;
+    }
 }

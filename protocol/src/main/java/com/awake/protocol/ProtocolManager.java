@@ -1,13 +1,17 @@
 package com.awake.protocol;
 
+import com.awake.protocol.anno.Packet;
 import com.awake.protocol.definition.ProtocolDefinition;
 import com.awake.protocol.properties.ProtocolProperties;
 import com.awake.util.ClassUtil;
+import com.awake.util.StringUtils;
+import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -20,33 +24,45 @@ import java.util.Set;
  **/
 @Data
 public class ProtocolManager implements IProtocolManager, InitializingBean {
+    private static final Logger logger = LoggerFactory.getLogger(ProtocolManager.class);
 
     private ProtocolProperties protocolProperties;
 
-    private HashMap<Integer, ProtocolDefinition> protocolDefinitionHashMap;
+    private HashMap<Integer, ProtocolDefinition> protocolDefinitionHashMap = new HashMap<>();
 
     public ProtocolManager(ProtocolProperties protocolProperties) {
-        this.protocolProperties=protocolProperties;
+        this.protocolProperties = protocolProperties;
     }
 
     @Override
     public ProtocolDefinition getProtocol(int protocolId) {
-        return null;
+        return protocolDefinitionHashMap.get(protocolId);
     }
 
     @Override
     public void afterPropertiesSet() {
         String scanProtocolPacket = protocolProperties.getScanProtocolPacket();
-        //TODO 扫描出所有协议包
-        System.out.println(scanProtocolPacket);
-
-        Set<Class> classSet1 = ClassUtil.scanPackageClass("com.awake.protocol.packet");
-        Set<Class> classSet2 = ClassUtil.scanPackageClass(scanProtocolPacket);
-        System.out.println(classSet1);
-        System.out.println(classSet2);
+        Set<Class> packageClass = ClassUtil.scanPackageClass(scanProtocolPacket);
+        if (packageClass.isEmpty()) {
+            logger.warn("There are no protocol class.");
+        }
+        for (Class clazz : packageClass) {
+            Annotation packetAnnotation = clazz.getAnnotation(Packet.class);
+            if (packetAnnotation == null) {
+                continue;
+            }
+            Annotation protoAnnotation = clazz.getAnnotation(ProtobufClass.class);
+            if (protoAnnotation == null) {
+                throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a ProtobufClass anno!", clazz.getName()));
+            }
+            Packet packet = (Packet) packetAnnotation;
+            if (protocolDefinitionHashMap.containsKey(packet.protocolId())) {
+                throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a unique protocolId : [{}]!", clazz.getName(), packet.protocolId()));
+            }
+            ProtocolDefinition protocolDefinition = ProtocolDefinition.valueOf(packet.protocolId(), clazz);
+            protocolDefinitionHashMap.put(packet.protocolId(), protocolDefinition);
+        }
     }
-
-    private static ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
     public static void main(String[] args) {
 
