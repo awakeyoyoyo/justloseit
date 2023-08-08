@@ -45,6 +45,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
         Set<Class> packageClass = ClassUtil.scanPackageClass(scanProtocolPacket);
         if (packageClass.isEmpty()) {
             logger.warn("There are no protocol class.");
+            return;
         }
         for (Class clazz : packageClass) {
             Annotation packetAnnotation = clazz.getAnnotation(Packet.class);
@@ -61,6 +62,9 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             }
             ProtocolDefinition protocolDefinition = ProtocolDefinition.valueOf(packet.protocolId(), clazz);
             protocolDefinitionHashMap.put(packet.protocolId(), protocolDefinition);
+        }
+        if (protocolDefinitionHashMap.isEmpty()) {
+            logger.warn("There are no protocolDefinitions.");
         }
     }
 
