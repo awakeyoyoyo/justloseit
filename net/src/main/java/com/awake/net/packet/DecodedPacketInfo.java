@@ -1,5 +1,6 @@
 package com.awake.net.packet;
 
+import com.awake.net.router.attachment.IAttachment;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
@@ -22,15 +23,6 @@ public class DecodedPacketInfo {
      * 解码后的包的附加包
      */
     private IAttachment attachment;
-
-    /**
-     * 长度
-     */
-    private int length;
-    /**
-     * 加密所用时间
-     */
-    private long encodedTime;
 
     public static DecodedPacketInfo valueOf(IPacket packet, @Nullable IAttachment attachment) {
         DecodedPacketInfo packetInfo = new DecodedPacketInfo();

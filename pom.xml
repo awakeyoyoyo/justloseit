@@ -38,7 +38,8 @@
         <spring.version>5.3.19</spring.version>
         <spring.boot.version>2.6.7</spring.boot.version>
         <junit.version>4.12</junit.version>
-
+        <!-- json and xml, use the version of spring boot first -->
+        <jackson.version>2.13.2</jackson.version>
         <java.version>1.8</java.version>
         <!-- 日志 -->
         <slf4j.version>1.7.30</slf4j.version>

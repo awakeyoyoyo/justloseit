@@ -14,7 +14,6 @@ package com.awake.net.event;
 
 
 import com.awake.event.model.IEvent;
-import com.awake.net.packet.IAttachment;
 import com.awake.net.packet.IPacket;
 import com.awake.net.session.Session;
 import lombok.Data;

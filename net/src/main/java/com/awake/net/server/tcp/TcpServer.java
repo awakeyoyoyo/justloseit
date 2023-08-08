@@ -11,7 +11,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 /**
  * @version : 1.0
  * @ClassName: TcpServer
- * @Description: TODO
+ * @Description: Tcp服务端
  * @Auther: awake
  * @Date: 2023/8/2 19:34
  **/
@@ -24,8 +24,11 @@ public class TcpServer extends AbstractServer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel channel) throws Exception {
         channel.pipeline().addLast(new IdleStateHandler(0, 0, 180));
+        //心跳处理器
         channel.pipeline().addLast(new ServerIdleHandler());
+        //协议解析
         channel.pipeline().addLast(new JProtobufTcpCodecHandler());
+        //逻辑处理
         channel.pipeline().addLast(new ServerRouteHandler());
     }
 }

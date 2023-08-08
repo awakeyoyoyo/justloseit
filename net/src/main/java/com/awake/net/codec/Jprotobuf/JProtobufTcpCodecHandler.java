@@ -16,7 +16,6 @@ package com.awake.net.codec.Jprotobuf;
 import com.awake.ProtocolContext;
 import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.packet.EncodedPacketInfo;
-import com.awake.net.packet.IAttachment;
 import com.awake.net.packet.IPacket;
 import com.awake.protocol.definition.ProtocolDefinition;
 import com.awake.util.IOUtils;
