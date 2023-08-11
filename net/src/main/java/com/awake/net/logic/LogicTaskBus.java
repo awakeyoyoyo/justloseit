@@ -12,14 +12,24 @@ import org.slf4j.LoggerFactory;
  * @Date: 2023/8/8 21:01
  **/
 public class LogicTaskBus {
+
     private static final Logger logger = LoggerFactory.getLogger(LogicTaskBus.class);
 
-    //线程池的大小，也可以通过provider thread配置指定
-    public static final int EXECUTOR_SIZE=1;
+    /**
+     *  线程池的大小，也可以通过provider thread配置指定
+     */
+    public int executorSize;
 
     /**
      * 使用不同的线程池，让线程池之间实现隔离，互不影响
      */
-    private static final ThreadActorPoolModel executors = new ThreadActorPoolModel(EXECUTOR_SIZE);
+    private ThreadActorPoolModel executors;
 
+    private LogicTaskBus instance;
+
+    LogicTaskBus(int executorSize) {
+        this.executorSize = executorSize;
+        executors= new ThreadActorPoolModel(executorSize, LogicTaskBus.class.getName());
+        instance=this;
+    }
 }
