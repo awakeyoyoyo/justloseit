@@ -28,7 +28,7 @@ public class EventBus {
      */
     public static final int EXECUTORS_SIZE = Runtime.getRuntime().availableProcessors() * 2;
 
-    private static final ThreadActorPoolModel executors = new ThreadActorPoolModel(EXECUTORS_SIZE);
+    private static final ThreadActorPoolModel executors = new ThreadActorPoolModel(EXECUTORS_SIZE, EventBus.class.getName());
 
     /**
      * Synchronous event mapping, synchronize observers

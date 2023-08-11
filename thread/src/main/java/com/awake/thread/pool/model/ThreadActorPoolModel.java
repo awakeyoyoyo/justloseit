@@ -28,11 +28,11 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
     public int executorsSize;
 
 
-    public ThreadActorPoolModel(int executorsSize) {
+    public ThreadActorPoolModel(int executorsSize,String threadModuleName) {
         this.executorsSize = executorsSize;
         executors = new ExecutorService[executorsSize];
         for (int i = 0; i < executorsSize; i++) {
-            TaskThreadFactory taskThreadFactory = new TaskThreadFactory(i);
+            TaskThreadFactory taskThreadFactory = new TaskThreadFactory(i,threadModuleName);
             ExecutorService executor = Executors.newSingleThreadExecutor(taskThreadFactory);
             executors[i] = executor;
         }
@@ -47,15 +47,17 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         private final int poolNumber;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final ThreadGroup group;
+        private final String threadModuleName;
 
-        public TaskThreadFactory(int poolNumber) {
+        public TaskThreadFactory(int poolNumber,String threadModuleName) {
             this.group = ThreadUtils.currentThreadGroup();
             this.poolNumber = poolNumber;
+            this.threadModuleName = threadModuleName;
         }
 
         @Override
         public Thread newThread(Runnable runnable) {
-            String threadName = StringUtils.format("ThreadActorPoolModel-p{}-t{}", poolNumber + 1, threadNumber.getAndIncrement());
+            String threadName = StringUtils.format("ThreadActorPoolModel-n{}-p{}-t{}", threadModuleName, poolNumber + 1, threadNumber.getAndIncrement());
             Thread thread = new FastThreadLocalThread(group, runnable, threadName);
             thread.setDaemon(false);
             thread.setPriority(Thread.NORM_PRIORITY);
