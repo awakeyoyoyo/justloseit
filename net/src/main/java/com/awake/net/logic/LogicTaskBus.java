@@ -4,8 +4,6 @@ import com.awake.thread.pool.model.ThreadActorPoolModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
-
 /**
  * @version : 1.0
  * @ClassName: LogicTaskBus
@@ -17,7 +15,7 @@ public class LogicTaskBus {
     private static final Logger logger = LoggerFactory.getLogger(LogicTaskBus.class);
 
     //线程池的大小，也可以通过provider thread配置指定
-    public static final int EXECUTOR_SIZE;
+    public static final int EXECUTOR_SIZE=1;
 
     /**
      * 使用不同的线程池，让线程池之间实现隔离，互不影响

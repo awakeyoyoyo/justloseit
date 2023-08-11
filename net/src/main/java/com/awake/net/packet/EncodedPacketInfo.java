@@ -1,5 +1,6 @@
 package com.awake.net.packet;
 
+import com.awake.net.router.attachment.IAttachment;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
