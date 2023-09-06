@@ -1,8 +1,6 @@
 package com.awake.net.packet.common;
 
-import com.awake.net.router.attachment.IAttachment;
-import com.awake.net.router.attachment.NoAnswerAttachment;
-import com.awake.net.router.attachment.SignalAttachment;
+import com.awake.net.router.attachment.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +17,13 @@ public enum AttachmentType {
      * synchronous or asynchronous attachment
      */
     SIGNAL_PACKET( 0, SignalAttachment.class),
+
+    SIGNAL_ONLY_PACKET((byte) 1, SignalOnlyAttachment.class),
+
+    /**
+     * gateway attachment
+     */
+    GATEWAY_PACKET((byte) 2, GatewayAttachment.class),
 
     /**
      * not used attachment

@@ -3,6 +3,7 @@ package com.awake.net.session;
 import com.awake.net.util.SessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -17,6 +18,7 @@ import java.util.function.Consumer;
  * @Auther: awake
  * @Date: 2023/7/31 10:44
  **/
+@Component
 public class SessionManager implements ISessionManager{
 
     private static final Logger logger = LoggerFactory.getLogger(SessionManager.class);

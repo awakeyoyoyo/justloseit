@@ -40,7 +40,7 @@ public class ProtocolTest {
 
     @Test
     public void testProtocolCodec() throws IOException {
-        ProtocolDefinition definition = protocolManager.getProtocol(1);
+        ProtocolDefinition definition = protocolManager.getProtocolDefinition(1);
         AAA aaa=new AAA();
         aaa.setA(9527);
         aaa.setAa("awake");

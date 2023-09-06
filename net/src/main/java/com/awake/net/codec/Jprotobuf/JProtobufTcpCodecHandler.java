@@ -96,7 +96,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
             attachmentProtocolId = sliceByteBuf.readInt();
         }
         //协议包
-        ProtocolDefinition packetDefinition = ProtocolContext.getProtocolContext().getProtocolManager().getProtocol(packetProtocolId);
+        ProtocolDefinition packetDefinition = ProtocolContext.getProtocolContext().getProtocolManager().getProtocolDefinition(packetProtocolId);
         Codec packetCodec = ProtobufProxy.create(packetDefinition.getProtocolClass());
         int readableBytes = sliceByteBuf.readableBytes();
         byte[] packetBytes = new byte[readableBytes - attachmentLen];
@@ -107,7 +107,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
         //附加包
         IAttachment attachment = null;
         if (attachmentProtocolId != 0) {
-            ProtocolDefinition attachmentDefinition = ProtocolContext.getProtocolContext().getProtocolManager().getProtocol(attachmentProtocolId);
+            ProtocolDefinition attachmentDefinition = ProtocolContext.getProtocolContext().getProtocolManager().getProtocolDefinition(attachmentProtocolId);
             Codec attachmentCodec = ProtobufProxy.create(attachmentDefinition.getProtocolClass());
             byte[] attachmentBytes = new byte[readableBytes - attachmentLen];
             sliceByteBuf.readBytes(attachmentBytes);

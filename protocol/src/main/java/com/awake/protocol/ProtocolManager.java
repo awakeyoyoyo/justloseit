@@ -35,8 +35,18 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     }
 
     @Override
-    public ProtocolDefinition getProtocol(int protocolId) {
+    public ProtocolDefinition getProtocolDefinition(int protocolId) {
         return protocolDefinitionHashMap.get(protocolId);
+    }
+
+    @Override
+    public int getProtocolId(Class<?> packetClazz) {
+        for (ProtocolDefinition definition : protocolDefinitionHashMap.values()) {
+            if (definition.getProtocolClass().equals(packetClazz)){
+                return definition.getProtocolId();
+            }
+        }
+        return 0;
     }
 
     @Override

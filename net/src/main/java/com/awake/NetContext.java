@@ -1,6 +1,8 @@
 package com.awake;
 
 import com.awake.net.config.IConfigManager;
+import com.awake.net.router.IRouter;
+import com.awake.net.router.PacketBus;
 import com.awake.net.session.ISessionManager;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -29,6 +31,10 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private IConfigManager configManager;
 
+    private IRouter router;
+
+    private PacketBus packetBus;
+
     private ApplicationContext applicationContext;
 
     @Override
@@ -40,8 +46,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
              */
             NetContext.instance = this;
             instance.applicationContext = event.getApplicationContext();
-//            instance.sessionManager = applicationContext.getBean(ISessionManager.class);
-//            instance.configManager = applicationContext.getBean(IConfigManager.class);
+            //初始化packet
+            packetBus.init(event.getApplicationContext());
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();

@@ -1,8 +1,7 @@
 package com.awake;
 
 import com.awake.protocol.IProtocolManager;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
@@ -17,9 +16,9 @@ import org.springframework.core.Ordered;
  * @Auther: awake
  * @Date: 2023/8/5 16:57
  **/
-@Getter
+@Data
 public class ProtocolContext implements ApplicationListener<ApplicationContextEvent>, Ordered {
-    @Autowired
+
     private IProtocolManager protocolManager;
 
     private static ProtocolContext instance;

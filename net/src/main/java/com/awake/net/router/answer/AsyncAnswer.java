@@ -63,4 +63,9 @@ public class AsyncAnswer <T extends IPacket> implements IAsyncAnswer<T> {
         this.notCompleteCallback = notCompleteCallback;
         return this;
     }
+
+    public void consume() {
+        consumerList.forEach(it -> it.accept(futurePacket));
+    }
+
 }

@@ -16,8 +16,8 @@ public interface IProtocolManager {
      * @param protocolId
      * @return
      */
-    ProtocolDefinition getProtocol(int protocolId);
+    ProtocolDefinition getProtocolDefinition(int protocolId);
 
 
-
+    int getProtocolId(Class<?> packetClazz);
 }
