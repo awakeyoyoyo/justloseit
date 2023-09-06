@@ -1,13 +1,15 @@
 package com.awake.event.manger;
 
-import com.awake.event.model.IEvent;
 import com.awake.event.enhance.IEventReceiver;
-import com.awake.thread.pool.model.ThreadActorPoolModel;
+import com.awake.event.model.IEvent;
 import com.awake.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,16 +29,11 @@ public class EventBus {
      */
     public static final int EXECUTORS_SIZE = Runtime.getRuntime().availableProcessors() * 2;
 
-    private static final ThreadActorPoolModel executors = new ThreadActorPoolModel(EXECUTORS_SIZE, EventBus.class.getName());
 
     /**
      * Synchronous event mapping, synchronize observers
      */
     private static final Map<Class<? extends IEvent>, List<IEventReceiver>> receiverMapSync = new HashMap<>();
-    /**
-     * Asynchronous event mapping, asynchronous observer
-     */
-    private static final Map<Class<? extends IEvent>, List<IEventReceiver>> receiverMapAsync = new HashMap<>();
 
     /**
      * 发布事件
@@ -58,21 +55,6 @@ public class EventBus {
                 } catch (Throwable t) {
                     logger.error("eventBus sync event [{}] unknown error", clazz.getSimpleName(), t);
                 }
-            }
-        }
-
-        List<IEventReceiver> listAsync = receiverMapAsync.get(clazz);
-        if (CollectionUtils.isNotEmpty(listAsync)) {
-            for (IEventReceiver receiver : listAsync) {
-                executors.execute(event.executorHash(), () -> {
-                    try {
-                        receiver.invoke(event);
-                    } catch (Exception e) {
-                        logger.error("eventBus async event [{}] unknown exception", clazz.getSimpleName(), e);
-                    } catch (Throwable t) {
-                        logger.error("eventBus async event [{}] unknown error", clazz.getSimpleName(), t);
-                    }
-                });
             }
         }
     }
@@ -112,12 +94,8 @@ public class EventBus {
     /**
      * 注册事件及其对应观察者
      */
-    public static void registerEventReceiver(Class<? extends IEvent> eventType, IEventReceiver receiver, boolean asyncFlag) {
-        if (asyncFlag) {
-            receiverMapAsync.computeIfAbsent(eventType, it -> new ArrayList<>(1)).add(receiver);
-        } else {
-            receiverMapSync.computeIfAbsent(eventType, it -> new ArrayList<>(1)).add(receiver);
-        }
+    public static void registerEventReceiver(Class<? extends IEvent> eventType, IEventReceiver receiver) {
+        receiverMapSync.computeIfAbsent(eventType, it -> new ArrayList<>(1)).add(receiver);
     }
 
 }
