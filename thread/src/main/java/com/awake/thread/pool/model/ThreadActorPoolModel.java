@@ -1,17 +1,14 @@
 package com.awake.thread.pool.model;
 
 import com.awake.thread.anno.SafeRunnable;
-import com.awake.util.StringUtils;
-import com.awake.util.ThreadUtils;
-import io.netty.util.concurrent.FastThreadLocalThread;
+import com.awake.util.RandomUtils;
+import io.netty.channel.DefaultEventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version : 1.0
@@ -29,12 +26,12 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
     public int executorsSize;
 
 
-    public ThreadActorPoolModel(int executorsSize, String threadModuleName) {
+    public ThreadActorPoolModel(int executorsSize) {
         this.executorsSize = executorsSize;
         executors = new ExecutorService[executorsSize];
         for (int i = 0; i < executorsSize; i++) {
-            TaskThreadFactory taskThreadFactory = new TaskThreadFactory(i, threadModuleName);
-            ExecutorService executor = Executors.newSingleThreadExecutor(taskThreadFactory);
+            //使用netty自带
+            DefaultEventLoop executor = new DefaultEventLoop();
             executors[i] = executor;
         }
     }
@@ -49,31 +46,36 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
     }
 
+
+    public int calTaskExecutorHash(int taskExecutorHash) {
+        // Other hash algorithms can be customized to make the distribution more uniform
+        return Math.abs(taskExecutorHash) % executorsSize;
+    }
+
+    public int calTaskExecutorHash(Object argument) {
+        int hash = 0;
+        if (argument == null) {
+            hash = RandomUtils.randomInt();
+        } else if (argument instanceof Number) {
+            hash = ((Number) argument).intValue();
+        } else {
+            hash = argument.hashCode();
+        }
+        return calTaskExecutorHash(hash);
+    }
+
     @Override
     public CompletableFuture asyncExecuteCallBack(int taskExecutorHash, SafeRunnable runnable) {
         return null;
     }
 
-    public static class TaskThreadFactory implements ThreadFactory {
-        private final int poolNumber;
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
-        private final ThreadGroup group;
-        private final String threadModuleName;
+    /**
+     * 请求成功过后依然在相同的线程执行回调任务
+     */
+    public Executor currentThreadExecutor() {
 
-        public TaskThreadFactory(int poolNumber, String threadModuleName) {
-            this.group = ThreadUtils.currentThreadGroup();
-            this.poolNumber = poolNumber;
-            this.threadModuleName = threadModuleName;
-        }
+        var threadId = Thread.currentThread().getId();
 
-        @Override
-        public Thread newThread(Runnable runnable) {
-            String threadName = StringUtils.format("ThreadActorPoolModel-n{}-p{}-t{}", threadModuleName, poolNumber + 1, threadNumber.getAndIncrement());
-            Thread thread = new FastThreadLocalThread(group, runnable, threadName);
-            thread.setDaemon(false);
-            thread.setPriority(Thread.NORM_PRIORITY);
-            thread.setUncaughtExceptionHandler((t, e) -> logger.error(t.toString(), e));
-            return thread;
-        }
+        return executors[calTaskExecutorHash(RandomUtils.randomInt())];
     }
 }
