@@ -1,8 +1,8 @@
-package com.awake.protocol;
+package com.awake.net.protocol;
 
-import com.awake.protocol.anno.Packet;
-import com.awake.protocol.definition.ProtocolDefinition;
-import com.awake.protocol.properties.ProtocolProperties;
+import com.awake.net.protocol.anno.Packet;
+import com.awake.net.protocol.definition.ProtocolDefinition;
+import com.awake.net.protocol.properties.ProtocolProperties;
 import com.awake.util.ClassUtil;
 import com.awake.util.StringUtils;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;

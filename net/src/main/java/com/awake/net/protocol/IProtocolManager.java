@@ -1,6 +1,7 @@
-package com.awake.protocol;
+package com.awake.net.protocol;
 
-import com.awake.protocol.definition.ProtocolDefinition;
+
+import com.awake.net.protocol.definition.ProtocolDefinition;
 
 /**
  * @version : 1.0

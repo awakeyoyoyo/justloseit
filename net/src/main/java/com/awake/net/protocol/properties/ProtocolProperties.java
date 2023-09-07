@@ -1,4 +1,4 @@
-package com.awake.protocol.properties;
+package com.awake.net.protocol.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

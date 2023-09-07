@@ -1,4 +1,4 @@
-package com.awake.protocol.definition;
+package com.awake.net.protocol.definition;
 
 import lombok.Data;
 

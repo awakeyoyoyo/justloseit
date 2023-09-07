@@ -1,4 +1,4 @@
-package com.awake.protocol.anno;
+package com.awake.net.protocol.anno;
 
 import java.lang.annotation.*;
 
