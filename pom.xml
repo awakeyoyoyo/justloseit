@@ -40,7 +40,8 @@
         <junit.version>4.12</junit.version>
         <!-- json and xml, use the version of spring boot first -->
         <jackson.version>2.13.2</jackson.version>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
+        <file.encoding>UTF-8</file.encoding>
         <!-- 日志 -->
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
@@ -58,6 +59,8 @@
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
         <!-- zookeeper -->
         <curator.version>5.3.0</curator.version>
+        <project.build.sourceEncoding>${file.encoding}</project.build.sourceEncoding>
+        <maven.compiler.encoding>${file.encoding}</maven.compiler.encoding>
     </properties>
 
 
@@ -68,7 +71,18 @@
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven-clean-plugin.version}</version>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${file.encoding}</encoding>
+                </configuration>
+            </plugin>
         </plugins>
+
     </build>
 
 </project>
