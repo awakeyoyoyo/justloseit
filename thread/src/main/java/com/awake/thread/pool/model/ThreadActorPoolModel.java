@@ -7,6 +7,7 @@ import io.netty.util.concurrent.FastThreadLocalThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -28,11 +29,11 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
     public int executorsSize;
 
 
-    public ThreadActorPoolModel(int executorsSize,String threadModuleName) {
+    public ThreadActorPoolModel(int executorsSize, String threadModuleName) {
         this.executorsSize = executorsSize;
         executors = new ExecutorService[executorsSize];
         for (int i = 0; i < executorsSize; i++) {
-            TaskThreadFactory taskThreadFactory = new TaskThreadFactory(i,threadModuleName);
+            TaskThreadFactory taskThreadFactory = new TaskThreadFactory(i, threadModuleName);
             ExecutorService executor = Executors.newSingleThreadExecutor(taskThreadFactory);
             executors[i] = executor;
         }
@@ -43,13 +44,23 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         executors[Math.abs(executorHash % executorsSize)].execute(SafeRunnable.valueOf(runnable));
     }
 
+    @Override
+    public void asyncExecute(int taskExecutorHash, SafeRunnable runnable) {
+
+    }
+
+    @Override
+    public CompletableFuture asyncExecuteCallBack(int taskExecutorHash, SafeRunnable runnable) {
+        return null;
+    }
+
     public static class TaskThreadFactory implements ThreadFactory {
         private final int poolNumber;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final ThreadGroup group;
         private final String threadModuleName;
 
-        public TaskThreadFactory(int poolNumber,String threadModuleName) {
+        public TaskThreadFactory(int poolNumber, String threadModuleName) {
             this.group = ThreadUtils.currentThreadGroup();
             this.poolNumber = poolNumber;
             this.threadModuleName = threadModuleName;
