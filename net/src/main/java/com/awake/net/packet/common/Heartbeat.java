@@ -1,8 +1,9 @@
 package com.awake.net.packet.common;
 
 import com.awake.net.packet.IPacket;
+import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+
 
 /**
  * @version : 1.0

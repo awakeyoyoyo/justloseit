@@ -1,5 +1,9 @@
 package com.awake.thread.pool.model;
 
+import com.awake.thread.anno.SafeRunnable;
+
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @version : 1.0
  * @ClassName: SingleThreadActorPool
@@ -12,5 +16,15 @@ public class TaskQueueActorPoolModel implements IThreadPoolModel {
     @Override
     public void execute(int taskExecutorHash, Runnable runnable) {
 
+    }
+
+    @Override
+    public void asyncExecute(int taskExecutorHash, SafeRunnable runnable) {
+
+    }
+
+    @Override
+    public CompletableFuture asyncExecuteCallBack(int taskExecutorHash, SafeRunnable runnable) {
+        return null;
     }
 }
