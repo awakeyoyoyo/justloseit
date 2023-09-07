@@ -1,6 +1,6 @@
 package com.awake.net.packet.common;
 
-import com.awake.ProtocolContext;
+import com.awake.NetContext;
 import com.awake.net.packet.IPacket;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
@@ -53,7 +53,7 @@ public class Error implements IPacket {
 
     public static Error valueOf(IPacket packet, int errorCode, String errorMessage) {
         Error response = new Error();
-        response.module = ProtocolContext.getProtocolContext().getProtocolManager().getProtocolDefinition(packet.protocolId()).getModule();
+        response.module = NetContext.getProtocolManager().getProtocolDefinition(packet.protocolId()).getModule();
         response.errorCode = errorCode;
         response.errorMessage = errorMessage;
         return response;

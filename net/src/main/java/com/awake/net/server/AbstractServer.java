@@ -56,7 +56,7 @@ public abstract class AbstractServer <C extends Channel> extends ChannelInitiali
 
     @Override
     public void start() {
-
+        doStart();
     }
 
     protected synchronized void doStart() {

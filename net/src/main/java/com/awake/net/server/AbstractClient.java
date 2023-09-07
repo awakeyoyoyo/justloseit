@@ -1,5 +1,7 @@
 package com.awake.net.server;
 
+import com.awake.NetContext;
+import com.awake.net.router.handler.BaseRouteHandler;
 import com.awake.net.session.Session;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.IOUtils;
@@ -59,8 +61,10 @@ public abstract class AbstractClient <C extends Channel> extends ChannelInitiali
         if (channelFuture.isSuccess()) {
             if (channelFuture.channel().isActive()) {
                 Channel channel = channelFuture.channel();
+                var session = BaseRouteHandler.initChannel(channel);
+                NetContext.getSessionManager().addClientSession(session);
                 logger.info("{} started at [{}]", this.getClass().getSimpleName(), channel.localAddress());
-                return null;
+                return session;
             }
         } else if (channelFuture.cause() != null) {
             logger.error(ExceptionUtils.getMessage(channelFuture.cause()));

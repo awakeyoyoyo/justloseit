@@ -1,6 +1,6 @@
 package com.awake.net.router;
 
-import com.awake.ProtocolContext;
+import com.awake.NetContext;
 import com.awake.exception.RunException;
 import com.awake.net.packet.IPacket;
 import com.awake.net.router.attachment.GatewayAttachment;
@@ -124,7 +124,7 @@ public class PacketBus {
 
             int protocolId = Integer.MIN_VALUE;
             try {
-                protocolId = ProtocolContext.getProtocolContext().getProtocolManager().getProtocolId(packetClazz);
+                protocolId = NetContext.getProtocolManager().getProtocolId(packetClazz);
             } catch (Exception e) {
                 throw new RunException("[class:{}][protocolId:{}] has no registration, please register for this protocol", packetClazz.getSimpleName(), protocolId);
             }

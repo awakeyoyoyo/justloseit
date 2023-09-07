@@ -29,7 +29,7 @@ public class ServerRouteHandler extends BaseRouteHandler {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         Session session = SessionUtils.initChannel(ctx.channel());
-        NetContext.getNetContext().getSessionManager().addServerSession(session);
+        NetContext.getSessionManager().addServerSession(session);
         logger.info("server channel is active {}", SessionUtils.sessionInfo(ctx));
         EventBus.publicEvent(ServerSessionActiveEvent.valueOf(session));
     }
@@ -42,7 +42,7 @@ public class ServerRouteHandler extends BaseRouteHandler {
         if (session == null) {
             return;
         }
-        NetContext.getNetContext().getSessionManager().removeServerSession(session);
+        NetContext.getSessionManager().removeServerSession(session);
         logger.warn("server channel is inactive {}", SessionUtils.sessionSimpleInfo(ctx));
         EventBus.publicEvent(ServerSessionInactiveEvent.valueOf(session));
     }

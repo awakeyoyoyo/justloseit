@@ -13,12 +13,12 @@
 
 package com.awake.net.codec.Jprotobuf;
 
-import com.awake.ProtocolContext;
+import com.awake.NetContext;
 import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.packet.EncodedPacketInfo;
 import com.awake.net.packet.IPacket;
+import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.router.attachment.IAttachment;
-import com.awake.protocol.definition.ProtocolDefinition;
 import com.awake.util.IOUtils;
 import com.awake.util.StringUtils;
 import com.baidu.bjf.remoting.protobuf.Codec;
@@ -96,7 +96,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
             attachmentProtocolId = sliceByteBuf.readInt();
         }
         //协议包
-        ProtocolDefinition packetDefinition = ProtocolContext.getProtocolContext().getProtocolManager().getProtocolDefinition(packetProtocolId);
+        ProtocolDefinition packetDefinition = NetContext.getProtocolManager().getProtocolDefinition(packetProtocolId);
         Codec packetCodec = ProtobufProxy.create(packetDefinition.getProtocolClass());
         int readableBytes = sliceByteBuf.readableBytes();
         byte[] packetBytes = new byte[readableBytes - attachmentLen];
@@ -107,7 +107,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
         //附加包
         IAttachment attachment = null;
         if (attachmentProtocolId != 0) {
-            ProtocolDefinition attachmentDefinition = ProtocolContext.getProtocolContext().getProtocolManager().getProtocolDefinition(attachmentProtocolId);
+            ProtocolDefinition attachmentDefinition = NetContext.getProtocolManager().getProtocolDefinition(attachmentProtocolId);
             Codec attachmentCodec = ProtobufProxy.create(attachmentDefinition.getProtocolClass());
             byte[] attachmentBytes = new byte[readableBytes - attachmentLen];
             sliceByteBuf.readBytes(attachmentBytes);

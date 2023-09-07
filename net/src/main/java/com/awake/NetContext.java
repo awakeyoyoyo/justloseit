@@ -1,6 +1,7 @@
 package com.awake;
 
 import com.awake.net.config.IConfigManager;
+import com.awake.net.protocol.IProtocolManager;
 import com.awake.net.router.IRouter;
 import com.awake.net.router.PacketBus;
 import com.awake.net.session.ISessionManager;
@@ -27,15 +28,21 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static NetContext instance;
 
-    private ISessionManager sessionManager;
+    private static ISessionManager sessionManager;
 
-    private IConfigManager configManager;
+    private static IConfigManager configManager;
 
-    private IRouter router;
+    private static IRouter router;
 
-    private PacketBus packetBus;
+    private static PacketBus packetBus;
 
-    private ApplicationContext applicationContext;
+    private static ApplicationContext applicationContext;
+
+    private static IProtocolManager protocolManager;
+
+    public static IProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
@@ -45,7 +52,12 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
              * 另外，ContextRefreshedEvent还可以用于在同一容器中多个bean之间建立关联关系。
              */
             NetContext.instance = this;
-            instance.applicationContext = event.getApplicationContext();
+            applicationContext = event.getApplicationContext();
+//            configManager = applicationContext.getBean(IConfigManager.class);
+            packetBus = applicationContext.getBean(PacketBus.class);
+            router = applicationContext.getBean(IRouter.class);
+            sessionManager = applicationContext.getBean(ISessionManager.class);
+            protocolManager = applicationContext.getBean(IProtocolManager.class);
             //初始化packet
             packetBus.init(event.getApplicationContext());
         } else if (event instanceof ContextClosedEvent) {
@@ -69,5 +81,23 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     public synchronized void shutdownAfter() {
 
+    }
+
+
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public static IRouter getRouter() {
+        return router;
+    }
+
+
+    public static IConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public static ISessionManager getSessionManager() {
+        return sessionManager;
     }
 }

@@ -1,11 +1,15 @@
 package com.awake.net.router.handler;
 
+import com.awake.NetContext;
 import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.session.Session;
 import com.awake.net.util.SessionUtils;
+import com.awake.util.StringUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +23,8 @@ import org.slf4j.LoggerFactory;
 @ChannelHandler.Sharable
 public abstract class BaseRouteHandler extends ChannelInboundHandlerAdapter {
 
+    public static final AttributeKey<Session> SESSION_KEY = AttributeKey.valueOf("session");
+
     private static final Logger logger = LoggerFactory.getLogger(BaseRouteHandler.class);
 
     @Override
@@ -28,7 +34,7 @@ public abstract class BaseRouteHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         DecodedPacketInfo decodedPacketInfo = (DecodedPacketInfo) msg;
-        //todo 分发逻辑
+        NetContext.getRouter().receive(session, decodedPacketInfo.getPacket(), decodedPacketInfo.getAttachment());
     }
 
     @Override
@@ -38,6 +44,17 @@ public abstract class BaseRouteHandler extends ChannelInboundHandlerAdapter {
         } finally {
             ctx.close();
         }
+    }
+
+    public static Session initChannel(Channel channel) {
+        var sessionAttr = channel.attr(SESSION_KEY);
+        var session = new Session(channel);
+        var setSuccessful = sessionAttr.compareAndSet(null, session);
+        if (!setSuccessful) {
+            channel.close();
+            throw new RuntimeException(StringUtils.format("The properties of the session[channel:{}] cannot be set", channel));
+        }
+        return session;
     }
 
 }

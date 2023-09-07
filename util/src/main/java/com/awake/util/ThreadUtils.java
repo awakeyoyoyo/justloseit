@@ -72,4 +72,12 @@ public class ThreadUtils {
         }
         logger.info("[{}] shutdown gracefully.", executorGroupName);
     }
+
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
