@@ -12,7 +12,6 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.ExecutorService;
@@ -24,7 +23,6 @@ import java.util.concurrent.ExecutorService;
  * @Auther: awake
  * @Date: 2023/3/10 16:42
  **/
-@Component
 public class EventContext implements ApplicationListener<ApplicationContextEvent>, Ordered {
 
     private static final Logger logger = LoggerFactory.getLogger(EventContext.class);

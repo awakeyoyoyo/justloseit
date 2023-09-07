@@ -17,7 +17,6 @@ import java.util.*;
  * @Auther: awake
  * @Date: 2022/9/8 16:05
  **/
-//TODO 后续注入到Spring容器里面的吧
 public class EventBus {
 
     private static final Logger logger = LoggerFactory.getLogger(EventBus.class);
