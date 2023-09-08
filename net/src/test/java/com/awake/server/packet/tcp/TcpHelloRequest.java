@@ -2,6 +2,7 @@ package com.awake.server.packet.tcp;
 
 import com.awake.net.packet.IPacket;
 import com.awake.net.protocol.anno.Packet;
+import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 
 /**
@@ -14,8 +15,8 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 @Packet(protocolId = TcpHelloRequest.PROTOCOL_ID)
 @ProtobufClass
 public class TcpHelloRequest implements IPacket {
-
-    public static final short PROTOCOL_ID = 1300;
+    @Ignore
+    public static final int PROTOCOL_ID = 1300;
 
     private String message;
 

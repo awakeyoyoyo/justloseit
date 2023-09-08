@@ -120,7 +120,9 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, EncodedPacketInfo packetInfo, ByteBuf out) throws IOException {
+    protected void encode(ChannelHandlerContext ctx, EncodedPacketInfo packetInfo, ByteBuf out) throws IOException, ClassNotFoundException {
+        long now = System.currentTimeMillis();
+        System.out.println("send encode begin, time:" + now);
         IPacket packet = packetInfo.getPacket();
         IAttachment attachment = packetInfo.getAttachment();
         int len = 0;
@@ -156,5 +158,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
             //附加包
             out.writeBytes(attachmentBytes);
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("send encode end time:"+endTime + "between time"+ (endTime-now));
     }
 }

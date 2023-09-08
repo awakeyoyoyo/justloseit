@@ -6,7 +6,7 @@ import com.awake.server.ApplicationConfiguration;
 import com.awake.server.packet.tcp.TcpHelloRequest;
 import com.awake.util.ThreadUtils;
 import com.awake.util.net.HostAndPort;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +32,7 @@ public class TcpClientTest {
         for (int i = 0; i < 1000; i++) {
             ThreadUtils.sleep(2000);
             NetContext.getRouter().send(session, TcpHelloRequest.valueOf("Hello, this is the tcp client!"));
+
         }
 
         ThreadUtils.sleep(Long.MAX_VALUE);
