@@ -5,6 +5,7 @@ import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.protocol.properties.ProtocolProperties;
 import com.awake.util.ClassUtil;
 import com.awake.util.StringUtils;
+import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -71,6 +72,8 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
                 throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a unique protocolId : [{}]!", clazz.getName(), packet.protocolId()));
             }
             ProtocolDefinition protocolDefinition = ProtocolDefinition.valueOf(packet.protocolId(), clazz);
+            //缓存
+            ProtobufProxy.create(protocolDefinition.getProtocolClass());
             protocolDefinitionHashMap.put(packet.protocolId(), protocolDefinition);
         }
         if (protocolDefinitionHashMap.isEmpty()) {
