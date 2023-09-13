@@ -30,6 +30,15 @@ public class SignalAttachment implements IAttachment {
     private int signalId = ATOMIC_ID.incrementAndGet();
 
     /**
+     * 0 for the server, 1 for the sync or async native client, 2 for the outside client such as browser, mobile
+     */
+    public static final byte SIGNAL_SERVER = 0;
+    public static final byte SIGNAL_NATIVE_ARGUMENT_CLIENT = 1;
+    public static final byte SIGNAL_NATIVE_NO_ARGUMENT_CLIENT = 2;
+    public static final byte SIGNAL_OUTSIDE_CLIENT = 12;
+
+
+    /**
      * 用来在TaskBus中计算hash的参数，用来决定任务在哪一条线程执行
      */
     private int taskExecutorHash = -1;
@@ -37,7 +46,7 @@ public class SignalAttachment implements IAttachment {
     /**
      * 客户端标识，false为服务端返回的包
      */
-    private boolean client = true;
+    private byte client = SIGNAL_NATIVE_ARGUMENT_CLIENT;
 
     /**
      * 客户端发送时间

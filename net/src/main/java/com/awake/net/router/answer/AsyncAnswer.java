@@ -2,7 +2,7 @@ package com.awake.net.router.answer;
 
 import com.awake.net.packet.IPacket;
 import com.awake.net.router.attachment.SignalAttachment;
-import com.awake.thread.anno.SafeRunnable;
+import com.awake.util.ThreadUtils;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class AsyncAnswer <T extends IPacket> implements IAsyncAnswer<T> {
     /**
      * 没有成功后的回调
      */
-    private SafeRunnable notCompleteCallback;
+    private Runnable notCompleteCallback;
 
     @Override
     public IAsyncAnswer<T> thenAccept(Consumer<T> consumer) {
@@ -59,8 +59,8 @@ public class AsyncAnswer <T extends IPacket> implements IAsyncAnswer<T> {
     }
 
     @Override
-    public IAsyncAnswer<T> notComplete(SafeRunnable notCompleteCallback) {
-        this.notCompleteCallback = notCompleteCallback;
+    public IAsyncAnswer<T> notComplete(Runnable notCompleteCallback) {
+        this.notCompleteCallback = ThreadUtils.safeRunnable(notCompleteCallback);;
         return this;
     }
 

@@ -67,34 +67,39 @@ public class Router implements IRouter {
             logger.info("heartbeat");
             return;
         }
-        // 发送者（客户端）同步和异步消息的接收，发送者通过signalId判断重复
-        if (attachment != null) {
-            switch (attachment.packetType()) {
-                case SIGNAL_PACKET:
-                    var signalAttachment = (SignalAttachment) attachment;
 
-                    if (signalAttachment.isClient()) {
-                        // 服务器收到signalAttachment，不做任何处理
-                        signalAttachment.setClient(false);
-                    } else {
-                        // 客户端收到服务器应答，客户端发送的时候isClient为true，服务器收到的时候将其设置为false
-                        var removedAttachment = signalAttachmentMap.remove(signalAttachment.getSignalId());
-                        if (removedAttachment != null) {
-                            // 这里会让之前的CompletableFuture得到结果，从而像asyncAsk之类的回调到结果
-                            removedAttachment.getResponseFuture().complete(packet);
-                        } else {
-                            logger.error("client receives packet:[{}] and attachment:[{}] from server, but clientAttachmentMap has no attachment, perhaps timeout exception.", JsonUtils.object2String(packet), JsonUtils.object2String(attachment));
-                        }
-                        // 注意：这个return，这样子，asyncAsk的结果就返回了。
-                        return;
-                    }
-                    break;
-                default:
-                    break;
-            }
+        if (attachment == null) {
+            // 正常发送消息的接收,把客户端的业务请求包装下到路由策略指定的线程进行业务处理
+            // 注意：像客户端以asyncAsk发送请求，在服务器处理完后返回结果，在请求方也是进入这个receive方法，但是attachment不为空，会提前return掉不会走到这
+            dispatch(session, packet, attachment);
+            return;
         }
-        // 分发逻辑
-        dispatch(session, packet, attachment);
+
+        switch (attachment.packetType()) {
+            case SIGNAL_PACKET:
+                var signalAttachment = (SignalAttachment) attachment;
+//
+//                if (signalAttachment.isClient()) {
+//                    // 服务器收到signalAttachment，不做任何处理
+//                    signalAttachment.setClient(false);
+//                } else {
+//                    // 客户端收到服务器应答，客户端发送的时候isClient为true，服务器收到的时候将其设置为false
+//                    var removedAttachment = signalAttachmentMap.remove(signalAttachment.getSignalId());
+//                    if (removedAttachment != null) {
+//                        // 这里会让之前的CompletableFuture得到结果，从而像asyncAsk之类的回调到结果
+//                        removedAttachment.getResponseFuture().complete(packet);
+//                    } else {
+//                        logger.error("client receives packet:[{}] [{}] and attachment:[{}] [{}] from server, but clientAttachmentMap has no attachment, perhaps timeout exception."
+//                                , packet.getClass().getSimpleName(), JsonUtils.object2String(packet), attachment.getClass(), JsonUtils.object2String(attachment));                    }
+//                    // 注意：这个return，这样子，asyncAsk的结果就返回了。
+//                    return;
+//                }
+                break;
+            default:
+                break;
+        }
+
+
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.awake.net.router.answer;
 
 import com.awake.net.packet.IPacket;
-import com.awake.thread.anno.SafeRunnable;
 
 import java.util.function.Consumer;
 
@@ -27,5 +26,5 @@ public interface IAsyncAnswer <T extends IPacket>  {
     /**
      * 如果异步请求没有成功返回，那么就会回调该方法
      */
-    IAsyncAnswer<T> notComplete(SafeRunnable notCompleteCallback);
+    IAsyncAnswer<T> notComplete(Runnable notCompleteCallback);
 }
