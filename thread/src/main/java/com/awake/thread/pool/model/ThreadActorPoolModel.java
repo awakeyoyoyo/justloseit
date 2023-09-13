@@ -1,11 +1,12 @@
 package com.awake.thread.pool.model;
 
-import com.awake.thread.anno.SafeRunnable;
 import com.awake.util.RandomUtils;
+import com.awake.util.ThreadUtils;
 import io.netty.channel.DefaultEventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -36,17 +37,6 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         }
     }
 
-    @Override
-    public void execute(int executorHash, Runnable runnable) {
-        executors[Math.abs(executorHash % executorsSize)].execute(SafeRunnable.valueOf(runnable));
-    }
-
-    @Override
-    public void asyncExecute(int taskExecutorHash, SafeRunnable runnable) {
-
-    }
-
-
     public int calTaskExecutorHash(int taskExecutorHash) {
         // Other hash algorithms can be customized to make the distribution more uniform
         return Math.abs(taskExecutorHash) % executorsSize;
@@ -65,8 +55,31 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
     }
 
     @Override
-    public CompletableFuture asyncExecuteCallBack(int taskExecutorHash, SafeRunnable runnable) {
-        return null;
+    public void execute(int executorHash, Runnable runnable) {
+        executors[Math.abs(executorHash % executorsSize)].execute(ThreadUtils.safeRunnable(runnable));
+    }
+
+
+    @Override
+    public CompletableFuture asyncExecuteCallable(int callBackExecutorHash, int taskExecutorHash, Callable runnable) {
+        ExecutorService executor = executors[Math.abs(taskExecutorHash % executorsSize)];
+        CompletableFuture resultFuture = new CompletableFuture();
+        executor.execute(() -> {
+            Object result;
+            try {
+                result = runnable.call();
+                ExecutorService callBackExecutor = executors[Math.abs(callBackExecutorHash % executorsSize)];
+                resultFuture.completeAsync(() -> result, callBackExecutor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return resultFuture;
+    }
+
+    @Override
+    public CompletableFuture asyncExecuteCallable(int taskExecutorHash, Callable callable) {
+        return asyncExecuteCallable(RandomUtils.randomInt(), taskExecutorHash, callable);
     }
 
     /**

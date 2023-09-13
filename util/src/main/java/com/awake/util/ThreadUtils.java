@@ -5,6 +5,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -79,5 +80,30 @@ public class ThreadUtils {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Runnable safeRunnable(Runnable runnable) {
+        return () -> {
+            try {
+                runnable.run();
+            } catch (Exception e) {
+                logger.error("unknown exception", e);
+            } catch (Throwable t) {
+                logger.error("unknown error", t);
+            }
+        };
+    }
+
+    public static Callable safeCallable(Callable runnable) {
+        return () -> {
+            try {
+                return runnable.call();
+            } catch (Exception e) {
+                logger.error("unknown exception", e);
+            } catch (Throwable t) {
+                logger.error("unknown error", t);
+            }
+            return null;
+        };
     }
 }

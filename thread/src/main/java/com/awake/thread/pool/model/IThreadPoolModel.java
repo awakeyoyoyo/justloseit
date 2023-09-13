@@ -1,8 +1,7 @@
 package com.awake.thread.pool.model;
 
 
-import com.awake.thread.anno.SafeRunnable;
-
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -23,17 +22,18 @@ public interface IThreadPoolModel {
     void execute(int taskExecutorHash, Runnable runnable);
 
     /**
-     * 異步執行邏輯 無返回
+     * 異步執行返回 需要指定回调执行的线程标识
      * @param taskExecutorHash
-     * @param runnable
-     */
-    void asyncExecute(int taskExecutorHash, SafeRunnable runnable);
-
-    /**
-     * 異步執行返回
-     * @param taskExecutorHash
-     * @param runnable
+     * @param callable
      * @return
      */
-    CompletableFuture asyncExecuteCallBack(int taskExecutorHash, SafeRunnable runnable);
+    CompletableFuture asyncExecuteCallable(int callBackExecutorHash,int taskExecutorHash, Callable callable);
+
+    /**
+     * 用于-同步執行返回 无需指定回调执行的线程标识
+     * @param taskExecutorHash
+     * @param callable
+     * @return
+     */
+    CompletableFuture asyncExecuteCallable(int taskExecutorHash, Callable callable);
 }
