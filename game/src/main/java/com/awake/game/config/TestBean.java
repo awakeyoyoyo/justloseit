@@ -2,7 +2,6 @@ package com.awake.game.config;
 
 
 import com.awake.NetContext;
-import com.awake.ProtocolContext;
 import com.awake.net.config.model.NetConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +16,9 @@ public class TestBean implements InitializingBean {
     private NetConfig config;
     @Autowired
     private NetContext netContext;
-    @Autowired
-    private ProtocolContext protocolContext;
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("11111111111111111111111111111111111111");
         System.out.println(config.getZookeeperConfig());
-        System.out.println(protocolContext.getProtocolManager());
     }
 }
