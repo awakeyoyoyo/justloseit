@@ -61,13 +61,14 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
 
     @Override
-    public CompletableFuture asyncExecuteCallable(int callBackExecutorHash, int taskExecutorHash, Callable runnable) {
+    public CompletableFuture asyncExecuteCallable(int callBackExecutorHash, int taskExecutorHash, Callable callable) {
+        Callable safeCallable = ThreadUtils.safeCallable(callable);
         ExecutorService executor = executors[Math.abs(taskExecutorHash % executorsSize)];
         CompletableFuture resultFuture = new CompletableFuture();
         executor.execute(() -> {
             Object result;
             try {
-                result = runnable.call();
+                result = safeCallable.call();
                 ExecutorService callBackExecutor = executors[Math.abs(callBackExecutorHash % executorsSize)];
                 resultFuture.completeAsync(() -> result, callBackExecutor);
             } catch (Exception e) {

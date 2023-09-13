@@ -1,7 +1,6 @@
 package com.awake.pool;
 
 import com.awake.thread.pool.model.ThreadActorPoolModel;
-import com.awake.util.ThreadUtils;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -22,11 +21,11 @@ public class ThreadActorPoolModelTest {
         ThreadActorPoolModel poolModel = new ThreadActorPoolModel(10);
         poolModel.execute(1, () -> {
             System.out.println("[发送异步指令-测试线程执行]:" + Thread.currentThread());
-            CompletableFuture future = poolModel.asyncExecuteCallable(1,2, ThreadUtils.safeCallable(() -> {
+            CompletableFuture future = poolModel.asyncExecuteCallable(1,2,() -> {
                 System.out.println("[执行异步指令-测试线程执行]:" + Thread.currentThread());
                 Thread.sleep(1000);
                 return 1;
-            }));
+            });
             future.whenComplete((obj,err)->{
                 if(err!=null){
                     System.out.println("errorrrrrrrrr");
@@ -45,11 +44,10 @@ public class ThreadActorPoolModelTest {
         ThreadActorPoolModel poolModel = new ThreadActorPoolModel(10);
         poolModel.execute(1, () -> {
             System.out.println("[发送异步指令-测试线程执行]:" + Thread.currentThread());
-            CompletableFuture future = poolModel.asyncExecuteCallable(2, ThreadUtils.safeCallable(() -> {
+            CompletableFuture future = poolModel.asyncExecuteCallable(2, () -> {
                 System.out.println("[执行异步指令-测试线程执行]:" + Thread.currentThread());
-                Thread.sleep(1000);
-                return 1;
-            }));
+                throw  new RuntimeException("ggbond");
+            });
             try {
                 Object o = future.get();
                 System.out.println("[同步指令回调-测试线程执行]:" + Thread.currentThread());
