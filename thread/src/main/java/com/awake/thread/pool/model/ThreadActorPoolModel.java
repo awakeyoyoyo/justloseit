@@ -72,6 +72,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
                 ExecutorService callBackExecutor = executors[Math.abs(callBackExecutorHash % executorsSize)];
                 resultFuture.completeAsync(() -> result, callBackExecutor);
             } catch (Exception e) {
+                logger.error("[ThreadActorPoolModel] asyncExecuteCallable run error, error msg:{}", e.getMessage());
                 e.printStackTrace();
             }
         });
