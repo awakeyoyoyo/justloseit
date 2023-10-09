@@ -1,7 +1,5 @@
 package com.awake.net.router.receiver;
 
-import com.awake.net.packet.IPacket;
-import com.awake.net.router.attachment.IAttachment;
 import com.awake.net.session.Session;
 
 /**
@@ -12,5 +10,5 @@ import com.awake.net.session.Session;
  * @Date: 2023/9/6 11:30
  **/
 public interface IPacketReceiver {
-    void invoke(Session session, IPacket packet, IAttachment attachment);
+    void invoke(Session session, Object packet, Object attachment);
 }

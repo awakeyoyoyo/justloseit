@@ -14,8 +14,6 @@ package com.awake.net.event;
 
 
 import com.awake.event.model.IEvent;
-import com.awake.net.packet.IPacket;
-import com.awake.net.router.attachment.IAttachment;
 import com.awake.net.session.Session;
 import lombok.Data;
 
@@ -30,11 +28,11 @@ import lombok.Data;
 public class ServerExceptionEvent implements IEvent {
 
     private Session session;
-    private IPacket packet;
-    private IAttachment attachment;
+    private Object packet;
+    private Object attachment;
     private Exception exception;
 
-    public static ServerExceptionEvent valueOf(Session session, IPacket packet, IAttachment attachment, Exception exception) {
+    public static ServerExceptionEvent valueOf(Session session, Object packet, Object attachment, Exception exception) {
         ServerExceptionEvent event = new ServerExceptionEvent();
         event.session = session;
         event.packet = packet;

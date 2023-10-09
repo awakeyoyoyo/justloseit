@@ -1,6 +1,5 @@
 package com.awake.net.router.attachment;
 
-import com.awake.net.packet.IPacket;
 import com.awake.net.packet.common.AttachmentType;
 import com.awake.util.TimeUtils;
 import lombok.Data;
@@ -56,7 +55,7 @@ public class SignalAttachment implements IAttachment {
     /**
      * 客户端收到服务器回复的时候回调的方法
      */
-    private transient CompletableFuture<IPacket> responseFuture = new CompletableFuture<>();
+    private transient CompletableFuture<Object> responseFuture = new CompletableFuture<>();
 
     public SignalAttachment() {
     }

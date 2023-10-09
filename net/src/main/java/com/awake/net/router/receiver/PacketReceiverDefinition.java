@@ -1,7 +1,5 @@
 package com.awake.net.router.receiver;
 
-import com.awake.net.packet.IPacket;
-import com.awake.net.router.attachment.IAttachment;
 import com.awake.net.session.Session;
 import com.awake.util.ReflectionUtils;
 import lombok.Data;
@@ -47,7 +45,7 @@ public class PacketReceiverDefinition implements IPacketReceiver {
     }
 
     @Override
-    public void invoke(Session session, IPacket packet, IAttachment attachment) {
+    public void invoke(Session session, Object packet, Object attachment) {
         if (attachmentClazz == null) {
             ReflectionUtils.invokeMethod(bean, method, session, packet);
         } else {

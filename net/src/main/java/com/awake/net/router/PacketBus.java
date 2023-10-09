@@ -67,8 +67,8 @@ public class PacketBus {
     /**
      * The routing of the message
      */
-    public static void route(Session session, IPacket packet, IAttachment attachment) {
-        IPacketReceiver receiver = receiverMap.get(packet.protocolId());
+    public static void route(Session session, Object packet, Object attachment) {
+        IPacketReceiver receiver = receiverMap.get(NetContext.getProtocolManager().getProtocolId(packet.getClass()));
         if (receiver == null) {
             String name = packet.getClass().getSimpleName();
             throw new RuntimeException(StringUtils.format("no any packetReceiver:[at{}] found for this packet:[{}] or no GatewayAttachment sent back if this server is gateway", name, name));

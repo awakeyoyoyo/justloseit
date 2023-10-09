@@ -3,7 +3,6 @@ package com.awake.net.router;
 import com.awake.net.packet.IPacket;
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
-import com.awake.net.router.attachment.IAttachment;
 import com.awake.net.session.Session;
 import org.springframework.lang.Nullable;
 
@@ -20,9 +19,9 @@ public interface IRouter {
      * @param session
      * @param packet
      */
-    void send(Session session, IPacket packet);
+    void send(Session session, Object packet);
 
-    void send(Session session, IPacket packet, @Nullable IAttachment attachment);
+    void send(Session session, Object packet, @Nullable Object attachment);
 
     /**
      * 在服务端收到数据后，会调用这个方法. 这个方法在BaseRouteHandler.java的channelRead中被调用
@@ -30,9 +29,9 @@ public interface IRouter {
      * @param packet
      * @param attachment
      */
-    void receive(Session session, IPacket packet, @Nullable IAttachment attachment);
+    void receive(Session session, Object packet, @Nullable Object attachment);
 
-    void atReceiver(Session session, IPacket packet, @Nullable IAttachment attachment);
+    void atReceiver(Session session, Object packet, @Nullable Object attachment);
 
     /**
      * attention：syncAsk和asyncAsk只能客户端调用
@@ -52,7 +51,7 @@ public interface IRouter {
      * @return 服务器返回的消息Response
      * @throws Exception 如果超时或者其它异常
      */
-    <T extends IPacket> SyncAnswer<T> syncAsk(Session session, IPacket packet, @Nullable Class<T> answerClass, @Nullable Object argument) throws Exception;
+    <T extends IPacket> SyncAnswer<T> syncAsk(Session session, Object packet, @Nullable Class<T> answerClass, @Nullable Object argument) throws Exception;
 
-    <T extends IPacket> AsyncAnswer<T> asyncAsk(Session session, IPacket packet, @Nullable Class<T> answerClass, @Nullable Object argument);
+    <T extends IPacket> AsyncAnswer<T> asyncAsk(Session session, Object packet, @Nullable Class<T> answerClass, @Nullable Object argument);
 }

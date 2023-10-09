@@ -33,11 +33,12 @@ import java.util.List;
 /**
  * 包结构
  * {
- * header(4byte) {len}
+ * header(4byte)    { len }
  * protocolId(4byte)
- * attachment.length(int)
- * attachmentProtocolId(4byte)
+ * attachment.length(4byte)
  * packet
+ * //可能沒有
+ * attachmentProtocolId(4byte)
  * attachment
  * }
  * header = body(bytes.length) + protocolId.length(4byte) + attachment(attachment.length)
@@ -55,12 +56,12 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
     public static final int PACKET_HEAD_LENGTH = 4;
 
     /**
-     * 包协议号长度，一个int字节长度
+     * 主包协议号长度，一个int字节长度
      */
     public static final int PROTOCOL_ID_LENGTH = 4;
 
     /**
-     * 包协议号长度，一个int字节长度
+     * 信號包协议号长度，一个int字节长度
      */
     public static final int ATTACHMENT_LENGTH_LEN = 4;
 
@@ -89,33 +90,33 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
         //协议包id
         int packetProtocolId = sliceByteBuf.readInt();
         //附加包长度
-        int attachmentLen = sliceByteBuf.readInt();
-        //附加包id
-        int attachmentProtocolId = 0;
-        if (attachmentLen != 0) {
-            attachmentProtocolId = sliceByteBuf.readInt();
-        }
-        //协议包
+        int attachmentLength = sliceByteBuf.readInt();
+
+        Object packet;
+        Object attachment = null;
         ProtocolDefinition packetDefinition = NetContext.getProtocolManager().getProtocolDefinition(packetProtocolId);
         Codec packetCodec = ProtobufProxy.create(packetDefinition.getProtocolClass());
         int readableBytes = sliceByteBuf.readableBytes();
-        byte[] packetBytes = new byte[readableBytes - attachmentLen];
-        sliceByteBuf.readBytes(packetBytes);
-        Object packet = packetCodec.decode(packetBytes);
-
-
-        //附加包
-        IAttachment attachment = null;
-        if (attachmentProtocolId != 0) {
+        if (attachmentLength != 0) {
+            //协议包
+            byte[] packetBytes = new byte[readableBytes - ATTACHMENT_LENGTH_LEN - attachmentLength];
+            sliceByteBuf.readBytes(packetBytes);
+            packet = packetCodec.decode(packetBytes);
+            //附加包id
+            int attachmentProtocolId = sliceByteBuf.readInt();
+            //附加包
             ProtocolDefinition attachmentDefinition = NetContext.getProtocolManager().getProtocolDefinition(attachmentProtocolId);
             Codec attachmentCodec = ProtobufProxy.create(attachmentDefinition.getProtocolClass());
-            byte[] attachmentBytes = new byte[readableBytes - attachmentLen];
+            byte[] attachmentBytes = new byte[attachmentLength];
             sliceByteBuf.readBytes(attachmentBytes);
-            attachment = (IAttachment) attachmentCodec.decode(attachmentBytes);
+            attachment = attachmentCodec.decode(attachmentBytes);
+        }else{
+            //协议包
+            byte[] packetBytes = new byte[readableBytes];
+            sliceByteBuf.readBytes(packetBytes);
+            packet = packetCodec.decode(packetBytes);
         }
-
-        
-        DecodedPacketInfo decodedPacketInfo = DecodedPacketInfo.valueOf((IPacket) packet, attachment);
+        DecodedPacketInfo decodedPacketInfo = DecodedPacketInfo.valueOf(packet, attachment);
         out.add(decodedPacketInfo);
     }
 
@@ -123,42 +124,40 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
     protected void encode(ChannelHandlerContext ctx, EncodedPacketInfo packetInfo, ByteBuf out) throws IOException, ClassNotFoundException {
         long now = System.currentTimeMillis();
         System.out.println("send encode begin, time:" + now);
-        IPacket packet = packetInfo.getPacket();
-        IAttachment attachment = packetInfo.getAttachment();
-        int len = 0;
-        // 写入protobuf协议
+        IPacket packet = (IPacket) packetInfo.getPacket();
+        Object attachmentObj = packetInfo.getAttachment();
+        int packetProtocolId = packet.protocolId();
+        //默認有包頭長度4byte
+        int packetLength = PACKET_HEAD_LENGTH;
         Codec<IPacket> packetCodec = (Codec<IPacket>) ProtobufProxy.create(packet.getClass());
         byte[] packetBytes = packetCodec.encode(packet);
-        len += packetBytes.length + PROTOCOL_ID_LENGTH;
+        // 主包長度+協議號
+        packetLength += packetBytes.length + PROTOCOL_ID_LENGTH;
 
         byte[] attachmentBytes = null;
         int attachmentProtocolId = 0;
-        if (attachment != null) {
-            Codec<IAttachment> attachmentCodec = (Codec<IAttachment>) ProtobufProxy.create(attachment.getClass());
-            attachmentBytes = attachmentCodec.encode(attachment);
-            attachmentProtocolId = attachment.protocolId();
-            len += attachmentBytes.length + PROTOCOL_ID_LENGTH + ATTACHMENT_LENGTH_LEN;
+        int attachmentLength = 0;
+        if (attachmentObj != null) {
+            IAttachment iAttachment = (IAttachment) attachmentObj;
+            Codec<IAttachment> attachmentCodec = (Codec<IAttachment>) ProtobufProxy.create(attachmentObj.getClass());
+            attachmentBytes = attachmentCodec.encode(iAttachment);
+            attachmentLength = attachmentBytes.length;
+            attachmentProtocolId = iAttachment.protocolId();
+            packetLength += attachmentLength + ATTACHMENT_LENGTH_LEN;
         }
-
-
         // 包头 包长度
-        out.writeInt(len);
-        int packetProtocolId = packet.protocolId();
+        out.writeInt(packetLength);
         // 协议号
         out.writeInt(packetProtocolId);
         // 附加包长度
-        out.writeInt(attachmentBytes == null ? 0 : attachmentBytes.length);
-        if (attachmentBytes != null) {
-            //附加包协议号
-            out.writeInt(attachmentProtocolId);
-        }
+        out.writeInt(attachmentLength);
         // 协议包
         out.writeBytes(packetBytes);
-        if (attachmentBytes != null) {
+        if (attachmentLength != 0) {
+            //附加包协议号
+            out.writeInt(attachmentProtocolId);
             //附加包
             out.writeBytes(attachmentBytes);
         }
-        long endTime = System.currentTimeMillis();
-        System.out.println("send encode end time:"+endTime + "between time"+ (endTime-now));
     }
 }

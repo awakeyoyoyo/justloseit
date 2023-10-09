@@ -1,8 +1,6 @@
 package com.awake.net.packet;
 
-import com.awake.net.router.attachment.IAttachment;
 import lombok.Data;
-import org.springframework.lang.Nullable;
 
 /**
  * @version : 1.0
@@ -17,14 +15,14 @@ public class DecodedPacketInfo {
     /**
      * 解码后的包
      */
-    private IPacket packet;
+    private Object packet;
 
     /**
      * 解码后的包的附加包
      */
-    private IAttachment attachment;
+    private Object attachment;;
 
-    public static DecodedPacketInfo valueOf(IPacket packet, @Nullable IAttachment attachment) {
+    public static DecodedPacketInfo valueOf(Object packet, Object attachment) {
         DecodedPacketInfo packetInfo = new DecodedPacketInfo();
         packetInfo.packet = packet;
         packetInfo.attachment = attachment;
