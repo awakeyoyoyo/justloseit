@@ -1,7 +1,10 @@
 package com.awake.net.router.attachment;
 
 import com.awake.net.packet.common.AttachmentType;
+import com.awake.net.protocol.anno.Packet;
 import com.awake.util.time.TimeUtils;
+import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
+import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
 
 import java.util.concurrent.CompletableFuture;
@@ -14,13 +17,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Auther: awake
  * @Date: 2023/8/8 20:03
  **/
+@Packet(protocolId = SignalAttachment.PROTOCOL_ID)
+@ProtobufClass
 @Data
 public class SignalAttachment implements IAttachment {
-    public static final short PROTOCOL_ID = 0;
+    @Ignore
+    public static final short PROTOCOL_ID = 1;
 
     /**
      * 允许负数的signalId
      */
+    @Ignore
     public static final AtomicInteger ATOMIC_ID = new AtomicInteger(0);
 
     /**
@@ -31,10 +38,14 @@ public class SignalAttachment implements IAttachment {
     /**
      * 0 for the server, 1 for the sync or async native client, 2 for the outside client such as browser, mobile
      */
-    public static final byte SIGNAL_SERVER = 0;
-    public static final byte SIGNAL_NATIVE_ARGUMENT_CLIENT = 1;
-    public static final byte SIGNAL_NATIVE_NO_ARGUMENT_CLIENT = 2;
-    public static final byte SIGNAL_OUTSIDE_CLIENT = 12;
+    @Ignore
+    public static final int SIGNAL_SERVER = 0;
+    @Ignore
+    public static final int SIGNAL_NATIVE_ARGUMENT_CLIENT = 1;
+    @Ignore
+    public static final int SIGNAL_NATIVE_NO_ARGUMENT_CLIENT = 2;
+    @Ignore
+    public static final int SIGNAL_OUTSIDE_CLIENT = 12;
 
 
     /**
@@ -45,7 +56,7 @@ public class SignalAttachment implements IAttachment {
     /**
      * 客户端标识，false为服务端返回的包
      */
-    private byte client = SIGNAL_NATIVE_ARGUMENT_CLIENT;
+    private int client = SIGNAL_NATIVE_ARGUMENT_CLIENT;
 
     /**
      * 客户端发送时间
@@ -55,6 +66,7 @@ public class SignalAttachment implements IAttachment {
     /**
      * 客户端收到服务器回复的时候回调的方法
      */
+    @Ignore
     private transient CompletableFuture<Object> responseFuture = new CompletableFuture<>();
 
     public SignalAttachment() {

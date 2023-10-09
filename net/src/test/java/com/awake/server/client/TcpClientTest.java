@@ -33,6 +33,8 @@ public class TcpClientTest {
             ThreadUtils.sleep(2000);
             NetContext.getRouter().send(session, TcpHelloRequest.valueOf("Hello, this is the tcp client!"));
 
+//            NetContext.getRouter().send(session, TcpHelloRequest.valueOf("Hello, this is the tcp client!"), new SignalAttachment());
+
         }
 
         ThreadUtils.sleep(Long.MAX_VALUE);

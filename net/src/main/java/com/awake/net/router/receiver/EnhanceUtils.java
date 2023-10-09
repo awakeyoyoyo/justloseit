@@ -57,7 +57,7 @@ public class EnhanceUtils {
         constructor.setModifiers(Modifier.PUBLIC);
         enhanceClazz.addConstructor(constructor);
 
-        CtMethod invokeMethod = new CtMethod(classPool.get(void.class.getCanonicalName()), "invoke", classPool.get(new String[]{Session.class.getCanonicalName(), IPacket.class.getCanonicalName(), IAttachment.class.getCanonicalName()}), enhanceClazz);
+        CtMethod invokeMethod = new CtMethod(classPool.get(void.class.getCanonicalName()), "invoke", classPool.get(new String[]{Session.class.getCanonicalName(), Object.class.getCanonicalName(), Object.class.getCanonicalName()}), enhanceClazz);
         invokeMethod.setModifiers(Modifier.PUBLIC + Modifier.FINAL);
         if (attachmentClazz == null) {
             // Cast type(强制类型转换)

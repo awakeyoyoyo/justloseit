@@ -26,6 +26,8 @@ import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,6 +52,8 @@ import java.util.List;
  * @Date: 2023/8/2 20:12
  **/
 public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketInfo> {
+
+    private static final Logger logger = LoggerFactory.getLogger(JProtobufTcpCodecHandler.class);
     /**
      * 包体的头部的长度，一个int字节长度
      */
@@ -95,6 +99,9 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
         Object packet;
         Object attachment = null;
         ProtocolDefinition packetDefinition = NetContext.getProtocolManager().getProtocolDefinition(packetProtocolId);
+        if (packetDefinition==null){
+            throw new IllegalArgumentException(StringUtils.format("illegal packetProtocolId no register [packetProtocolId:{}]", packetProtocolId));
+        }
         Codec packetCodec = ProtobufProxy.create(packetDefinition.getProtocolClass());
         int readableBytes = sliceByteBuf.readableBytes();
         if (attachmentLength != 0) {
@@ -122,8 +129,6 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
 
     @Override
     protected void encode(ChannelHandlerContext ctx, EncodedPacketInfo packetInfo, ByteBuf out) throws IOException, ClassNotFoundException {
-        long now = System.currentTimeMillis();
-        System.out.println("send encode begin, time:" + now);
         IPacket packet = (IPacket) packetInfo.getPacket();
         Object attachmentObj = packetInfo.getAttachment();
         int packetProtocolId = packet.protocolId();

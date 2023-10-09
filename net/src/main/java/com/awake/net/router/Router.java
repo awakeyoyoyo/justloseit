@@ -13,8 +13,8 @@ import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.net.router.exception.ErrorResponseException;
 import com.awake.net.router.exception.NetTimeOutException;
 import com.awake.net.router.exception.UnexpectedProtocolException;
+import com.awake.net.router.task.TaskBus;
 import com.awake.net.session.Session;
-import com.awake.thread.pool.model.ThreadActorPoolModel;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.JsonUtils;
 import com.awake.util.base.StringUtils;
@@ -41,11 +41,6 @@ public class Router implements IRouter {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
 
     public static final long DEFAULT_TIMEOUT = 3000;
-
-    /**
-     * 使用不同的线程池，让线程池之间实现隔离，互不影响
-     */
-    private static ThreadActorPoolModel executors;
 
     /**
      * 路由的转发都会到异步线程池执行
@@ -133,7 +128,7 @@ public class Router implements IRouter {
     @Override
     public <T extends IPacket> SyncAnswer<T> syncAsk(Session session, Object packet, Class<T> answerClass, Object argument) throws Exception {
         var clientSignalAttachment = new SignalAttachment();
-        int taskExecutorHash = executors.calTaskExecutorHash(argument);
+        int taskExecutorHash = TaskBus.calTaskExecutorHash(argument);
         clientSignalAttachment.setTaskExecutorHash(taskExecutorHash);
 
         try {
@@ -166,7 +161,7 @@ public class Router implements IRouter {
     @Override
     public <T extends IPacket> AsyncAnswer<T> asyncAsk(Session session, Object packet, Class<T> answerClass, Object argument) {
         var clientSignalAttachment = new SignalAttachment();
-        var taskExecutorHash = executors.calTaskExecutorHash(argument);
+        var taskExecutorHash = TaskBus.calTaskExecutorHash(argument);
 
         clientSignalAttachment.setTaskExecutorHash(taskExecutorHash);
 
@@ -258,16 +253,16 @@ public class Router implements IRouter {
     private void dispatchBySession(Session session, Object packet, @Nullable Object attachment) {
         long uid = session.getUid();
         if (uid > 0) {
-            executors.execute((int) uid, () -> atReceiver(session, packet, attachment));
+            TaskBus.execute((int) uid, () -> atReceiver(session, packet, attachment));
         } else {
-            executors.execute((int) session.getSid(), () -> atReceiver(session, packet, attachment));
+            TaskBus.execute((int) session.getSid(), () -> atReceiver(session, packet, attachment));
         }
     }
 
     private void dispatchByAttachment(Session session, Object packet, IAttachment attachment) {
         switch (attachment.packetType()) {
             case SIGNAL_PACKET:
-                executors.execute(((SignalAttachment) attachment).taskExecutorHash(), () -> atReceiver(session, packet, attachment));
+                TaskBus.execute(((SignalAttachment) attachment).taskExecutorHash(), () -> atReceiver(session, packet, attachment));
                 break;
             case NO_ANSWER_PACKET:
             default:

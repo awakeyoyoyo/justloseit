@@ -25,7 +25,7 @@ public class PacketReceiverTask implements Runnable{
 
     @Override
     public void run() {
-        NetContext.getNetContext().getRouter().atReceiver(session, packet, attachment);
+        NetContext.getRouter().atReceiver(session, packet, attachment);
     }
 
     public Session getSession() {
