@@ -4,7 +4,7 @@ import com.awake.net.packet.IPacket;
 import com.awake.net.router.attachment.IAttachment;
 import com.awake.net.session.Session;
 import com.awake.util.IdUtils;
-import com.awake.util.StringUtils;
+import com.awake.util.base.StringUtils;
 import javassist.*;
 
 import java.lang.reflect.Constructor;

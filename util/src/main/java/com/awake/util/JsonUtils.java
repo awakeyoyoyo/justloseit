@@ -1,6 +1,7 @@
 package com.awake.util;
 
 import com.awake.exception.RunException;
+import com.awake.util.base.StringUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;

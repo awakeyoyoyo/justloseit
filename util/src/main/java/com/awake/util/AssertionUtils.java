@@ -1,6 +1,7 @@
 package com.awake.util;
 
 import com.awake.exception.AssertException;
+import com.awake.util.base.StringUtils;
 
 import java.util.Collection;
 import java.util.Map;

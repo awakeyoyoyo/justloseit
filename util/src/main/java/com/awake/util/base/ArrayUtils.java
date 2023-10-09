@@ -1,4 +1,6 @@
-package com.awake.util;
+package com.awake.util.base;
+
+import com.awake.util.AssertionUtils;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

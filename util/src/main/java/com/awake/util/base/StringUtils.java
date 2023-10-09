@@ -1,4 +1,4 @@
-package com.awake.util;
+package com.awake.util.base;
 
 import java.nio.charset.Charset;
 import java.util.*;

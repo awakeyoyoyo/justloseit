@@ -4,7 +4,7 @@ import com.awake.NetContext;
 import com.awake.net.server.tcp.TcpClient;
 import com.awake.server.ApplicationConfiguration;
 import com.awake.server.packet.tcp.TcpHelloRequest;
-import com.awake.util.ThreadUtils;
+import com.awake.util.base.ThreadUtils;
 import com.awake.util.net.HostAndPort;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

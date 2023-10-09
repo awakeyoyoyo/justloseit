@@ -1,7 +1,7 @@
 package com.awake.thread.pool.model;
 
-import com.awake.util.RandomUtils;
-import com.awake.util.ThreadUtils;
+import com.awake.util.math.RandomUtils;
+import com.awake.util.base.ThreadUtils;
 import io.netty.channel.DefaultEventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

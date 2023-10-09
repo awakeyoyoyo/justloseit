@@ -1,5 +1,7 @@
 package com.awake.util;
 
+import com.awake.util.base.StringUtils;
+
 /**
  * @version : 1.0
  * @ClassName: FileUtils

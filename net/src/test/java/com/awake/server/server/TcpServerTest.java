@@ -2,7 +2,7 @@ package com.awake.server.server;
 
 import com.awake.net.server.tcp.TcpServer;
 import com.awake.server.ApplicationConfiguration;
-import com.awake.util.ThreadUtils;
+import com.awake.util.base.ThreadUtils;
 import com.awake.util.net.HostAndPort;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

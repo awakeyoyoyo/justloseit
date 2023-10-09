@@ -1,7 +1,7 @@
 package com.awake.net.router.attachment;
 
 import com.awake.net.packet.common.AttachmentType;
-import com.awake.util.TimeUtils;
+import com.awake.util.time.TimeUtils;
 import lombok.Data;
 
 import java.util.concurrent.CompletableFuture;

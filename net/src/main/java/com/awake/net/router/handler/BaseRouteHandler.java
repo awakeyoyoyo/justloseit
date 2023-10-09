@@ -4,7 +4,7 @@ import com.awake.NetContext;
 import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.session.Session;
 import com.awake.net.util.SessionUtils;
-import com.awake.util.StringUtils;
+import com.awake.util.base.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;

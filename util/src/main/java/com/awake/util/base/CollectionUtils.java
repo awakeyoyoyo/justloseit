@@ -1,4 +1,7 @@
-package com.awake.util;
+package com.awake.util.base;
+
+import com.awake.util.IOUtils;
+import com.awake.util.base.StringUtils;
 
 import java.util.*;
 

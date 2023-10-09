@@ -2,7 +2,7 @@ package com.awake.net.router.answer;
 
 import com.awake.net.packet.IPacket;
 import com.awake.net.router.attachment.SignalAttachment;
-import com.awake.util.ThreadUtils;
+import com.awake.util.base.ThreadUtils;
 import lombok.Data;
 
 import java.util.ArrayList;

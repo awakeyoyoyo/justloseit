@@ -20,7 +20,7 @@ import com.awake.net.packet.IPacket;
 import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.router.attachment.IAttachment;
 import com.awake.util.IOUtils;
-import com.awake.util.StringUtils;
+import com.awake.util.base.StringUtils;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import io.netty.buffer.ByteBuf;

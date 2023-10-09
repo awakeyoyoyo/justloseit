@@ -1,6 +1,6 @@
 package com.awake.exception;
 
-import com.awake.util.StringUtils;
+import com.awake.util.base.StringUtils;
 
 /**
  * @version : 1.0

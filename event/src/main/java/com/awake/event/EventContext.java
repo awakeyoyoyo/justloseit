@@ -3,7 +3,7 @@ package com.awake.event;
 import com.awake.event.manger.EventBus;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.ReflectionUtils;
-import com.awake.util.ThreadUtils;
+import com.awake.util.base.ThreadUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

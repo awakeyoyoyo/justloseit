@@ -1,5 +1,7 @@
 package com.awake.util;
 
+import com.awake.util.base.StringUtils;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;

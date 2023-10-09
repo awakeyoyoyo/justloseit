@@ -1,6 +1,7 @@
-package com.awake.util;
+package com.awake.util.clazz;
 
 
+import com.awake.util.base.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;

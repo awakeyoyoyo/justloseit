@@ -1,4 +1,8 @@
-package com.awake.util;
+package com.awake.util.math;
+
+import com.awake.util.base.ArrayUtils;
+import com.awake.util.AssertionUtils;
+import com.awake.util.base.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

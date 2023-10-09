@@ -17,7 +17,7 @@ import com.awake.net.session.Session;
 import com.awake.thread.pool.model.ThreadActorPoolModel;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.JsonUtils;
-import com.awake.util.StringUtils;
+import com.awake.util.base.StringUtils;
 import io.netty.util.concurrent.FastThreadLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

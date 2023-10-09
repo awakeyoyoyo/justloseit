@@ -1,7 +1,7 @@
 package com.awake.util.net;
 
-import com.awake.util.CollectionUtils;
-import com.awake.util.StringUtils;
+import com.awake.util.base.CollectionUtils;
+import com.awake.util.base.StringUtils;
 import lombok.Data;
 
 import java.util.ArrayList;

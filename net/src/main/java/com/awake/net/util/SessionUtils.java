@@ -1,7 +1,7 @@
 package com.awake.net.util;
 
 import com.awake.net.session.Session;
-import com.awake.util.StringUtils;
+import com.awake.util.base.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.Attribute;

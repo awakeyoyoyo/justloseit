@@ -1,6 +1,6 @@
 package com.awake.net.config.model;
 
-import com.awake.util.StringUtils;
+import com.awake.util.base.StringUtils;
 import lombok.Data;
 
 /**

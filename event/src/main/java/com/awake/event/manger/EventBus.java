@@ -2,7 +2,7 @@ package com.awake.event.manger;
 
 import com.awake.event.enhance.IEventReceiver;
 import com.awake.event.model.IEvent;
-import com.awake.util.CollectionUtils;
+import com.awake.util.base.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
