@@ -1,6 +1,7 @@
 package com.awake.net.packet.common;
 
 import com.awake.net.packet.IPacket;
+import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 
@@ -12,6 +13,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
  * @Auther: awake
  * @Date: 2023/8/3 20:38
  **/
+@Packet(protocolId = Heartbeat.PROTOCOL_ID)
 @ProtobufClass
 public class Heartbeat implements IPacket {
 

@@ -2,6 +2,7 @@ package com.awake.net.packet.common;
 
 import com.awake.NetContext;
 import com.awake.net.packet.IPacket;
+import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
@@ -15,6 +16,7 @@ import org.slf4j.helpers.MessageFormatter;
  * @Auther: awake
  * @Date: 2023/9/7 17:16
  **/
+@Packet(protocolId = Error.PROTOCOL_ID)
 @ProtobufClass
 @Data
 public class Error implements IPacket {

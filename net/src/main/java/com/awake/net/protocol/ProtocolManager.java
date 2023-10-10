@@ -3,8 +3,8 @@ package com.awake.net.protocol;
 import com.awake.net.protocol.anno.Packet;
 import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.protocol.properties.ProtocolProperties;
-import com.awake.util.clazz.ClassUtil;
 import com.awake.util.base.StringUtils;
+import com.awake.util.clazz.ClassUtil;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
@@ -26,6 +26,9 @@ import java.util.Set;
 @Data
 public class ProtocolManager implements IProtocolManager, InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(ProtocolManager.class);
+
+    public static final String ATTACHMENT_PACKET = "com.awake.net.router.attachment";
+    public static final String COMMON_PACKET = "com.awake.net.packet.common";
 
     private ProtocolProperties protocolProperties;
 
@@ -53,7 +56,9 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     @Override
     public void afterPropertiesSet() {
         String scanProtocolPacket = protocolProperties.getScanProtocolPacket();
-        Set<Class> packageClass = ClassUtil.scanPackageClass(scanProtocolPacket);
+        String scanPackage = StringUtils.joinWith(StringUtils.COMMA, ATTACHMENT_PACKET, COMMON_PACKET, scanProtocolPacket);
+        logger.info("[ProtocolManager] scan packages [{}]", scanPackage);
+        Set<Class> packageClass = ClassUtil.scanPackageClass(scanPackage);
         if (packageClass.isEmpty()) {
             logger.warn("There are no protocol class.");
             return;
