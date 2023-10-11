@@ -32,6 +32,16 @@
             <groupId>com.baidu</groupId>
             <artifactId>jprotobuf-precompile-plugin</artifactId>
             <version>${jprotobuf.precompile.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>com.baidu</artifactId>
+                    <groupId>jprotobuf</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
