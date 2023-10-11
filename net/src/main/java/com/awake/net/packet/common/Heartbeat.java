@@ -18,7 +18,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 public class Heartbeat implements IPacket {
 
     @Ignore
-    public static final short PROTOCOL_ID = 102;
+    public static final int PROTOCOL_ID = 102;
 
     @Override
     public int protocolId() {

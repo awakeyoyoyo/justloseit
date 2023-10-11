@@ -29,7 +29,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
 
     public static final String ATTACHMENT_PACKET = "com.awake.net.router.attachment";
     public static final String COMMON_PACKET = "com.awake.net.packet.common";
-
+    public static final String GATEWAY_PACKET = "com.awake.net.core.gateway.packet";
     private ProtocolProperties protocolProperties;
 
     private HashMap<Integer, ProtocolDefinition> protocolDefinitionHashMap = new HashMap<>();
@@ -56,7 +56,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     @Override
     public void afterPropertiesSet() {
         String scanProtocolPacket = protocolProperties.getScanProtocolPacket();
-        String scanPackage = StringUtils.joinWith(StringUtils.COMMA, ATTACHMENT_PACKET, COMMON_PACKET, scanProtocolPacket);
+        String scanPackage = StringUtils.joinWith(StringUtils.COMMA, GATEWAY_PACKET, ATTACHMENT_PACKET, COMMON_PACKET, scanProtocolPacket);
         logger.info("[ProtocolManager] scan packages [{}]", scanPackage);
         Set<Class> packageClass = ClassUtil.scanPackageClass(scanPackage);
         if (packageClass.isEmpty()) {

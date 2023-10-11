@@ -12,13 +12,13 @@ import lombok.Data;
  * @Auther: awake
  * @Date: 2023/10/11 18:12
  **/
-@Packet(protocolId = Error.PROTOCOL_ID)
+@Packet(protocolId = Pong.PROTOCOL_ID)
 @ProtobufClass
 @Data
 public class Pong {
 
     @Ignore
-    public static final short PROTOCOL_ID = 104;
+    public static final int PROTOCOL_ID = 104;
 
     /**
      * 服务器当前的时间戳

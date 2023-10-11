@@ -12,11 +12,11 @@ import lombok.Data;
  * @Auther: awake
  * @Date: 2023/10/11 18:12
  **/
-@Packet(protocolId = Error.PROTOCOL_ID)
+@Packet(protocolId = Ping.PROTOCOL_ID)
 @ProtobufClass
 @Data
 public class Ping {
 
     @Ignore
-    public static final short PROTOCOL_ID = 103;
+    public static final int PROTOCOL_ID = 103;
 }

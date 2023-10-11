@@ -21,7 +21,7 @@ import org.slf4j.helpers.MessageFormatter;
 @Data
 public class Error implements IPacket {
     @Ignore
-    public static final short PROTOCOL_ID = 101;
+    public static final int PROTOCOL_ID = 101;
 
     private int module;
 
