@@ -1,4 +1,4 @@
-package com.awake.net.registry;
+package com.awake.net.provider.registry;
 
 import org.apache.zookeeper.CreateMode;
 import org.springframework.lang.Nullable;
@@ -31,7 +31,7 @@ public interface IRegistry {
 
     List<String> children(String path);
 
-    Set<RegisterVo> remoteProviderRegisterSet();
+    Set<RegisterVO> remoteProviderRegisterSet();
 
     /**
      * 监听path路径下的更新

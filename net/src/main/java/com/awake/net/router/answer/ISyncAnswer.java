@@ -1,6 +1,5 @@
 package com.awake.net.router.answer;
 
-import com.awake.net.packet.IPacket;
 import com.awake.net.router.attachment.SignalAttachment;
 
 /**
@@ -10,7 +9,7 @@ import com.awake.net.router.attachment.SignalAttachment;
  * @Auther: awake
  * @Date: 2023/8/8 19:53
  **/
-public interface ISyncAnswer<T extends IPacket> {
+public interface ISyncAnswer<T> {
     /**
      * 同步请求的返回数据包
      */

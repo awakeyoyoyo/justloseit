@@ -1,6 +1,6 @@
 package com.awake.net.session;
 
-import com.awake.net.registry.RegisterVo;
+import com.awake.net.provider.registry.RegisterVO;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.Data;
@@ -42,7 +42,7 @@ public class Session  implements Closeable {
      * EN:Session extra parameters
      * CN:Session附带的属性参数，连接上的服务提供者的属性
      */
-    private RegisterVo providerAttribute = null;
+    private RegisterVO providerAttribute = null;
 
     public Session(Channel channel) {
         if (channel == null) {

@@ -1,7 +1,5 @@
 package com.awake.net.router.answer;
 
-import com.awake.net.packet.IPacket;
-
 import java.util.function.Consumer;
 
 /**
@@ -11,7 +9,7 @@ import java.util.function.Consumer;
  * @Auther: awake
  * @Date: 2023/8/8 19:53
  **/
-public interface IAsyncAnswer <T extends IPacket>  {
+public interface IAsyncAnswer <T>  {
 
     /**
      * 发送完消息后处理

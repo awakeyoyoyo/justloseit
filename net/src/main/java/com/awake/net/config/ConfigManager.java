@@ -2,7 +2,7 @@ package com.awake.net.config;
 
 import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ZookeeperRegistryProperties;
-import com.awake.net.registry.IRegistry;
+import com.awake.net.provider.registry.IRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

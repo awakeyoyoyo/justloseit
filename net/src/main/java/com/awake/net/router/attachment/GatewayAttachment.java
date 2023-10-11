@@ -34,21 +34,22 @@ public class GatewayAttachment implements IAttachment {
      */
     private long uid;
 
-    private boolean useTaskExecutorHashParam;
-    private int taskExecutorHashParam;
+    /**
+     * EN:Used to determine which thread the message is processed on
+     * CN:用来确定这条消息在哪一个线程处理
+     */
+    private int taskExecutorHash;
 
     /**
      * true for the client, false for the server
      */
     private boolean client;
 
-
     /**
      * EN:The client may send an packet with synchronous or asynchronous to the gateway, and the gateway needs to bring this attachment when forwarding
      * CN:客户端发到网关的可能是一个带有同步或者异步的附加包，网关转发的时候需要把这个附加包给带上
      */
     private SignalAttachment signalAttachment;
-    private SignalOnlyAttachment signalOnlyAttachment;
 
 
     public GatewayAttachment() {
@@ -76,43 +77,12 @@ public class GatewayAttachment implements IAttachment {
      * CN:用来确定这条消息在哪一个线程处理
      */
     public int taskExecutorHash() {
-        return useTaskExecutorHashParam ? taskExecutorHashParam : (int) uid;
+        return taskExecutorHash == 0 ? (int) uid : taskExecutorHash;
     }
 
     @Override
     public int protocolId() {
         return PROTOCOL_ID;
     }
-
-    public void wrapTaskExecutorHash(Object argument) {
-        this.useTaskExecutorHashParam = true;
-        this.taskExecutorHashParam = argument.hashCode();
-    }
-
-    public void wrapAttachment(IAttachment attachment) {
-        if (attachment == null) {
-            return;
-        }
-        switch (attachment.packetType()) {
-            case SIGNAL_ONLY_PACKET:
-                signalOnlyAttachment = (SignalOnlyAttachment) attachment;
-                break;
-            case SIGNAL_PACKET:
-                signalAttachment = (SignalAttachment) attachment;
-                break;
-            default:
-        }
-    }
-
-    public IAttachment attachment() {
-        if (signalAttachment != null) {
-            return signalAttachment;
-        }
-        if (signalOnlyAttachment != null) {
-            return signalOnlyAttachment;
-        }
-        return null;
-    }
-
 }
 

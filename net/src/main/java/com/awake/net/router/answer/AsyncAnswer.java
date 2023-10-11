@@ -1,6 +1,5 @@
 package com.awake.net.router.answer;
 
-import com.awake.net.packet.IPacket;
 import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.util.base.ThreadUtils;
 import lombok.Data;
@@ -17,7 +16,7 @@ import java.util.function.Consumer;
  * @Date: 2023/8/8 20:16
  **/
 @Data
-public class AsyncAnswer <T extends IPacket> implements IAsyncAnswer<T> {
+public class AsyncAnswer <T> implements IAsyncAnswer<T> {
 
     /**
      * 异步回调包

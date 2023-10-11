@@ -1,6 +1,10 @@
 package com.awake.net.router;
 
+import com.awake.NetContext;
 import com.awake.event.manger.EventBus;
+import com.awake.net.core.gateway.event.AuthUidToGatewayEvent;
+import com.awake.net.core.gateway.packet.AuthUidToGatewayCheck;
+import com.awake.net.core.gateway.packet.AuthUidToGatewayConfirm;
 import com.awake.net.event.ServerExceptionEvent;
 import com.awake.net.packet.EncodedPacketInfo;
 import com.awake.net.packet.IPacket;
@@ -8,7 +12,7 @@ import com.awake.net.packet.common.Error;
 import com.awake.net.packet.common.Heartbeat;
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
-import com.awake.net.router.attachment.IAttachment;
+import com.awake.net.router.attachment.GatewayAttachment;
 import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.net.router.exception.ErrorResponseException;
 import com.awake.net.router.exception.NetTimeOutException;
@@ -94,7 +98,45 @@ public class Router implements IRouter {
             }
             return;
         }
+        if (attachment.getClass() == GatewayAttachment.class) {
+            var gatewayAttachment = (GatewayAttachment) attachment;
 
+            // 如：在网关监听到GatewaySessionInactiveEvent后，这时告诉home时，这个client参数设置的true
+            // 注意：此时并没有return，这样子网关的消息才能发给home，在home进行处理LogoutRequest消息的处理
+            if (gatewayAttachment.isClient()) {
+                gatewayAttachment.setClient(false);
+                dispatchByAttachment(session, packet, gatewayAttachment);
+            } else {
+                // 这里是：别的服务提供者提供授权给网关，比如：在玩家登录后，home服查到了玩家uid，然后发给Gateway服
+                var gatewaySession = NetContext.getSessionManager().getServerSession(gatewayAttachment.getSid());
+                if (gatewaySession == null) {
+                    logger.warn("gateway receives packet:[{}] and attachment:[{}] from server" + ", but serverSessionMap has no session[id:{}], perhaps client disconnected from gateway.", JsonUtils.object2String(packet), JsonUtils.object2String(attachment), gatewayAttachment.getSid());
+                    return;
+                }
+
+                // 网关授权，授权完成直接返回
+                // 注意：这个 AuthUidToGatewayCheck 是在home的LoginController中处理完登录后，把消息发给网关进行授权
+                if (AuthUidToGatewayCheck.class == packet.getClass()) {
+                    var uid = ((AuthUidToGatewayCheck) packet).getUid();
+                    if (uid <= 0) {
+                        logger.error("错误的网关授权信息，uid必须大于0");
+                        return;
+                    }
+                    gatewaySession.setUid(uid);
+                    EventBus.publicEvent(AuthUidToGatewayEvent.valueOf(gatewaySession.getSid(), uid));
+
+                    NetContext.getRouter().send(session, AuthUidToGatewayConfirm.valueOf(uid), new GatewayAttachment(gatewaySession));
+                    return;
+                }
+                send(gatewaySession, packet, gatewayAttachment.getSignalAttachment());
+            }
+            return;
+        }
+//        if (attachment.getClass() == HttpAttachment.class) {
+//            var httpAttachment = (HttpAttachment) attachment;
+//            TaskBus.dispatchByTaskExecutorHash(httpAttachment.getTaskExecutorHash(), task);
+//            return;
+//        }
         dispatchBySession(session, packet, attachment);
     }
 
@@ -259,14 +301,8 @@ public class Router implements IRouter {
         }
     }
 
-    private void dispatchByAttachment(Session session, Object packet, IAttachment attachment) {
-        switch (attachment.packetType()) {
-            case SIGNAL_PACKET:
-                TaskBus.execute(((SignalAttachment) attachment).taskExecutorHash(), () -> atReceiver(session, packet, attachment));
-                break;
-            case NO_ANSWER_PACKET:
-            default:
-        }
+    private void dispatchByAttachment(Session session, Object packet, Object attachment) {
+        TaskBus.execute(((SignalAttachment) attachment).taskExecutorHash(), () -> atReceiver(session, packet, attachment));
     }
 
 

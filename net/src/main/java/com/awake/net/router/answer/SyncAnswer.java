@@ -12,7 +12,7 @@ import lombok.Data;
  * @Date: 2023/8/8 20:16
  **/
 @Data
-public class SyncAnswer <T extends IPacket> implements ISyncAnswer<T> {
+public class SyncAnswer <T> implements ISyncAnswer<T> {
 
     private final T packet;
 

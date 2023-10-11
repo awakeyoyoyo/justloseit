@@ -1,7 +1,7 @@
 package com.awake.net.config;
 
 import com.awake.net.config.model.NetConfig;
-import com.awake.net.registry.IRegistry;
+import com.awake.net.provider.registry.IRegistry;
 
 /**
  * @version : 1.0

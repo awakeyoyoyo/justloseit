@@ -1,8 +1,9 @@
-package com.awake.net.registry;
+package com.awake.net.provider.registry;
 
 import com.awake.net.config.model.ConsumerConfig;
 import com.awake.net.config.model.InstanceConfig;
 import com.awake.util.IdUtils;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,9 +14,10 @@ import org.slf4j.LoggerFactory;
  * @Auther: awake
  * @Date: 2023/7/31 10:29
  **/
-public class RegisterVo {
+@Data
+public class RegisterVO {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegisterVo.class);
+    private static final Logger logger = LoggerFactory.getLogger(RegisterVO.class);
 
     private static final String uuid = IdUtils.getUUID();
 
@@ -25,4 +27,5 @@ public class RegisterVo {
     private InstanceConfig instanceConfig;
     // 服务消费者配置
     private ConsumerConfig consumerConfig;
+
 }
