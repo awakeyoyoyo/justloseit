@@ -84,7 +84,9 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
         if (protocolDefinitionHashMap.isEmpty()) {
             logger.warn("There are no protocolDefinitions.");
         }
-        logger.info("register packet proto {}", protocolDefinitionHashMap.values());
+        for (ProtocolDefinition protocolDefinition : protocolDefinitionHashMap.values()) {
+            logger.info("register packet :[{}]", protocolDefinition);
+        }
     }
 
     public static void main(String[] args) {
