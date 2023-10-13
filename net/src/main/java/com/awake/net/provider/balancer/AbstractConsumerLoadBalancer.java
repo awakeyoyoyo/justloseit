@@ -2,11 +2,14 @@ package com.awake.net.provider.balancer;
 
 import com.awake.NetContext;
 import com.awake.net.config.model.ProtocolModule;
+import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.provider.registry.RegisterVO;
 import com.awake.net.session.Session;
 import com.awake.util.base.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -38,10 +41,10 @@ public abstract class AbstractConsumerLoadBalancer implements IConsumerLoadBalan
         NetContext.getSessionManager().forEachClientSession(new Consumer<Session>() {
             @Override
             public void accept(Session session) {
-                if (session.getProviderAttribute() == null || session.getProviderAttribute().getInstanceConfig() == null) {
+                if (session.getProviderAttribute() == null || session.getProviderAttribute().getProviderProperties() == null) {
                     return;
                 }
-                var providerConfig = session.getProviderAttribute().getInstanceConfig();
+                var providerConfig = session.getProviderAttribute().getProviderProperties();
                 if (providerConfig.getProviders().stream().anyMatch(it -> it.getProtocolModule().equals(module))) {
                     list.add(session);
                 }
@@ -50,18 +53,18 @@ public abstract class AbstractConsumerLoadBalancer implements IConsumerLoadBalan
         return list;
     }
 
-//    public boolean sessionHasModule(Session session, Object packet) {
-//        var consumerAttribute = session.getProviderAttribute();
-//        if (Objects.isNull(consumerAttribute)) {
-//            return false;
-//        }
-//
-//        var registerVO = (RegisterVo) consumerAttribute;
-//        if (Objects.isNull(registerVO.getConsumerConfig())) {
-//            return false;
-//        }
-//
-//        var module = ProtocolManager.moduleByProtocol(packet.getClass());
-//        return registerVO.getProviderConfig().getProviders().contains(module);
-//    }
+    public boolean sessionHasModule(Session session, Object packet) {
+        var consumerAttribute = session.getProviderAttribute();
+        if (Objects.isNull(consumerAttribute)) {
+            return false;
+        }
+
+        var registerVO = (RegisterVO) consumerAttribute;
+        if (Objects.isNull(registerVO.getConsumerProperties())) {
+            return false;
+        }
+
+        var module = ProtocolManager.moduleByProtocol(packet.getClass());
+        return registerVO.getProviderProperties().getProviders().contains(module);
+    }
 }

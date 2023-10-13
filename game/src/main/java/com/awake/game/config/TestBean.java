@@ -19,6 +19,5 @@ public class TestBean implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("11111111111111111111111111111111111111");
-        System.out.println(config.getZookeeperConfig());
     }
 }

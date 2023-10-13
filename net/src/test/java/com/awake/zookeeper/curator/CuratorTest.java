@@ -1,6 +1,6 @@
 package com.awake.zookeeper.curator;
 
-import com.awake.net.config.model.ZookeeperRegistryProperties;
+import com.awake.zookeeper.ZookeeperRegistryProperties;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.CuratorCache;

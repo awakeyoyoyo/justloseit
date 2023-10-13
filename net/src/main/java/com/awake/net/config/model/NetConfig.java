@@ -14,21 +14,28 @@ import org.springframework.context.annotation.Configuration;
  **/
 
 @Configuration
-@EnableConfigurationProperties({ZookeeperRegistryProperties.class, ServerProperties.class})
+@EnableConfigurationProperties({RegistryProperties.class
+        ,ProviderProperties.class
+        ,ConsumerProperties.class})
 @Data
 public class NetConfig {
 
     /**
-     * zookeeper配置
-     */
-    @Autowired
-    private ZookeeperRegistryProperties zookeeperConfig;
-    /**
      * 网络配置
      */
     @Autowired
-    private ServerProperties serverProperties;
+    private RegistryProperties registryConfig;
 
+
+    /**
+     * 生产者配置
+     */
+    private ProviderProperties provider;
+
+    /**
+     * 消费者配置
+     */
+    private ConsumerProperties consumer;
 
 
 }

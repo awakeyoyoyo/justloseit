@@ -1,7 +1,7 @@
 package com.awake.net.provider.registry;
 
-import com.awake.net.config.model.ConsumerConfig;
-import com.awake.net.config.model.InstanceConfig;
+import com.awake.net.config.model.ConsumerProperties;
+import com.awake.net.config.model.ProviderProperties;
 import com.awake.util.IdUtils;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -24,8 +24,8 @@ public class RegisterVO {
     private String id;
 
     // 服务提供者配置
-    private InstanceConfig instanceConfig;
+    private ProviderProperties providerProperties;
     // 服务消费者配置
-    private ConsumerConfig consumerConfig;
+    private ConsumerProperties consumerProperties;
 
 }
