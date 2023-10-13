@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Set;
@@ -34,6 +35,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     public static final String ATTACHMENT_PACKET = "com.awake.net.router.attachment";
     public static final String COMMON_PACKET = "com.awake.net.packet.common";
     public static final String GATEWAY_PACKET = "com.awake.net.core.gateway.packet";
+    @Resource
     private ProtocolProperties protocolProperties;
 
     private HashMap<Integer, ProtocolDefinition> protocolDefinitionHashMap = new HashMap<>();
@@ -50,6 +52,9 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     public ProtocolManager(ProtocolProperties protocolProperties) {
         this.protocolProperties = protocolProperties;
     }
+    public ProtocolManager(){
+    }
+
 
     public static ProtocolModule moduleByProtocol(Class<?> protocolClass) {
         return null;

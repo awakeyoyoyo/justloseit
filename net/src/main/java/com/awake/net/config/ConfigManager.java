@@ -6,6 +6,8 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
+
 /**
  * @version : 1.0
  * @ClassName: ConfigManager
@@ -21,6 +23,7 @@ public class ConfigManager implements IConfigManager {
     /**
      * 本地配置
      */
+    @Resource
     private NetConfig localConfig;
 
     /**

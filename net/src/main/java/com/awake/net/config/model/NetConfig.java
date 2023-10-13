@@ -1,9 +1,9 @@
 package com.awake.net.config.model;
 
+import com.awake.net.protocol.properties.ProtocolProperties;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
  * @version : 1.0
@@ -13,29 +13,30 @@ import org.springframework.context.annotation.Configuration;
  * @Date: 2023/7/12 15:44
  **/
 
-@Configuration
-@EnableConfigurationProperties({RegistryProperties.class
-        ,ProviderProperties.class
-        ,ConsumerProperties.class})
 @Data
 public class NetConfig {
 
     /**
-     * 网络配置
+     * 注册中心配置
      */
-    @Autowired
+    @Resource
     private RegistryProperties registryConfig;
-
 
     /**
      * 生产者配置
      */
+    @Resource
     private ProviderProperties provider;
 
     /**
      * 消费者配置
      */
+    @Resource
     private ConsumerProperties consumer;
 
-
+    /**
+     * 协议配置
+     */
+    @Resource
+    private ProtocolProperties protocolConfig;
 }

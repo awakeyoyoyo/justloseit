@@ -53,7 +53,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
              */
             NetContext.instance = this;
             applicationContext = event.getApplicationContext();
-//            configManager = applicationContext.getBean(IConfigManager.class);
+            configManager = applicationContext.getBean(IConfigManager.class);
             packetBus = applicationContext.getBean(PacketBus.class);
             router = applicationContext.getBean(IRouter.class);
             sessionManager = applicationContext.getBean(ISessionManager.class);
@@ -82,7 +82,6 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     public synchronized void shutdownAfter() {
 
     }
-
 
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
