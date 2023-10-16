@@ -18,6 +18,7 @@ public class TestBean implements InitializingBean {
     private NetContext netContext;
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("11111111111111111111111111111111111111");
+        System.out.println(netContext.toString());
+        System.out.println(config.getProtocolConfig().getScanProtocolPacket());
     }
 }
