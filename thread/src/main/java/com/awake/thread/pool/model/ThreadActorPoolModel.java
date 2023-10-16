@@ -84,6 +84,13 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         return asyncExecuteCallable(RandomUtils.randomInt(), taskExecutorHash, callable);
     }
 
+    @Override
+    public void shutdown() {
+        for (ExecutorService executor : executors) {
+            ThreadUtils.shutdown(executor);
+        }
+    }
+
     /**
      * 请求成功过后依然在相同的线程执行回调任务
      */

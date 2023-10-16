@@ -4,7 +4,11 @@ import com.awake.net.config.IConfigManager;
 import com.awake.net.protocol.IProtocolManager;
 import com.awake.net.router.IRouter;
 import com.awake.net.router.PacketBus;
+import com.awake.net.router.task.TaskBus;
 import com.awake.net.session.ISessionManager;
+import com.awake.thread.pool.model.ThreadActorPoolModel;
+import com.awake.util.ExceptionUtils;
+import com.awake.util.ReflectionUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +18,8 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
+
+import java.lang.reflect.Field;
 
 /**
  * @version : 1.0
@@ -80,7 +86,18 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     }
 
     public synchronized void shutdownAfter() {
+        // 关闭TaskBus
+        try {
+            Field field = TaskBus.class.getDeclaredField("executors");
+            ReflectionUtils.makeAccessible(field);
 
+            var poolModel = (ThreadActorPoolModel) ReflectionUtils.getField(field, null);
+            poolModel.shutdown();
+        } catch (Throwable e) {
+            logger.error("Net thread pool failed shutdown: " + ExceptionUtils.getMessage(e));
+            return;
+        }
+        logger.info("Net shutdown gracefully.");
     }
 
     public static ApplicationContext getApplicationContext() {

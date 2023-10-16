@@ -27,6 +27,11 @@ public class TaskQueueActorPoolModel implements IThreadPoolModel {
         return null;
     }
 
+    @Override
+    public void shutdown() {
+
+    }
+
 
     //todo
 

@@ -40,7 +40,7 @@ public class ThreadUtils {
                 if (!executor.awaitTermination(WAIT_TIME, TIME_UNIT)) {
                     executor.shutdownNow();
                 }
-
+                logger.info("[{}] is shutdown gracefully",executor);
             }
         } catch (Exception e) {
             logger.error("[{}] is failed to shutdown! ", executor, e);

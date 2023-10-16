@@ -2,6 +2,7 @@ package com.awake.game.config;
 
 
 import com.awake.NetContext;
+import com.awake.event.EventContext;
 import com.awake.net.config.model.NetConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,8 @@ public class TestBean implements InitializingBean {
     private NetConfig config;
     @Autowired
     private NetContext netContext;
+    @Autowired
+    private EventContext eventContext;
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println(netContext.toString());

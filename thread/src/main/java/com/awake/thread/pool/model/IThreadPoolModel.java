@@ -36,4 +36,9 @@ public interface IThreadPoolModel {
      * @return
      */
     CompletableFuture asyncExecuteCallable(int taskExecutorHash, Callable callable);
+
+    /**
+     * 关闭线程池
+     */
+    void shutdown();
 }
