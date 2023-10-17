@@ -15,11 +15,11 @@ public class ProtocolModule {
 
     public static final ProtocolModule DEFAULT_PROTOCOL_MODULE = new ProtocolModule((byte) 0, "default");
 
-    private byte id;
+    private int id;
 
     private String name;
 
-    public ProtocolModule(byte id, String name) {
+    public ProtocolModule(int id, String name) {
         if (id < 0) {
             throw new IllegalArgumentException(StringUtils.format("模块[{}]的id[{}]必须大于0", name, id));
         }

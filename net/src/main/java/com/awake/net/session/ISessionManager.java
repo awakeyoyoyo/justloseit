@@ -73,5 +73,5 @@ public interface ISessionManager {
      */
     int clientSessionSize();
 
-    int getServerSessionChangeId();
+    int getClientSessionChangeId();
 }

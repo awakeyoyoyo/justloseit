@@ -130,7 +130,7 @@ public class SessionManager implements ISessionManager{
     }
 
     @Override
-    public int getServerSessionChangeId() {
+    public int getClientSessionChangeId() {
         return serverSessionChangeId;
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @version : 1.0
  * @ClassName: InstanceConfig
- * @Description: 服务提供者配置
+ * @Description: 服务提供者配置 - 声明自己提供那些服务
  * @Auther: awake
  * @Date: 2023/8/1 10:39
  **/

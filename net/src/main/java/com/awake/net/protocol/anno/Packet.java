@@ -14,4 +14,8 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface Packet {
     int protocolId() default 0;
+
+    int moduleId();
+
+    String moduleName();
 }
