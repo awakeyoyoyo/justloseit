@@ -5,7 +5,7 @@ import com.awake.net.session.Session;
 /**
  * @version : 1.0
  * @ClassName: ConsistentHashConsumerLoadBalancer
- * @Description: TODO
+ * @Description: 哈希一致性选择消费者  todo
  * @Auther: awake
  * @Date: 2023/10/11 19:34
  **/

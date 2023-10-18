@@ -4,7 +4,6 @@ import com.awake.net.config.model.ProtocolModule;
 import com.awake.net.protocol.anno.Packet;
 import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.protocol.properties.ProtocolProperties;
-import com.awake.util.AssertionUtils;
 import com.awake.util.base.StringUtils;
 import com.awake.util.clazz.ClassUtil;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
@@ -36,7 +35,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
 
     public static final String ATTACHMENT_PACKET = "com.awake.net.router.attachment";
     public static final String COMMON_PACKET = "com.awake.net.packet.common";
-    public static final String GATEWAY_PACKET = "com.awake.net.core.gateway.packet";
+    public static final String GATEWAY_PACKET = "com.awake.gateway.core.packet";
     @Resource
     private ProtocolProperties protocolProperties;
 
@@ -110,10 +109,6 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             Packet packet = (Packet) packetAnnotation;
             var protocolId = packet.protocolId();
             var moduleId = packet.moduleId();
-            var moduleName = packet.moduleName();
-            var module = new ProtocolModule(moduleId, moduleName);
-            AssertionUtils.isTrue(module.getId() > 0, "[module:{}] [id:{}] 模块必须大于等于1", module.getName(), moduleId);
-            AssertionUtils.isNull(modules[module.getId()], "duplicate [module:{}] [id:{}] Exception!", module.getName(), moduleId);
             if (protocolDefinitionHashMap.containsKey(protocolId)) {
                 throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a unique protocolId : [{}]!", clazz.getName(), protocolId));
             }
@@ -121,7 +116,6 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             //缓存
             ProtobufProxy.create(protocolDefinition.getProtocolClass());
             //注册协议
-            modules[module.getId()] = module;
             protocolDefinitionHashMap.put(protocolId, protocolDefinition);
             protocols[protocolId] = protocolDefinition;
             protocolName2ProtocolIdHashMap.put(clazz.getSimpleName(), protocolId);

@@ -23,6 +23,7 @@
         <module>thread</module>
         <module>util</module>
         <module>net</module>
+        <module>gateway</module>
 
     </modules>
 

@@ -1,6 +1,7 @@
 package com.awake.net.router.attachment;
 
 import com.awake.net.packet.common.AttachmentType;
+import com.awake.net.packet.common.ModuleConstant;
 import com.awake.net.protocol.anno.Packet;
 import com.awake.net.session.Session;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
@@ -14,7 +15,7 @@ import lombok.Data;
  * @Auther: awake
  * @Date: 2023/9/6 11:43
  **/
-@Packet(protocolId = GatewayAttachment.PROTOCOL_ID)
+@Packet(protocolId = GatewayAttachment.PROTOCOL_ID,moduleId = ModuleConstant.COMMON_MODULE_ID)
 @ProtobufClass
 @Data
 public class GatewayAttachment implements IAttachment {

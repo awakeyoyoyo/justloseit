@@ -12,7 +12,7 @@ import lombok.Data;
  * @Auther: awake
  * @Date: 2023/10/11 18:12
  **/
-@Packet(protocolId = Pong.PROTOCOL_ID)
+@Packet(protocolId = Pong.PROTOCOL_ID, moduleId = ModuleConstant.COMMON_MODULE_ID)
 @ProtobufClass
 @Data
 public class Pong {

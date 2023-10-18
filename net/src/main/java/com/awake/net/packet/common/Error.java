@@ -16,7 +16,7 @@ import org.slf4j.helpers.MessageFormatter;
  * @Auther: awake
  * @Date: 2023/9/7 17:16
  **/
-@Packet(protocolId = Error.PROTOCOL_ID)
+@Packet(protocolId = Error.PROTOCOL_ID, moduleId = ModuleConstant.COMMON_MODULE_ID)
 @ProtobufClass
 @Data
 public class Error implements IPacket {

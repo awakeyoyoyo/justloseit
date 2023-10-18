@@ -13,7 +13,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
  * @Auther: awake
  * @Date: 2023/8/3 20:38
  **/
-@Packet(protocolId = Heartbeat.PROTOCOL_ID)
+@Packet(protocolId = Heartbeat.PROTOCOL_ID, moduleId = ModuleConstant.COMMON_MODULE_ID)
 @ProtobufClass
 public class Heartbeat implements IPacket {
 

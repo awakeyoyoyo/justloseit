@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @version : 1.0
  * @ClassName: ConsumerConfig
- * @Description: TODO
+ * @Description: 声明自己消费那些模块
  * @Auther: awake
  * @Date: 2023/8/1 10:38
  **/

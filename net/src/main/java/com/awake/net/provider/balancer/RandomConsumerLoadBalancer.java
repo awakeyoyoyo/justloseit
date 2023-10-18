@@ -5,7 +5,7 @@ import com.awake.net.session.Session;
 /**
  * @version : 1.0
  * @ClassName: RandomConsumerLoadBalancer
- * @Description: TODO
+ * @Description: 随机选择消费者
  * @Auther: awake
  * @Date: 2023/10/11 19:34
  **/

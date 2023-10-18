@@ -1,6 +1,7 @@
 package com.awake.net.router.attachment;
 
 import com.awake.net.packet.common.AttachmentType;
+import com.awake.net.packet.common.ModuleConstant;
 import com.awake.net.protocol.anno.Packet;
 import com.awake.util.time.TimeUtils;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Auther: awake
  * @Date: 2023/8/8 20:03
  **/
-@Packet(protocolId = SignalAttachment.PROTOCOL_ID)
+@Packet(protocolId = SignalAttachment.PROTOCOL_ID,moduleId = ModuleConstant.COMMON_MODULE_ID)
 @ProtobufClass
 @Data
 public class SignalAttachment implements IAttachment {
