@@ -1,4 +1,4 @@
-package com.awake.net.core.gateway.event;
+package com.awake.gateway.core.event;
 
 import com.awake.event.model.IEvent;
 

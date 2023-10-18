@@ -1,9 +1,9 @@
-package com.awake.net.core.gateway.handler;
+package com.awake.gateway.core.handler;
 
 import com.awake.NetContext;
 import com.awake.event.manger.EventBus;
-import com.awake.net.core.gateway.IGatewayLoadBalancer;
-import com.awake.net.core.gateway.event.GatewaySessionInactiveEvent;
+import com.awake.gateway.core.IGatewayLoadBalancer;
+import com.awake.gateway.core.event.GatewaySessionInactiveEvent;
 import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.packet.common.Heartbeat;
 import com.awake.net.packet.common.Ping;

@@ -1,5 +1,6 @@
-package com.awake.net.core.gateway.packet;
+package com.awake.gateway.core.packet;
 
+import com.awake.net.packet.common.ModuleConstant;
 import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
@@ -15,7 +16,7 @@ import java.util.Map;
  * @Date: 2023/10/11 17:55
  **/
 
-@Packet(protocolId = GatewaySynchronizeSidAsk.PROTOCOL_ID)
+@Packet(protocolId = GatewaySynchronizeSidAsk.PROTOCOL_ID, moduleId = ModuleConstant.GATEWAY_MODULE_ID)
 @ProtobufClass
 @Data
 public class GatewaySynchronizeSidAsk {
