@@ -2,10 +2,10 @@ package com.awake.net.router;
 
 import com.awake.NetContext;
 import com.awake.event.manger.EventBus;
-import com.awake.gateway.core.event.AuthUidToGatewayEvent;
-import com.awake.gateway.core.packet.AuthUidToGatewayCheck;
-import com.awake.gateway.core.packet.AuthUidToGatewayConfirm;
 import com.awake.net.event.ServerExceptionEvent;
+import com.awake.net.gateway.core.event.AuthUidToGatewayEvent;
+import com.awake.net.gateway.core.packet.AuthUidToGatewayCheck;
+import com.awake.net.gateway.core.packet.AuthUidToGatewayConfirm;
 import com.awake.net.packet.EncodedPacketInfo;
 import com.awake.net.packet.IPacket;
 import com.awake.net.packet.common.Error;
