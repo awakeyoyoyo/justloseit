@@ -1,9 +1,9 @@
-package com.awake.net.provider.balancer;
+package com.awake.net.consumer.balancer;
 
 import com.awake.NetContext;
 import com.awake.net.config.model.ProtocolModule;
 import com.awake.net.protocol.ProtocolManager;
-import com.awake.net.provider.registry.RegisterVO;
+import com.awake.net.consumer.registry.RegisterVO;
 import com.awake.net.session.Session;
 import com.awake.util.base.StringUtils;
 
@@ -41,10 +41,10 @@ public abstract class AbstractConsumerLoadBalancer implements IConsumerLoadBalan
         NetContext.getSessionManager().forEachClientSession(new Consumer<Session>() {
             @Override
             public void accept(Session session) {
-                if (session.getProviderAttribute() == null || session.getProviderAttribute().getProviderProperties() == null) {
+                if (session.getProviderAttribute() == null || session.getProviderAttribute().getProviderConfig() == null) {
                     return;
                 }
-                var providerConfig = session.getProviderAttribute().getProviderProperties();
+                var providerConfig = session.getProviderAttribute().getProviderConfig();
                 if (providerConfig.getProviders().stream().anyMatch(it -> it.getProtocolModule().equals(module))) {
                     list.add(session);
                 }
@@ -60,11 +60,11 @@ public abstract class AbstractConsumerLoadBalancer implements IConsumerLoadBalan
         }
 
         var registerVO = (RegisterVO) consumerAttribute;
-        if (Objects.isNull(registerVO.getConsumerProperties())) {
+        if (Objects.isNull(registerVO.getConsumerConfig())) {
             return false;
         }
 
         var module = ProtocolManager.moduleByProtocol(packet.getClass());
-        return registerVO.getProviderProperties().getProviders().contains(module);
+        return registerVO.getProviderConfig().getProviders().contains(module);
     }
 }

@@ -1,7 +1,7 @@
 package com.awake.net.config;
 
 import com.awake.net.config.model.NetConfig;
-import com.awake.net.provider.registry.IRegistry;
+import com.awake.net.consumer.registry.IRegistry;
 
 /**
  * @version : 1.0
@@ -11,7 +11,7 @@ import com.awake.net.provider.registry.IRegistry;
  * @Date: 2023/7/12 15:27
  **/
 public interface IConfigManager {
-    NetConfig getLocalConfig();
+    NetConfig getNetConfig();
 
     void initRegistry();
 

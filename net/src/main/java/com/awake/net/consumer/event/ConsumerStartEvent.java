@@ -1,6 +1,7 @@
-package com.awake.net.provider.event;
+package com.awake.net.consumer.event;
 
-import com.awake.net.provider.registry.RegisterVO;
+import com.awake.event.model.IEvent;
+import com.awake.net.consumer.registry.RegisterVO;
 import com.awake.net.session.Session;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import lombok.Data;
  * @Date: 2023/10/11 19:33
  **/
 @Data
-public class ConsumerStartEvent {
+public class ConsumerStartEvent implements IEvent {
     private RegisterVO registerVO;
     private Session session;
 

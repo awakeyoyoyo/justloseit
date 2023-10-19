@@ -1,6 +1,6 @@
 package com.awake.net.server.tcp;
 
-import com.awake.net.codec.Jprotobuf.JProtobufTcpCodecHandler;
+import com.awake.net.router.codec.Jprotobuf.JProtobufTcpCodecHandler;
 import com.awake.net.router.handler.ServerRouteHandler;
 import com.awake.net.router.handler.idle.ServerIdleHandler;
 import com.awake.net.server.AbstractServer;

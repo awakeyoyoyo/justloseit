@@ -1,5 +1,6 @@
 package com.awake.net.config.model;
 
+import com.awake.util.base.StringUtils;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -26,5 +27,14 @@ public class RegistryProperties {
     private String password;
 
     private Map<String, String> address;
+
+    public boolean hasZookeeperAuthor() {
+        return !(StringUtils.isBlank(user) || StringUtils.isBlank(password));
+    }
+
+    public String toZookeeperAuthor() {
+        return user + StringUtils.COLON + password;
+    }
+
 
 }

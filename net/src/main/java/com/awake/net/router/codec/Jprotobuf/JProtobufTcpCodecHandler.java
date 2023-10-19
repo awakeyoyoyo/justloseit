@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.awake.net.codec.Jprotobuf;
+package com.awake.net.router.codec.Jprotobuf;
 
 import com.awake.NetContext;
 import com.awake.net.packet.DecodedPacketInfo;

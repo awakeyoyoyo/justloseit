@@ -1,7 +1,7 @@
-package com.awake.net.provider;
+package com.awake.net.consumer;
 
 import com.awake.net.config.model.ProtocolModule;
-import com.awake.net.provider.balancer.IConsumerLoadBalancer;
+import com.awake.net.consumer.balancer.IConsumerLoadBalancer;
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
 
@@ -10,16 +10,15 @@ import java.util.Map;
 
 /**
  * @version : 1.0
- * @ClassName: Provider
+ * @ClassName: Consumer
  * @Description: 服务调度和负载均衡，两个关键点：摘除故障节点，负载均衡
  * 在clientSession中选择一个可用的session，最终还是调用的IRouter中的方法
  *
- * 对于某个服务提供者的封装
  *
  * @Auther: awake
  * @Date: 2023/10/11 19:33
  **/
-public class Provider implements IProvider {
+public class Consumer implements IConsumer {
 
     private final Map<ProtocolModule, IConsumerLoadBalancer> consumerLoadBalancerMap = new HashMap<>();
 

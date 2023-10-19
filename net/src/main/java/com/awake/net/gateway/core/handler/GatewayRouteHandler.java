@@ -8,7 +8,7 @@ import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.packet.common.Heartbeat;
 import com.awake.net.packet.common.Ping;
 import com.awake.net.packet.common.Pong;
-import com.awake.net.provider.balancer.ConsistentHashConsumerLoadBalancer;
+import com.awake.net.consumer.balancer.ConsistentHashConsumerLoadBalancer;
 import com.awake.net.router.attachment.GatewayAttachment;
 import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.net.router.handler.ServerRouteHandler;

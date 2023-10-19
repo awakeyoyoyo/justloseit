@@ -1,19 +1,19 @@
-package com.awake.net.provider;
+package com.awake.net.consumer;
 
 import com.awake.net.config.model.ProtocolModule;
-import com.awake.net.provider.balancer.IConsumerLoadBalancer;
+import com.awake.net.consumer.balancer.IConsumerLoadBalancer;
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
 import org.springframework.lang.Nullable;
 
 /**
  * @version : 1.0
- * @ClassName: IProvider
- * @Description: 服务提供者
+ * @ClassName: IConsumer
+ * @Description: 连接上的服务提供者-在当前服务器视角是消费者
  * @Auther: awake
  * @Date: 2023/10/11 19:33
  **/
-public interface IProvider {
+public interface IConsumer {
 
     void init();
 

@@ -1,7 +1,7 @@
 package com.awake.net.config;
 
 import com.awake.net.config.model.NetConfig;
-import com.awake.net.provider.registry.IRegistry;
+import com.awake.net.consumer.registry.IRegistry;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class ConfigManager implements IConfigManager {
 
 
     @Override
-    public NetConfig getLocalConfig() {
+    public NetConfig getNetConfig() {
         return localConfig;
     }
 
