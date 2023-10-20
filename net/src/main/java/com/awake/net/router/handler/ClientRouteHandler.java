@@ -42,13 +42,13 @@ public class ClientRouteHandler extends BaseRouteHandler {
             return;
         }
 
-        NetContext.getNetContext().getSessionManager().removeClientSession(session);
+        NetContext.getSessionManager().removeClientSession(session);
         EventBus.publicEvent(ClientSessionInactiveEvent.valueOf(session));
 
         // 如果是消费者inactive，还需要触发客户端消费者检查事件，以便重新连接
-//        if (session.getProviderAttribute() != null) {
-//            NetContext.getNetContext().getConfigManager().getRegistry().checkConsumer();
-//        }
+        if (session.getProviderAttribute() != null) {
+            NetContext.getConfigManager().getRegistry().checkConsumer();
+        }
 
         logger.warn("client channel is inactive {}", SessionUtils.sessionSimpleInfo(ctx));
     }

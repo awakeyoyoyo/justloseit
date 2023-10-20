@@ -5,9 +5,12 @@ import com.awake.net.protocol.IProtocolManager;
 import com.awake.net.router.IRouter;
 import com.awake.net.router.PacketBus;
 import com.awake.net.router.task.TaskBus;
+import com.awake.net.server.AbstractClient;
+import com.awake.net.server.AbstractServer;
 import com.awake.net.session.ISessionManager;
 import com.awake.thread.pool.model.ThreadActorPoolModel;
 import com.awake.util.ExceptionUtils;
+import com.awake.util.IOUtils;
 import com.awake.util.ReflectionUtils;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -66,6 +69,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             protocolManager = applicationContext.getBean(IProtocolManager.class);
             //初始化packet
             packetBus.init(event.getApplicationContext());
+            configManager.initRegistry();
+
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();
@@ -86,6 +91,17 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     }
 
     public synchronized void shutdownAfter() {
+        // 关闭zookeeper的客户端
+        configManager.getRegistry().shutdown();
+
+        // 先关闭所有session
+        sessionManager.forEachClientSession(it -> IOUtils.closeIO(it));
+        sessionManager.forEachServerSession(it -> IOUtils.closeIO(it));
+
+        // 关闭客户端和服务器
+        AbstractClient.shutdown();
+        AbstractServer.shutdownAllServers();
+
         // 关闭TaskBus
         try {
             Field field = TaskBus.class.getDeclaredField("executors");

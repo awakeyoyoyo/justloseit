@@ -4,6 +4,7 @@ import com.awake.net.config.model.ProtocolModule;
 import com.awake.net.protocol.anno.Packet;
 import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.protocol.properties.ProtocolProperties;
+import com.awake.util.AssertionUtils;
 import com.awake.util.base.StringUtils;
 import com.awake.util.clazz.ClassUtil;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
@@ -68,6 +69,16 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
         return moduleByProtocolId(protocolId(clazz));
     }
 
+    /**
+     * Find the module based on the module ID
+     */
+    public static ProtocolModule moduleByModuleId(int moduleId) {
+        var module = modules[moduleId];
+        AssertionUtils.notNull(module, "[moduleId:{}]不存在", moduleId);
+        return module;
+    }
+
+
     public static int protocolId(Class<?> clazz) {
         return protocolName2ProtocolIdHashMap.get(clazz.getSimpleName());
     }
@@ -118,6 +129,10 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             //注册协议
             protocolDefinitionHashMap.put(protocolId, protocolDefinition);
             protocols[protocolId] = protocolDefinition;
+            //注册模块->
+            if (modules[moduleId] == null) {
+                modules[moduleId] = new ProtocolModule(moduleId, "");
+            }
             protocolName2ProtocolIdHashMap.put(clazz.getSimpleName(), protocolId);
         }
         if (protocolDefinitionHashMap.isEmpty()) {
