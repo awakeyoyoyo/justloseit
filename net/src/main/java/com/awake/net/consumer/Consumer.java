@@ -1,12 +1,30 @@
 package com.awake.net.consumer;
 
+import com.awake.NetContext;
 import com.awake.net.config.model.ProtocolModule;
+import com.awake.net.consumer.balancer.AbstractConsumerLoadBalancer;
 import com.awake.net.consumer.balancer.IConsumerLoadBalancer;
+import com.awake.net.packet.common.Error;
+import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
+import com.awake.net.router.attachment.NoAnswerAttachment;
+import com.awake.net.router.attachment.SignalAttachment;
+import com.awake.net.router.exception.ErrorResponseException;
+import com.awake.net.router.exception.NetTimeOutException;
+import com.awake.net.router.exception.UnexpectedProtocolException;
+import com.awake.net.router.task.TaskBus;
+import com.awake.util.JsonUtils;
+import com.awake.util.base.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static com.awake.net.router.Router.DEFAULT_TIMEOUT;
 
 /**
  * @version : 1.0
@@ -19,31 +37,81 @@ import java.util.Map;
  * @Date: 2023/10/11 19:33
  **/
 public class Consumer implements IConsumer {
+    private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
 
     private final Map<ProtocolModule, IConsumerLoadBalancer> consumerLoadBalancerMap = new HashMap<>();
 
     @Override
     public void init() {
-
+        var consumerConfig = NetContext.getConfigManager().getNetConfig().getConsumer();
+        if (consumerConfig == null || CollectionUtils.isEmpty(consumerConfig.getConsumers())) {
+            return;
+        }
+        var consumers = consumerConfig.getConsumers();
+        for (var consumer : consumers) {
+            consumerLoadBalancerMap.put(consumer.getProtocolModule(), AbstractConsumerLoadBalancer.valueOf(consumer.getLoadBalancer()));
+        }
     }
 
     @Override
     public IConsumerLoadBalancer loadBalancer(ProtocolModule protocolModule) {
-        return null;
+        return consumerLoadBalancerMap.get(protocolModule);
     }
 
     @Override
     public void send(Object packet, Object argument) {
-
+        try {
+            var loadBalancer = loadBalancer(ProtocolManager.moduleByProtocol(packet.getClass()));
+            var session = loadBalancer.loadBalancer(packet, argument);
+            var taskExecutorHash = TaskBus.calTaskExecutorHash(argument);
+            NetContext.getRouter().send(session, packet, NoAnswerAttachment.valueOf(taskExecutorHash));
+        } catch (Throwable t) {
+            logger.error("consumer发送未知异常", t);
+        }
     }
 
     @Override
     public <T> SyncAnswer<T> syncAsk(Object packet, Class<T> answerClass, Object argument) throws Exception {
-        return null;
+        var loadBalancer = loadBalancer(ProtocolManager.moduleByProtocol(packet.getClass()));
+        var session = loadBalancer.loadBalancer(packet, argument);
+        // 下面的代码逻辑同Router的syncAsk，如果修改的话，记得一起修改
+        var clientSignalAttachment = new SignalAttachment();
+        int taskExecutorHash = TaskBus.calTaskExecutorHash(argument);
+        clientSignalAttachment.setTaskExecutorHash(taskExecutorHash);
+
+        try {
+            NetContext.getRouter().addSignalAttachment(clientSignalAttachment);
+            // 里面调用的依然是：send方法发送消息
+            NetContext.getRouter().send(session, packet, clientSignalAttachment);
+
+            var responsePacket = clientSignalAttachment.getResponseFuture().get(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+
+            if (responsePacket.getClass() == Error.class) {
+                throw new ErrorResponseException((Error) responsePacket);
+            }
+            if (answerClass != null && answerClass != responsePacket.getClass()) {
+                throw new UnexpectedProtocolException("client expect protocol:[{}], but found protocol:[{}]", answerClass, responsePacket.getClass().getName());
+            }
+
+            return new SyncAnswer<>((T) responsePacket, clientSignalAttachment);
+        } catch (TimeoutException e) {
+            throw new NetTimeOutException("syncAsk timeout exception, ask:[{}], attachment:[{}]", JsonUtils.object2String(packet), JsonUtils.object2String(clientSignalAttachment));
+        } finally {
+            NetContext.getRouter().removeSignalAttachment(clientSignalAttachment);
+        }
     }
 
     @Override
     public <T> AsyncAnswer<T> asyncAsk(Object packet, Class<T> answerClass, Object argument) {
-        return null;
+        var loadBalancer = loadBalancer(ProtocolManager.moduleByProtocol(packet.getClass()));
+        var session = loadBalancer.loadBalancer(packet, argument);
+        var asyncAnswer = NetContext.getRouter().asyncAsk(session, packet, answerClass, argument);
+
+        // load balancer之前调用
+        loadBalancer.beforeLoadBalancer(session, packet, asyncAnswer.getSignalAttachment());
+
+        // load balancer之后调用
+        asyncAnswer.thenAccept(responsePacket -> loadBalancer.afterLoadBalancer(session, packet, asyncAnswer.getSignalAttachment()));
+        return asyncAnswer;
     }
 }

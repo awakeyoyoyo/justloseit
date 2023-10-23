@@ -70,7 +70,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             //初始化packet
             packetBus.init(event.getApplicationContext());
             configManager.initRegistry();
-
+//            instance.consumer.init();
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();

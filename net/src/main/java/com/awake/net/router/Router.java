@@ -168,7 +168,7 @@ public class Router implements IRouter {
     }
 
     @Override
-    public <T extends IPacket> SyncAnswer<T> syncAsk(Session session, Object packet, Class<T> answerClass, Object argument) throws Exception {
+    public <T> SyncAnswer<T> syncAsk(Session session, Object packet, Class<T> answerClass, Object argument) throws Exception {
         var clientSignalAttachment = new SignalAttachment();
         int taskExecutorHash = TaskBus.calTaskExecutorHash(argument);
         clientSignalAttachment.setTaskExecutorHash(taskExecutorHash);
@@ -195,13 +195,24 @@ public class Router implements IRouter {
         }
     }
 
+    @Override
+    public  void addSignalAttachment(SignalAttachment clientSignalAttachment){
+        signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
+    }
+
+    @Override
+    public  void removeSignalAttachment(SignalAttachment clientSignalAttachment){
+        signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
+    }
+
+
     /**
      * 注意：
      * 1.这个里面其实还是调用send发送的消息
      * 2.这个argument的参数，只用于provider处哪个线程执行，其实就是hashId，如：工会业务，则传入guildId，回调回来后，一定会在发起者线程。
      */
     @Override
-    public <T extends IPacket> AsyncAnswer<T> asyncAsk(Session session, Object packet, Class<T> answerClass, Object argument) {
+    public <T> AsyncAnswer<T> asyncAsk(Session session, Object packet, Class<T> answerClass, Object argument) {
         var clientSignalAttachment = new SignalAttachment();
         var taskExecutorHash = TaskBus.calTaskExecutorHash(argument);
 
