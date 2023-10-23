@@ -36,7 +36,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
 
     public static final String ATTACHMENT_PACKET = "com.awake.net.router.attachment";
     public static final String COMMON_PACKET = "com.awake.net.packet.common";
-    public static final String GATEWAY_PACKET = "com.awake.gateway.core.packet";
+    public static final String GATEWAY_PACKET = "com.awake.net.gateway.core.packet";
     @Resource
     private ProtocolProperties protocolProperties;
 

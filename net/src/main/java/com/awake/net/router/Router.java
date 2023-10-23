@@ -7,7 +7,6 @@ import com.awake.net.gateway.core.event.AuthUidToGatewayEvent;
 import com.awake.net.gateway.core.packet.AuthUidToGatewayCheck;
 import com.awake.net.gateway.core.packet.AuthUidToGatewayConfirm;
 import com.awake.net.packet.EncodedPacketInfo;
-import com.awake.net.packet.IPacket;
 import com.awake.net.packet.common.Error;
 import com.awake.net.packet.common.Heartbeat;
 import com.awake.net.router.answer.AsyncAnswer;
