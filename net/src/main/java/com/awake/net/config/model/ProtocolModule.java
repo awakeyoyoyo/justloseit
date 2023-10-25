@@ -2,6 +2,7 @@ package com.awake.net.config.model;
 
 import com.awake.util.base.StringUtils;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @version : 1.0
@@ -11,6 +12,7 @@ import lombok.Data;
  * @Date: 2023/8/1 10:54
  **/
 @Data
+@NoArgsConstructor
 public class ProtocolModule {
 
     public static final ProtocolModule DEFAULT_PROTOCOL_MODULE = new ProtocolModule((byte) 0, "default");

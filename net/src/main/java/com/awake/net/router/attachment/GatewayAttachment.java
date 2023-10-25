@@ -15,7 +15,7 @@ import lombok.Data;
  * @Auther: awake
  * @Date: 2023/9/6 11:43
  **/
-@Packet(protocolId = GatewayAttachment.PROTOCOL_ID,moduleId = ModuleConstant.COMMON_MODULE_ID)
+@Packet(protocolId = GatewayAttachment.PROTOCOL_ID, moduleId = ModuleConstant.COMMON_MODULE_ID)
 @ProtobufClass
 @Data
 public class GatewayAttachment implements IAttachment {

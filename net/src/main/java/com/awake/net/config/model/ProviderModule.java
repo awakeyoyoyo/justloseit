@@ -1,6 +1,7 @@
 package com.awake.net.config.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @version : 1.0
@@ -11,6 +12,7 @@ import lombok.Data;
  **/
 
 @Data
+@NoArgsConstructor
 public class ProviderModule {
 
     /**

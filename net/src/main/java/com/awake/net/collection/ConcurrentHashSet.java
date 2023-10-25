@@ -45,6 +45,5 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
     public void clear() {
         map.clear();
     }
-}
 
 }

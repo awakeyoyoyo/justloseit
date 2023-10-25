@@ -14,7 +14,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
  * @Date: 2023/9/7 16:18
  **/
 
-@Packet(protocolId = TcpHelloResponse.PROTOCOL_ID,moduleId = GameModuleConstant.GAME_MODULE_ID,moduleName = GameModuleConstant.GAME_MODULE_NAME)
+@Packet(protocolId = TcpHelloResponse.PROTOCOL_ID,moduleId = GameModuleConstant.GAME_MODULE_ID)
 @ProtobufClass
 public class TcpHelloResponse implements IPacket {
     @Ignore

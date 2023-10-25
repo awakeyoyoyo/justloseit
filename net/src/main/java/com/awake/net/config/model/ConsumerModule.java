@@ -1,6 +1,7 @@
 package com.awake.net.config.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
  * @Date: 2023/8/1 10:53
  **/
 @Data
+@NoArgsConstructor
 public class ConsumerModule {
 
     /**

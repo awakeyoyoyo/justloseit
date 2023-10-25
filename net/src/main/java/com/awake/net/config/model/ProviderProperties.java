@@ -25,8 +25,6 @@ public class ProviderProperties {
 
     private String id;
 
-    private String thread;
-
     /**
      * 地址
      */

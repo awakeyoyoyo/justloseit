@@ -1,6 +1,7 @@
 package com.awake;
 
 import com.awake.net.config.IConfigManager;
+import com.awake.net.consumer.IConsumer;
 import com.awake.net.protocol.IProtocolManager;
 import com.awake.net.router.IRouter;
 import com.awake.net.router.PacketBus;
@@ -12,6 +13,7 @@ import com.awake.thread.pool.model.ThreadActorPoolModel;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.IOUtils;
 import com.awake.util.ReflectionUtils;
+import com.awake.util.time.Stopwatch;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static IRouter router;
 
+    private static IConsumer consumer;
+
     private static PacketBus packetBus;
 
     private static ApplicationContext applicationContext;
@@ -56,6 +60,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
+            var stopWatch = new Stopwatch();
+            stopWatch.start();
             /**
              * ContextRefreshedEvent可以用于在Spring容器完全初始化之后执行一些操作。例如，我们可以在Spring容器初始化完毕之后执行一些需要依赖容器中的bean对象才能完成的操作。
              * 另外，ContextRefreshedEvent还可以用于在同一容器中多个bean之间建立关联关系。
@@ -69,8 +75,12 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             protocolManager = applicationContext.getBean(IProtocolManager.class);
             //初始化packet
             packetBus.init(event.getApplicationContext());
-            configManager.initRegistry();
-//            instance.consumer.init();
+//            configManager.initRegistry();
+//            consumer.init();
+            stopWatch.tag("[Net]");
+            stopWatch.stop();
+            logger.info("Net started successfully");
+            logger.info(stopWatch.toString());
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();
@@ -92,7 +102,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     public synchronized void shutdownAfter() {
         // 关闭zookeeper的客户端
-        configManager.getRegistry().shutdown();
+//        configManager.getRegistry().shutdown();
 
         // 先关闭所有session
         sessionManager.forEachClientSession(it -> IOUtils.closeIO(it));
