@@ -1,11 +1,16 @@
 package com.awake.net.util;
 
+import com.awake.NetContext;
 import com.awake.net.session.Session;
+import com.awake.util.FileUtils;
 import com.awake.util.base.StringUtils;
+import com.awake.util.base.ThreadUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+
+import java.util.function.Consumer;
 
 /**
  * @version : 1.0
@@ -83,5 +88,36 @@ public class SessionUtils {
             throw new RuntimeException(StringUtils.format("The properties of the session[channel:{}] cannot be set", channel));
         }
         return session;
+    }
+
+    public static void printSessionInfo() {
+        Thread thread = new Thread(() -> {
+            while (true) {
+                ThreadUtils.sleep(10_000);
+                var builder = new StringBuilder();
+                builder.append(FileUtils.LS);
+                NetContext.getSessionManager().forEachClientSession(new Consumer<Session>() {
+                    @Override
+                    public void accept(Session session) {
+                        builder.append(StringUtils.format("[session:{}]", session.getChannel().remoteAddress()));
+                        builder.append(FileUtils.LS);
+                    }
+                });
+
+                builder.append(StringUtils.format("serverSession count：[{}]", NetContext.getSessionManager().serverSessionSize()));
+                builder.append(FileUtils.LS);
+                NetContext.getSessionManager().forEachServerSession(new Consumer<Session>() {
+                    @Override
+                    public void accept(Session session) {
+                        builder.append(StringUtils.format("[session:{}]", session.getChannel().remoteAddress()));
+                        builder.append(FileUtils.LS);
+                    }
+                });
+
+                System.out.println(builder.toString());
+
+            }
+        });
+        thread.start();
     }
 }

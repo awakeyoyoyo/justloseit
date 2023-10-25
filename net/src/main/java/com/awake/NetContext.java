@@ -75,8 +75,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             protocolManager = applicationContext.getBean(IProtocolManager.class);
             //初始化packet
             packetBus.init(event.getApplicationContext());
-//            configManager.initRegistry();
-//            consumer.init();
+            configManager.initRegistry();
+            consumer.init();
             stopWatch.tag("[Net]");
             stopWatch.stop();
             logger.info("Net started successfully");
@@ -142,4 +142,9 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     public static ISessionManager getSessionManager() {
         return sessionManager;
     }
+
+    public static IConsumer getConsumer() {
+        return consumer;
+    }
+
 }
