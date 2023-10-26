@@ -75,7 +75,7 @@ public class RegisterVO {
         builder.append(id);
 
         // 服务提供者相关配置信息
-        if (Objects.nonNull(providerConfig)) {
+        if (Objects.nonNull(providerConfig)&&Objects.nonNull(providerConfig.getProviders())) {
             var providerAddress = providerConfig.getAddress();
             if (StringUtils.isBlank(providerAddress)) {
                 throw new RuntimeException(StringUtils.format("providerConfig的address不能为空"));
@@ -95,7 +95,7 @@ public class RegisterVO {
         }
 
         // 服务消费者相关信息
-        if (Objects.nonNull(consumerConfig)) {
+        if (Objects.nonNull(consumerConfig)&&(Objects.nonNull(consumerConfig.getConsumers()))) {
             builder.append(StringUtils.SPACE).append(StringUtils.VERTICAL_BAR).append(StringUtils.SPACE);
 
             var consumerModules = consumerConfig.getConsumers().stream()

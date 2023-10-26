@@ -126,6 +126,9 @@ public class ZookeeperRegistry implements IRegistry {
         startProviderCache();
     }
 
+    /**
+     * 监听各种zookeeper事件变化
+     */
     private void startProviderCache() {
         // 初始化providerCache
         providerCuratorCache = CuratorCache.builder(curator, PROVIDER_ROOT_PATH)
@@ -170,6 +173,7 @@ public class ZookeeperRegistry implements IRegistry {
 
             @Override
             public void initialized() {
+                //缓存启动 所有节点的加载到缓存中的时候调用
                 initZookeeper();
             }
         }, executor);
@@ -487,7 +491,7 @@ public class ZookeeperRegistry implements IRegistry {
         var providerConfig = NetContext.getConfigManager().getNetConfig().getProvider();
 
         // 这句意思是：提供了注册中心的配置(zk)，但是却没有服务提供者
-        if (Objects.isNull(providerConfig)) {
+        if (Objects.isNull(providerConfig) && Objects.isNull(providerConfig.getProviders())) {
             logger.info("Distributed startup with no providers");
             return;
         }
@@ -539,6 +543,7 @@ public class ZookeeperRegistry implements IRegistry {
                     // zk客户端和zk服务器重连了
                     case CONNECTED:
                     case RECONNECTED:
+                        logger.info("[zookeeper:{}] connect or reconnect [state{}]", zookeeperConnectStr, state);
                         // 检查3个持久化节点，不存在就创建
                         createZookeeperRootPath();
                         // 如果自己是服务提供者，则注册自己

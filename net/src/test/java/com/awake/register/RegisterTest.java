@@ -3,6 +3,7 @@ package com.awake.register;
 import com.awake.NetContext;
 import com.awake.net.consumer.registry.IRegistry;
 import com.awake.server.ApplicationConfiguration;
+import com.awake.util.base.ThreadUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,5 +34,6 @@ public class RegisterTest {
     public void startRegister() {
         IRegistry registry = NetContext.getConfigManager().getRegistry();
         System.out.println(registry);
+        ThreadUtils.sleep(Long.MAX_VALUE);
     }
 }
