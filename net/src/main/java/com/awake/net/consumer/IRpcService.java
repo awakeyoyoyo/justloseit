@@ -13,7 +13,7 @@ import org.springframework.lang.Nullable;
  * @Auther: awake
  * @Date: 2023/10/11 19:33
  **/
-public interface IConsumer {
+public interface IRpcService {
 
     void init();
 

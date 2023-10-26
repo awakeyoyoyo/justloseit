@@ -6,6 +6,7 @@ import com.awake.net.config.model.ConsumerProperties;
 import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ProviderProperties;
 import com.awake.net.config.model.RegistryProperties;
+import com.awake.net.consumer.RpcService;
 import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.protocol.properties.ProtocolProperties;
 import com.awake.net.router.PacketBus;
@@ -56,6 +57,12 @@ public class ApplicationConfiguration {
         @ConditionalOnMissingBean
         public ProtocolManager protocolManager() {
             return new ProtocolManager();
+        }
+
+        @Bean
+        @ConditionalOnMissingBean
+        public RpcService rpcService() {
+            return new RpcService();
         }
 
         //路由

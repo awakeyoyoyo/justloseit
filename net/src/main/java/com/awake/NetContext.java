@@ -1,7 +1,7 @@
 package com.awake;
 
 import com.awake.net.config.IConfigManager;
-import com.awake.net.consumer.IConsumer;
+import com.awake.net.consumer.IRpcService;
 import com.awake.net.protocol.IProtocolManager;
 import com.awake.net.router.IRouter;
 import com.awake.net.router.PacketBus;
@@ -45,7 +45,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static IRouter router;
 
-    private static IConsumer consumer;
+    private static IRpcService consumer;
 
     private static PacketBus packetBus;
 
@@ -73,6 +73,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             router = applicationContext.getBean(IRouter.class);
             sessionManager = applicationContext.getBean(ISessionManager.class);
             protocolManager = applicationContext.getBean(IProtocolManager.class);
+            consumer = applicationContext.getBean(IRpcService.class);
             //初始化packet
             packetBus.init(event.getApplicationContext());
             configManager.initRegistry();
@@ -143,7 +144,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
         return sessionManager;
     }
 
-    public static IConsumer getConsumer() {
+    public static IRpcService getConsumer() {
         return consumer;
     }
 

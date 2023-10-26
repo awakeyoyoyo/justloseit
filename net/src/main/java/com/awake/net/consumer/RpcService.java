@@ -28,7 +28,7 @@ import static com.awake.net.router.Router.DEFAULT_TIMEOUT;
 
 /**
  * @version : 1.0
- * @ClassName: Consumer
+ * @ClassName: RpcService
  * @Description: 服务调度和负载均衡，两个关键点：摘除故障节点，负载均衡
  * 在clientSession中选择一个可用的session，最终还是调用的IRouter中的方法
  *
@@ -36,8 +36,8 @@ import static com.awake.net.router.Router.DEFAULT_TIMEOUT;
  * @Auther: awake
  * @Date: 2023/10/11 19:33
  **/
-public class Consumer implements IConsumer {
-    private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
+public class RpcService implements IRpcService {
+    private static final Logger logger = LoggerFactory.getLogger(RpcService.class);
 
     private final Map<ProtocolModule, IConsumerLoadBalancer> consumerLoadBalancerMap = new HashMap<>();
 
