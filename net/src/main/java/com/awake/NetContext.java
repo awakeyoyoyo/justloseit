@@ -103,7 +103,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     public synchronized void shutdownAfter() {
         // 关闭zookeeper的客户端
-//        configManager.getRegistry().shutdown();
+        configManager.getRegistry().shutdown();
 
         // 先关闭所有session
         sessionManager.forEachClientSession(it -> IOUtils.closeIO(it));

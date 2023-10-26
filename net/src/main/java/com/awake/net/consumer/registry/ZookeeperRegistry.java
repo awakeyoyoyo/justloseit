@@ -66,10 +66,10 @@ public class ZookeeperRegistry implements IRegistry {
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final String namePrefix;
 
-        // config-p1-t1 = config-pool-1-thread-1
+        // zookeeper-p1-t1 = zookeeper-pool-1-thread-1
         ConfigThreadFactory() {
             this.group = Thread.currentThread().getThreadGroup();
-            namePrefix = "config-p" + poolNumber.getAndIncrement() + "-t";
+            namePrefix = "zookeeper-pool" + poolNumber.getAndIncrement() + "-thread";
         }
 
         @Override
