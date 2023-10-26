@@ -15,6 +15,8 @@ import com.awake.net.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date: 2023/10/28 21:06
  **/
 @Configuration
+@ComponentScans(value = {@ComponentScan("com.awake.register")})
 public class RegisterConfiguration {
 
     @Configuration

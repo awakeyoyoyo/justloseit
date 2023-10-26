@@ -16,7 +16,6 @@ package com.awake.net.router.codec.Jprotobuf;
 import com.awake.NetContext;
 import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.packet.EncodedPacketInfo;
-import com.awake.net.packet.IPacket;
 import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.router.attachment.IAttachment;
 import com.awake.util.IOUtils;
@@ -129,12 +128,12 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
 
     @Override
     protected void encode(ChannelHandlerContext ctx, EncodedPacketInfo packetInfo, ByteBuf out) throws IOException, ClassNotFoundException {
-        IPacket packet = (IPacket) packetInfo.getPacket();
+        Object packet = packetInfo.getPacket();
+        int protocolId = NetContext.getProtocolManager().getProtocolId(packet.getClass());
         Object attachmentObj = packetInfo.getAttachment();
-        int packetProtocolId = packet.protocolId();
         //默認有包頭長度4byte
         int packetLength = PACKET_HEAD_LENGTH;
-        Codec<IPacket> packetCodec = (Codec<IPacket>) ProtobufProxy.create(packet.getClass());
+        Codec packetCodec = ProtobufProxy.create(packet.getClass());
         byte[] packetBytes = packetCodec.encode(packet);
         // 主包長度+協議號
         packetLength += packetBytes.length + PROTOCOL_ID_LENGTH;
@@ -153,7 +152,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
         // 包头 包长度
         out.writeInt(packetLength);
         // 协议号
-        out.writeInt(packetProtocolId);
+        out.writeInt(protocolId);
         // 附加包长度
         out.writeInt(attachmentLength);
         // 协议包
