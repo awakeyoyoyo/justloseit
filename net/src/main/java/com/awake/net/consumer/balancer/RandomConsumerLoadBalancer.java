@@ -1,6 +1,9 @@
 package com.awake.net.consumer.balancer;
 
+import com.awake.exception.RunException;
+import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.session.Session;
+import com.awake.util.math.RandomUtils;
 
 /**
  * @version : 1.0
@@ -21,6 +24,13 @@ public class RandomConsumerLoadBalancer extends AbstractConsumerLoadBalancer {
 
     @Override
     public Session loadBalancer(Object packet, Object argument) {
-        return null;
+        var module = ProtocolManager.moduleByProtocol(packet.getClass());
+        var sessions = getSessionsByModule(module);
+
+        if (sessions.isEmpty()) {
+            throw new RunException("RandomConsumerLoadBalancer [protocol:{}][argument:{}], no service provides the [module:{}]", packet.getClass(), argument, module);
+        }
+
+        return RandomUtils.randomEle(sessions);
     }
 }

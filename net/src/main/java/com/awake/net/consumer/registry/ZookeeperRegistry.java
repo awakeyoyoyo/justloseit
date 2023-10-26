@@ -12,6 +12,7 @@ import com.awake.util.ExceptionUtils;
 import com.awake.util.IOUtils;
 import com.awake.util.JsonUtils;
 import com.awake.util.base.ArrayUtils;
+import com.awake.util.base.CollectionUtils;
 import com.awake.util.base.StringUtils;
 import com.awake.util.base.ThreadUtils;
 import com.awake.util.net.HostAndPort;
@@ -491,7 +492,7 @@ public class ZookeeperRegistry implements IRegistry {
         var providerConfig = NetContext.getConfigManager().getNetConfig().getProvider();
 
         // 这句意思是：提供了注册中心的配置(zk)，但是却没有服务提供者
-        if (Objects.isNull(providerConfig) && Objects.isNull(providerConfig.getProviders())) {
+        if (Objects.isNull(providerConfig) || Objects.isNull(providerConfig.getProviders())) {
             logger.info("Distributed startup with no providers");
             return;
         }
@@ -661,7 +662,7 @@ public class ZookeeperRegistry implements IRegistry {
      */
     private void initLocalProvider() throws Exception {
         var localRegisterVO = NetContext.getConfigManager().getNetConfig().toLocalRegisterVO();
-        if (Objects.nonNull(localRegisterVO.getProviderConfig())) {
+        if (Objects.nonNull(localRegisterVO.getProviderConfig())&& !CollectionUtils.isEmpty(localRegisterVO.getProviderConfig().getProviders())) {
             var localProviderVoStr = localRegisterVO.toProviderString();
             var localProviderPath = PROVIDER_ROOT_PATH + StringUtils.SLASH + localProviderVoStr;
 

@@ -2,16 +2,16 @@ package com.awake.register;
 
 import com.awake.NetContext;
 import com.awake.net.util.SessionUtils;
+import com.awake.register.configuration.RegisterConfiguration;
 import com.awake.register.packet.ProviderMessAnswer;
 import com.awake.register.packet.ProviderMessAsk;
-import com.awake.server.ApplicationConfiguration;
 import com.awake.util.JsonUtils;
 import com.awake.util.base.ThreadUtils;
 import org.junit.jupiter.api.Test;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Date: 2023/10/28 21:14
  **/
 
-@SpringBootTest(classes = {ApplicationConfiguration.class})
-
+@SpringBootTest(classes = {RegisterConfiguration.class})
+@TestPropertySource(locations = {"classpath:application-consumer.properties"})
 public class RpcServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(RpcServiceTest.class);
     /**

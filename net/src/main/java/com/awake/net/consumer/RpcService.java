@@ -39,7 +39,7 @@ import static com.awake.net.router.Router.DEFAULT_TIMEOUT;
 public class RpcService implements IRpcService {
     private static final Logger logger = LoggerFactory.getLogger(RpcService.class);
 
-    private final Map<ProtocolModule, IConsumerLoadBalancer> consumerLoadBalancerMap = new HashMap<>();
+    private final Map<Integer, IConsumerLoadBalancer> consumerLoadBalancerMap = new HashMap<>();
 
     @Override
     public void init() {
@@ -49,13 +49,13 @@ public class RpcService implements IRpcService {
         }
         var consumers = consumerConfig.getConsumers();
         for (var consumer : consumers) {
-            consumerLoadBalancerMap.put(consumer.getProtocolModule(), AbstractConsumerLoadBalancer.valueOf(consumer.getLoadBalancer()));
+            consumerLoadBalancerMap.put(consumer.getProtocolModule().getId(), AbstractConsumerLoadBalancer.valueOf(consumer.getLoadBalancer()));
         }
     }
 
     @Override
     public IConsumerLoadBalancer loadBalancer(ProtocolModule protocolModule) {
-        return consumerLoadBalancerMap.get(protocolModule);
+        return consumerLoadBalancerMap.get(protocolModule.getId());
     }
 
     @Override
