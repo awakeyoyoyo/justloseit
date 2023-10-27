@@ -18,7 +18,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 @ProtobufClass
 public class TcpHelloResponse implements IPacket {
     @Ignore
-    public static final int PROTOCOL_ID = 1301;
+    public static final int PROTOCOL_ID = 1501;
 
     private String message;
 

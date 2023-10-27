@@ -127,7 +127,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, EncodedPacketInfo packetInfo, ByteBuf out) throws IOException, ClassNotFoundException {
+    protected void encode(ChannelHandlerContext ctx, EncodedPacketInfo packetInfo, ByteBuf out) throws IOException {
         Object packet = packetInfo.getPacket();
         int protocolId = NetContext.getProtocolManager().getProtocolId(packet.getClass());
         Object attachmentObj = packetInfo.getAttachment();
