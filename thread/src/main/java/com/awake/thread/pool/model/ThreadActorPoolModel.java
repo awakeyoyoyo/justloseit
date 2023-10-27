@@ -6,10 +6,7 @@ import io.netty.channel.DefaultEventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 
 /**
  * @version : 1.0
@@ -26,6 +23,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
     public int executorsSize;
 
+    private ConcurrentHashMap<Long, ExecutorService> threadId2ExecutorMap = new ConcurrentHashMap<>();
 
     public ThreadActorPoolModel(int executorsSize) {
         this.executorsSize = executorsSize;
@@ -34,6 +32,12 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
             //使用netty自带
             DefaultEventLoop executor = new DefaultEventLoop();
             executors[i] = executor;
+        }
+        //走捷径获取线程id
+        for (ExecutorService executor : executors) {
+            executor.submit(() -> {
+                threadId2ExecutorMap.put(Thread.currentThread().getId(), executor);
+            });
         }
     }
 
@@ -97,7 +101,10 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
     public Executor currentThreadExecutor() {
 
         var threadId = Thread.currentThread().getId();
-
+        ExecutorService executorService = threadId2ExecutorMap.get(threadId);
+        if (executorService!=null){
+            return executorService;
+        }
         return executors[calTaskExecutorHash(RandomUtils.randomInt())];
     }
 }

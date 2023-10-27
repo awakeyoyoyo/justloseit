@@ -1,6 +1,7 @@
 package com.awake.register;
 
 import com.awake.NetContext;
+import com.awake.net.router.task.TaskBus;
 import com.awake.net.util.SessionUtils;
 import com.awake.register.configuration.RegisterConfiguration;
 import com.awake.register.packet.ProviderMessAnswer;
@@ -62,6 +63,30 @@ public class RpcServiceTest {
             ThreadUtils.sleep(1000);
             NetContext.getConsumer().asyncAsk(ask, ProviderMessAnswer.class, null).whenComplete(answer -> {
                 logger.info("消费者请求[{}]收到消息[{}]", atomicInteger.incrementAndGet(), JsonUtils.object2String(answer));
+            });
+        }
+
+        ThreadUtils.sleep(Long.MAX_VALUE);
+    }
+
+    @Test
+    public void startAsyncRandomConsumerReturnSameThread() {
+
+        SessionUtils.printSessionInfo();
+
+        var ask = new ProviderMessAsk();
+        ask.setMessage("Hello, this is the consumer!");
+        var atomicInteger = new AtomicInteger(0);
+
+        for (int i = 0; i < 1000; i++) {
+            ThreadUtils.sleep(1000);
+            TaskBus.execute(10, new Runnable() {
+                @Override
+                public void run() {
+                    NetContext.getConsumer().asyncAsk(ask, ProviderMessAnswer.class, 10).whenComplete(answer -> {
+                        logger.info("消费者请求[{}]收到消息[{}]", atomicInteger.incrementAndGet(), JsonUtils.object2String(answer));
+                    });
+                }
             });
         }
 

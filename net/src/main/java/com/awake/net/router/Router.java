@@ -239,7 +239,7 @@ public class Router implements IRouter {
                     throw new UnexpectedProtocolException("client expect protocol:[{}], but found protocol:[{}]", answerClass, answer.getClass().getName());
                 }
                 return answer;
-            }).whenComplete((answer, throwable) -> {
+            }).whenCompleteAsync((answer, throwable) -> {
                 // 注意：进入这个方法的时机是：在上面的receive方法中，由于是asyncAsk的消息，attachment不为空，会调用CompletableFuture的complete方法
                 try {
                     signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
@@ -268,7 +268,7 @@ public class Router implements IRouter {
                     }
                 }
 
-            });
+            },TaskBus.currentThreadExecutor());
             signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
             // 等到上层调用whenComplete才会发送消息
             asyncAnswer.setAskCallback(() -> send(session, packet, clientSignalAttachment));

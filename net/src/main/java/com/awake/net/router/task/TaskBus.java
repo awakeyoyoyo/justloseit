@@ -4,6 +4,7 @@ import com.awake.thread.pool.model.ThreadActorPoolModel;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * @version : 1.0
@@ -43,5 +44,9 @@ public class TaskBus {
 
     public static int calTaskExecutorHash(Object argument) {
         return executors.calTaskExecutorHash(argument);
+    }
+
+    public static Executor currentThreadExecutor() {
+        return executors.currentThreadExecutor();
     }
 }
