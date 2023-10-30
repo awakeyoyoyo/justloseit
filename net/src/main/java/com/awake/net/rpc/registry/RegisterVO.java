@@ -1,4 +1,4 @@
-package com.awake.net.consumer.registry;
+package com.awake.net.rpc.registry;
 
 import com.awake.net.config.model.*;
 import com.awake.util.ExceptionUtils;

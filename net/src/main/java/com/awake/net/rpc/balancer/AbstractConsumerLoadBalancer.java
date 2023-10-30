@@ -1,9 +1,9 @@
-package com.awake.net.consumer.balancer;
+package com.awake.net.rpc.balancer;
 
 import com.awake.NetContext;
 import com.awake.net.config.model.ProtocolModule;
 import com.awake.net.protocol.ProtocolManager;
-import com.awake.net.consumer.registry.RegisterVO;
+import com.awake.net.rpc.registry.RegisterVO;
 import com.awake.net.session.Session;
 import com.awake.util.base.StringUtils;
 

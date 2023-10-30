@@ -1,6 +1,6 @@
 package com.awake.net.config.model;
 
-import com.awake.net.consumer.registry.RegisterVO;
+import com.awake.net.rpc.registry.RegisterVO;
 import com.awake.net.protocol.properties.ProtocolProperties;
 import lombok.Data;
 

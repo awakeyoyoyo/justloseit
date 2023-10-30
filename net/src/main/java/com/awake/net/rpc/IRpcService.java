@@ -1,7 +1,7 @@
-package com.awake.net.consumer;
+package com.awake.net.rpc;
 
 import com.awake.net.config.model.ProtocolModule;
-import com.awake.net.consumer.balancer.IConsumerLoadBalancer;
+import com.awake.net.rpc.balancer.IConsumerLoadBalancer;
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
 import org.springframework.lang.Nullable;

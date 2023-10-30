@@ -1,7 +1,7 @@
-package com.awake.net.consumer.event;
+package com.awake.net.rpc.event;
 
 import com.awake.event.model.IEvent;
-import com.awake.net.consumer.registry.RegisterVO;
+import com.awake.net.rpc.registry.RegisterVO;
 import com.awake.net.session.Session;
 import lombok.Data;
 

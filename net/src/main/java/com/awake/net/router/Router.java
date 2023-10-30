@@ -16,7 +16,6 @@ import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.net.router.exception.ErrorResponseException;
 import com.awake.net.router.exception.NetTimeOutException;
 import com.awake.net.router.exception.UnexpectedProtocolException;
-import com.awake.net.router.task.TaskBus;
 import com.awake.net.session.Session;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.JsonUtils;

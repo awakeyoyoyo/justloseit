@@ -1,8 +1,8 @@
 package com.awake.net.config;
 
 import com.awake.net.config.model.NetConfig;
-import com.awake.net.consumer.registry.IRegistry;
-import com.awake.net.consumer.registry.ZookeeperRegistry;
+import com.awake.net.rpc.registry.IRegistry;
+import com.awake.net.rpc.registry.ZookeeperRegistry;
 import com.awake.net.protocol.ProtocolManager;
 import com.awake.util.AssertionUtils;
 import com.awake.util.base.CollectionUtils;

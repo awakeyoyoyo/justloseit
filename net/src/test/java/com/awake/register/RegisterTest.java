@@ -1,7 +1,7 @@
 package com.awake.register;
 
 import com.awake.NetContext;
-import com.awake.net.consumer.registry.IRegistry;
+import com.awake.net.rpc.registry.IRegistry;
 import com.awake.server.ApplicationConfiguration;
 import com.awake.util.base.ThreadUtils;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.awake.net.consumer.balancer;
+package com.awake.net.rpc.balancer;
 
 import com.awake.net.session.Session;
 

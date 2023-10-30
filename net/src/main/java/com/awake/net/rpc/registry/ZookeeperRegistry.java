@@ -1,8 +1,8 @@
-package com.awake.net.consumer.registry;
+package com.awake.net.rpc.registry;
 
 import com.awake.NetContext;
 import com.awake.event.manger.EventBus;
-import com.awake.net.consumer.event.ConsumerStartEvent;
+import com.awake.net.rpc.event.ConsumerStartEvent;
 import com.awake.net.server.tcp.TcpClient;
 import com.awake.net.server.tcp.TcpServer;
 import com.awake.net.session.Session;

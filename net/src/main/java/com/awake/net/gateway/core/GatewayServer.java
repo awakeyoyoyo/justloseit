@@ -1,9 +1,9 @@
 package com.awake.net.gateway.core;
 
 
-import com.awake.net.router.codec.Jprotobuf.JProtobufTcpCodecHandler;
+import com.awake.net.handler.codec.Jprotobuf.JProtobufTcpCodecHandler;
 import com.awake.net.gateway.core.handler.GatewayRouteHandler;
-import com.awake.net.router.handler.idle.ServerIdleHandler;
+import com.awake.net.handler.idle.ServerIdleHandler;
 import com.awake.net.server.AbstractServer;
 import com.awake.net.session.Session;
 import com.awake.util.net.HostAndPort;

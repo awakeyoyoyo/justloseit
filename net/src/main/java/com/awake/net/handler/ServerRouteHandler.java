@@ -1,4 +1,4 @@
-package com.awake.net.router.handler;
+package com.awake.net.handler;
 
 import com.awake.NetContext;
 import com.awake.event.manger.EventBus;

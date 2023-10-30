@@ -1,7 +1,7 @@
 package com.awake.register;
 
 import com.awake.NetContext;
-import com.awake.net.router.task.TaskBus;
+import com.awake.net.router.TaskBus;
 import com.awake.net.util.SessionUtils;
 import com.awake.register.configuration.RegisterConfiguration;
 import com.awake.register.packet.ProviderMessAnswer;
