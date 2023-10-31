@@ -22,8 +22,6 @@ public class ZookeeperTest {
 
     @Test
     public void testApplicationProperties() {
-//        System.out.println(this.applicationContext.getEnvironment().getProperty("awake.net.zookeeper.connectionTimeoutMs"));
-//        System.out.println(this.applicationContext.getBean(ZookeeperRegistryProperties.class).toString());
         System.out.println(zookeeperRegistryProperties.toString());
     }
 }
