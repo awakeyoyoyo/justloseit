@@ -10,7 +10,7 @@ import java.util.TreeMap;
 /**
  * @version : 1.0
  * @ClassName: ConsistentHash
- * @Description: TODO
+ * @Description: 带虚拟节点的一致性Hash算法，参考：http://www.zsythink.net/archives/1182
  * @Auther: awake
  * @Date: 2023/10/30 15:34
  **/

@@ -13,7 +13,7 @@ public class HashUtils {
 
     /**
      * 改进的32位FNV算法1
-     *
+     * FNV能快速hash大量数据并保持较小的冲突率，他的高度分散是他适用于hash一些非常相近的字符串，比如URL、hostname、文件名、text、IP地址等
      * @param data 数组
      * @return hash结果
      */
@@ -32,7 +32,7 @@ public class HashUtils {
 
     /**
      * 改进的32位FNV算法1
-     *
+     * FNV能快速hash大量数据并保持较小的冲突率，他的高度分散是他适用于hash一些非常相近的字符串，比如URL、hostname、文件名、text、IP地址等
      * @param object 计算hash的对象，会调用toString方法
      * @return hash结果
      */
