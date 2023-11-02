@@ -98,7 +98,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     }
 
     public synchronized void shutdownBefore() {
-
+//        SchedulerContext.shutdown();
     }
 
     public synchronized void shutdownAfter() {
