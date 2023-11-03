@@ -80,7 +80,7 @@ public class Router implements IRouter {
             } else if (signalAttachment.getClient() == SignalAttachment.SIGNAL_NATIVE_ARGUMENT_CLIENT) {
                 signalAttachment.setClient(SignalAttachment.SIGNAL_SERVER);
                 // 根据信号中的argument来分发到不同线程
-                dispatchByTaskExecutorHash(session, packet, signalAttachment, signalAttachment.taskExecutorHash());
+                  dispatchByTaskExecutorHash(session, packet, signalAttachment, signalAttachment.taskExecutorHash());
             } else if (signalAttachment.getClient() == SignalAttachment.SIGNAL_NATIVE_NO_ARGUMENT_CLIENT) {
                 signalAttachment.setClient(SignalAttachment.SIGNAL_SERVER);
                 // 根据session中的uid
