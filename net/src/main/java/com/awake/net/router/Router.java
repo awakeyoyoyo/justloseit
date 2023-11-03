@@ -80,7 +80,7 @@ public class Router implements IRouter {
             } else if (signalAttachment.getClient() == SignalAttachment.SIGNAL_NATIVE_ARGUMENT_CLIENT) {
                 signalAttachment.setClient(SignalAttachment.SIGNAL_SERVER);
                 // 根据信号中的argument来分发到不同线程
-                dispatchByAttachment(session, packet, signalAttachment);
+                dispatchByTaskExecutorHash(session, packet, signalAttachment, signalAttachment.taskExecutorHash());
             } else if (signalAttachment.getClient() == SignalAttachment.SIGNAL_NATIVE_NO_ARGUMENT_CLIENT) {
                 signalAttachment.setClient(SignalAttachment.SIGNAL_SERVER);
                 // 根据session中的uid
@@ -105,7 +105,7 @@ public class Router implements IRouter {
             // 注意：此时并没有return，这样子网关的消息才能发给home，在home进行处理LogoutRequest消息的处理
             if (gatewayAttachment.isClient()) {
                 gatewayAttachment.setClient(false);
-                dispatchByAttachment(session, packet, gatewayAttachment);
+                dispatchByTaskExecutorHash(session, packet, gatewayAttachment, gatewayAttachment.taskExecutorHash());
             } else {
                 // 这里是：别的服务提供者提供授权给网关，比如：在玩家登录后，home服查到了玩家uid，然后发给Gateway服
                 var gatewaySession = NetContext.getSessionManager().getServerSession(gatewayAttachment.getSid());
@@ -196,12 +196,12 @@ public class Router implements IRouter {
     }
 
     @Override
-    public  void addSignalAttachment(SignalAttachment clientSignalAttachment){
+    public void addSignalAttachment(SignalAttachment clientSignalAttachment) {
         signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
     }
 
     @Override
-    public  void removeSignalAttachment(SignalAttachment clientSignalAttachment){
+    public void removeSignalAttachment(SignalAttachment clientSignalAttachment) {
         signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
     }
 
@@ -273,7 +273,7 @@ public class Router implements IRouter {
                     }
                 }
 
-            },TaskBus.currentThreadExecutor());
+            }, TaskBus.currentThreadExecutor());
             signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
             // 等到上层调用whenComplete才会发送消息
             asyncAnswer.setAskCallback(() -> send(session, packet, clientSignalAttachment));
@@ -316,8 +316,8 @@ public class Router implements IRouter {
         }
     }
 
-    private void dispatchByAttachment(Session session, Object packet, Object attachment) {
-        TaskBus.execute(((SignalAttachment) attachment).taskExecutorHash(), () -> atReceiver(session, packet, attachment));
+    private void dispatchByTaskExecutorHash(Session session, Object packet,@Nullable Object attachment, int taskExecutorHash) {
+        TaskBus.execute(taskExecutorHash, () -> atReceiver(session, packet, attachment));
     }
 
 
