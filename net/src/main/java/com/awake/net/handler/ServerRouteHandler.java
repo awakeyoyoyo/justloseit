@@ -28,7 +28,7 @@ public class ServerRouteHandler extends BaseRouteHandler {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        Session session = SessionUtils.initChannel(ctx.channel());
+        Session session = initChannel(ctx.channel());
         NetContext.getSessionManager().addServerSession(session);
         logger.info("server channel is active {}", SessionUtils.sessionInfo(ctx));
         EventBus.publicEvent(ServerSessionActiveEvent.valueOf(session));

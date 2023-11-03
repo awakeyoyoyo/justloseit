@@ -99,7 +99,7 @@ public class SessionUtils {
                 NetContext.getSessionManager().forEachClientSession(new Consumer<Session>() {
                     @Override
                     public void accept(Session session) {
-                        builder.append(StringUtils.format("[session:{}]", session.getChannel().remoteAddress()));
+                        builder.append(StringUtils.format("[session:{}，sid:{}]", session.getChannel().remoteAddress(),session.getSid()));
                         builder.append(FileUtils.LS);
                     }
                 });

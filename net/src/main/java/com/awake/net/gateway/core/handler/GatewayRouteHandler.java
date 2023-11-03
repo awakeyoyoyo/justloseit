@@ -2,6 +2,7 @@ package com.awake.net.gateway.core.handler;
 
 import com.awake.NetContext;
 import com.awake.event.manger.EventBus;
+import com.awake.net.packet.IPacket;
 import com.awake.net.rpc.balancer.ConsistentHashConsumerLoadBalancer;
 import com.awake.net.gateway.core.IGatewayLoadBalancer;
 import com.awake.net.gateway.core.event.GatewaySessionInactiveEvent;
@@ -108,6 +109,7 @@ public class GatewayRouteHandler extends ServerRouteHandler {
         try {
             var consumerSession = ConsistentHashConsumerLoadBalancer.getInstance().loadBalancer(packet, argument);
             NetContext.getRouter().send(consumerSession, packet, attachment);
+            logger.info("gateway forwardingPacket :packet protocolId:[{}],packet class:[{}].argument[{}],session:[{}]", ((IPacket) packet).protocolId(), packet.getClass(), argument, consumerSession.getSid());
         } catch (Exception e) {
             logger.error("An exception occurred at the gateway", e);
         } catch (Throwable t) {
