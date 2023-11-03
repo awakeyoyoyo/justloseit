@@ -7,6 +7,7 @@ import com.awake.net.gateway.core.event.AuthUidToGatewayEvent;
 import com.awake.net.gateway.core.packet.AuthUidToGatewayCheck;
 import com.awake.net.gateway.core.packet.AuthUidToGatewayConfirm;
 import com.awake.net.packet.EncodedPacketInfo;
+import com.awake.net.packet.IPacket;
 import com.awake.net.packet.common.Error;
 import com.awake.net.packet.common.Heartbeat;
 import com.awake.net.router.answer.AsyncAnswer;
@@ -128,7 +129,9 @@ public class Router implements IRouter {
                     NetContext.getRouter().send(session, AuthUidToGatewayConfirm.valueOf(uid), new GatewayAttachment(gatewaySession));
                     return;
                 }
-                send(gatewaySession, packet, gatewayAttachment.getSignalAttachment());
+                SignalAttachment signalAttachment = gatewayAttachment.getSignalAttachment();
+                send(gatewaySession, packet, signalAttachment);
+                logger.info("gateway send Packet :packet protocolId:[{}],packet class:[{}],session:[{}]", ((IPacket) packet).protocolId(), packet.getClass(), gatewaySession.getSid());
             }
             return;
         }

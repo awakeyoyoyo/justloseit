@@ -26,7 +26,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 @ProtobufClass
 public class GatewayToProviderRequest implements IPacket {
     @Ignore
-    public static final int PROTOCOL_ID = 5002;
+    public static final int PROTOCOL_ID = 5001;
     private String message;
 
     public String getMessage() {
