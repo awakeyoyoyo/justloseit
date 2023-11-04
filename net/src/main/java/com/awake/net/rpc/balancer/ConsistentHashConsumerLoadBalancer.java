@@ -7,8 +7,8 @@ import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.session.Session;
 import com.awake.net.util.ConsistentHash;
 import com.awake.net.util.FastTreeMapIntLong;
+import com.awake.net.util.Pair;
 import com.awake.util.base.CollectionUtils;
-import javafx.util.Pair;
 import org.springframework.lang.Nullable;
 
 import java.util.TreeMap;

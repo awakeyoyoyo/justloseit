@@ -1,9 +1,9 @@
 package com.awake.consistent;
 
 import com.awake.net.util.ConsistentHash;
+import com.awake.net.util.Pair;
 import com.awake.util.JsonUtils;
 import com.awake.util.base.StringUtils;
-import javafx.util.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
