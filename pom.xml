@@ -24,6 +24,7 @@
         <module>util</module>
         <module>net</module>
         <module>gateway</module>
+        <module>scheduler</module>
 
     </modules>
 
