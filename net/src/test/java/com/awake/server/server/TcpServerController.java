@@ -4,7 +4,9 @@ import com.awake.NetContext;
 import com.awake.net.router.receiver.PacketReceiver;
 import com.awake.net.session.Session;
 import com.awake.server.packet.tcp.TcpHelloRequest;
+import com.awake.server.packet.tcp.TcpHelloRequest1;
 import com.awake.server.packet.tcp.TcpHelloResponse;
+import com.awake.server.packet.tcp.TcpHelloResponse1;
 import com.awake.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,5 +34,14 @@ public class TcpServerController {
         NetContext.getRouter().send(session, response);
     }
 
+    @PacketReceiver
+    public void atTcpHelloRequest1(Session session, TcpHelloRequest1 request) {
+        logger.info("receive [packet:{}] from client", JsonUtils.object2String(request));
+
+        var response = new TcpHelloResponse1();
+        response.setMessage("Hello, this is the tcp server! awake awake awake");
+
+        NetContext.getRouter().send(session, response);
+    }
 }
 

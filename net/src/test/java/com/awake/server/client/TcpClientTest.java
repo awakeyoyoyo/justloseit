@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * @version : 1.0
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @Date: 2023/9/7 16:13
  **/
 @SpringBootTest(classes = {ApplicationConfiguration.class})
+@TestPropertySource(locations = {"classpath:application-consumer.properties"})
 public class TcpClientTest {
 
     private static final Logger logger = LoggerFactory.getLogger(TcpClientTest.class);

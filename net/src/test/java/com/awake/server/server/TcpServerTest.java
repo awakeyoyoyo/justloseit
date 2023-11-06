@@ -6,6 +6,7 @@ import com.awake.util.base.ThreadUtils;
 import com.awake.util.net.HostAndPort;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * @version : 1.0
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @Date: 2023/9/7 16:22
  **/
 @SpringBootTest(classes = {ApplicationConfiguration.class})
+@TestPropertySource(locations = {"classpath:application-provider.properties"})
 public class TcpServerTest {
 
 
