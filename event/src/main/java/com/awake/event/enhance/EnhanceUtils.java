@@ -72,9 +72,8 @@ public class EnhanceUtils {
         enhanceClazz.detach();
 
         Class<IEventReceiver> resultClazz = enhanceClazz.toClass();
-        Constructor<?> resultConstructor = resultClazz.getConstructor(bean.getClass());
-        IEventReceiver receiver = (IEventReceiver) resultConstructor.newInstance(bean);
-        return receiver;
+        Constructor<IEventReceiver> resultConstructor = resultClazz.getConstructor(bean.getClass());
+        return resultConstructor.newInstance(bean);
     }
 
 }
