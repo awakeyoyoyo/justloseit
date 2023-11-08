@@ -7,6 +7,7 @@ import com.awake.net.server.tcp.TcpClient;
 import com.awake.net.server.tcp.TcpServer;
 import com.awake.net.session.Session;
 import com.awake.net.util.SessionUtils;
+import com.awake.scheduler.manager.SchedulerBus;
 import com.awake.util.AssertionUtils;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.IOUtils;
@@ -274,7 +275,7 @@ public class ZookeeperRegistry implements IRegistry {
 
         if (recheckFlag) {
             //todo
-//            SchedulerBus.schedule(() -> checkConsumer(), RETRY_SECONDS, TimeUnit.SECONDS);
+            SchedulerBus.schedule(() -> checkConsumer(), RETRY_SECONDS, TimeUnit.SECONDS);
         }
     }
 

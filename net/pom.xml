@@ -50,6 +50,12 @@
             <version>${justloseit.event.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.awakeyo</groupId>
+            <artifactId>scheduler</artifactId>
+            <version>${justloseit.scheduler.version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.awakeyo</groupId>
