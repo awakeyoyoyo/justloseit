@@ -19,7 +19,7 @@
     <dependencies>
         <!-- 动态生成二进制字节码的javassist类库 -->
         <dependency>
-            <groupId>javassist</groupId>
+            <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>${javassist.version}</version>
         </dependency>
