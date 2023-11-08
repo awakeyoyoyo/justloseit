@@ -1,5 +1,8 @@
 package com.awake.scheduler.autoconfigure;
 
+import com.awake.scheduler.SchedulerContext;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -11,4 +14,11 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 public class SchedulerAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public SchedulerContext schedulerContext() {
+        return new SchedulerContext();
+    }
+
 }

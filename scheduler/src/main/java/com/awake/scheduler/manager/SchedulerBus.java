@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +30,8 @@ public class SchedulerBus {
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulerBus.class);
 
-    private static final List<SchedulerDefinition> schedulerDefList = new CopyOnWriteArrayList<>();
+    //後續改成優先隊列
+    private static final Map<String, SchedulerDefinition> schedulerDefMap = new ConcurrentHashMap();
 
     /**
      * scheduler默认只有一个单线程的线程池
@@ -97,7 +98,7 @@ public class SchedulerBus {
     private static void triggerPerSecond() {
         var currentTimeMillis = TimeUtils.currentTimeMillis();
 
-        if (CollectionUtils.isEmpty(schedulerDefList)) {
+        if (CollectionUtils.isEmpty(schedulerDefMap)) {
             return;
         }
 
@@ -105,7 +106,7 @@ public class SchedulerBus {
         // 有人向前调整过机器时间，重新计算scheduler里的triggerTimestamp
         // var diff = timestamp - lastTriggerTimestamp;
         if (currentTimeMillis < lastTriggerTimestamp) {
-            for (SchedulerDefinition schedulerDef : schedulerDefList) {
+            for (SchedulerDefinition schedulerDef : schedulerDefMap.values()) {
                 var nextTriggerTimestamp = TimeUtils.nextTimestampByCronExpression(schedulerDef.getCronExpression(), currentTimeMillis);
                 schedulerDef.setTriggerTimestamp(nextTriggerTimestamp);
             }
@@ -122,7 +123,7 @@ public class SchedulerBus {
 
         var minTimestamp = Long.MAX_VALUE;
         var timestampZonedDataTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(currentTimeMillis), TimeUtils.DEFAULT_ZONE_ID);
-        for (var scheduler : schedulerDefList) {
+        for (var scheduler : schedulerDefMap.values()) {
             var triggerTimestamp = scheduler.getTriggerTimestamp();
             if (triggerTimestamp <= currentTimeMillis) {
                 // 到达触发时间，则执行runnable方法
@@ -145,7 +146,7 @@ public class SchedulerBus {
 
     public static void refreshMinTriggerTimestamp() {
         var minTimestamp = Long.MAX_VALUE;
-        for (var scheduler : schedulerDefList) {
+        for (var scheduler : schedulerDefMap.values()) {
             if (scheduler.getTriggerTimestamp() < minTimestamp) {
                 minTimestamp = scheduler.getTriggerTimestamp();
             }
@@ -173,20 +174,24 @@ public class SchedulerBus {
     /**
      * cron表达式执行的任务
      */
-    public static void scheduleCron(Runnable runnable, String cron) {
+    public static void scheduleCron(String schedulerName, Runnable runnable, String cron) {
         if (SchedulerContext.isStop()) {
             return;
         }
 
-        registerScheduler(SchedulerDefinition.valueOf(cron, runnable));
+        registerScheduler(schedulerName, SchedulerDefinition.valueOf(cron, runnable));
     }
 
     public static Executor threadExecutor(long currentThreadId) {
         return threadId == currentThreadId ? executor : null;
     }
 
-    public static void registerScheduler(SchedulerDefinition scheduler) {
-        schedulerDefList.add(scheduler);
+    public static void registerScheduler(String schedulerName, SchedulerDefinition scheduler) {
+        schedulerDefMap.put(schedulerName, scheduler);
         refreshMinTriggerTimestamp();
+    }
+
+    public static void removerScheduler(String schedulerName, SchedulerDefinition scheduler) {
+        schedulerDefMap.remove(schedulerName, scheduler);
     }
 }

@@ -104,7 +104,7 @@ public class SchedulerContext implements ApplicationListener<ApplicationContextE
                     }
 
                     var scheduler = SchedulerDefinition.valueOf(schedulerMethod.cron(), bean, method);
-                    SchedulerBus.registerScheduler(scheduler);
+                    SchedulerBus.registerScheduler(methodName,scheduler);
                 }
             } catch (Throwable t) {
                 throw new RuntimeException(t);
