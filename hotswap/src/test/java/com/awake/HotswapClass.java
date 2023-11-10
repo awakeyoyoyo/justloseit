@@ -15,7 +15,7 @@ public class HotswapClass {
     private static final Logger logger = LoggerFactory.getLogger(HotswapClass.class);
 
     public void print() {
-        logger.info("没有热更新的输出内容");
+        logger.info("哈哈哈哈哈哈哈哈哈");
     }
 
 }
