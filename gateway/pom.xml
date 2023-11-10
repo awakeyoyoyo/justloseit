@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>justloseit</artifactId>
-        <groupId>com.awakeyo</groupId>
+        <groupId>com.awake</groupId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -22,13 +22,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.awakeyo</groupId>
+            <groupId>com.awake</groupId>
             <artifactId>net</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>com.awakeyo</groupId>
+            <groupId>com.awake</groupId>
             <artifactId>event</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
