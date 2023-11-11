@@ -2,12 +2,12 @@ package com.awake.net.rpc.balancer;
 
 import com.awake.NetContext;
 import com.awake.exception.RunException;
+import com.awake.model.Pair;
 import com.awake.net.config.model.ProtocolModule;
 import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.session.Session;
 import com.awake.net.util.ConsistentHash;
 import com.awake.net.util.FastTreeMapIntLong;
-import com.awake.net.util.Pair;
 import com.awake.util.base.CollectionUtils;
 import org.springframework.lang.Nullable;
 

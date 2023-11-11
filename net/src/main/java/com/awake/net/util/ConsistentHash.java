@@ -1,6 +1,8 @@
 package com.awake.net.util;
 
 
+import com.awake.model.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

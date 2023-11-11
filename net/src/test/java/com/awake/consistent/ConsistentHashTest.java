@@ -1,7 +1,7 @@
 package com.awake.consistent;
 
+import com.awake.model.Pair;
 import com.awake.net.util.ConsistentHash;
-import com.awake.net.util.Pair;
 import com.awake.util.JsonUtils;
 import com.awake.util.base.StringUtils;
 import org.junit.Assert;
