@@ -6,27 +6,21 @@
         <artifactId>justloseit</artifactId>
         <groupId>com.awakeyo</groupId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.awake</groupId>
     <artifactId>gateway</artifactId>
     <name>gateway</name>
     <description>gateway</description>
 
     <properties>
         <!-- spring and spring boot -->
-        <spring.version>5.3.19</spring.version>
-        <spring.boot.version>2.6.7</spring.boot.version>
-        <junit.version>4.12</junit.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.awakeyo</groupId>
-            <artifactId>justloseit</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>com.awakeyo</groupId>
             <artifactId>net</artifactId>

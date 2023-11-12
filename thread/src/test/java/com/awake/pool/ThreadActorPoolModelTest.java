@@ -36,7 +36,7 @@ public class ThreadActorPoolModelTest {
             });
         });
         System.out.println("[发送异步指令完毕-测试线程执行]:" + Thread.currentThread());
-        System.in.read();
+//        System.in.read();
     }
 
     @Test
@@ -57,6 +57,6 @@ public class ThreadActorPoolModelTest {
 
         });
         System.out.println("[发送异步指令完毕-测试线程执行]:" + Thread.currentThread());
-        System.in.read();
+//        System.in.read();
     }
 }

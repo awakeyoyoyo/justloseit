@@ -66,7 +66,7 @@ public class EnhanceUtils {
         // 释放缓存
         enhanceClazz.detach();
 
-        Class<IScheduler> resultClazz = enhanceClazz.toClass();
+        Class<IScheduler> resultClazz = (Class<IScheduler>) enhanceClazz.toClass();
         Constructor<IScheduler> resultConstructor = resultClazz.getConstructor(bean.getClass());
         return resultConstructor.newInstance(bean);
     }

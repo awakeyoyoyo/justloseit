@@ -13,6 +13,7 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.SystemPropertyUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -63,6 +64,35 @@ public class ClassUtil {
         }
         return methods;
     }
+
+    /**
+     * 从类路径中读取文件
+     *
+     * @param filePath 一般指resources中的文件，也可以在jar中
+     */
+    public static InputStream getFileFromClassPath(String filePath) throws IOException {
+        var classLoader = getDefaultClassLoader();
+        var resource = classLoader.getResource(filePath);
+        return resource.openStream();
+    }
+
+    public static ClassLoader getDefaultClassLoader() {
+        var classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null) {
+            return classLoader;
+        }
+
+        // No thread context class loader -> use class loader of this class.
+        classLoader = ClassUtil.class.getClassLoader();
+        if (classLoader != null) {
+            return classLoader;
+        }
+
+        // getClassLoader() returning null indicates the bootstrap ClassLoader
+        classLoader = ClassLoader.getSystemClassLoader();
+        return classLoader;
+    }
+
 
     /**
      * 根据扫描包的,查询下面的所有类

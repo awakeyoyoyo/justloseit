@@ -8,7 +8,7 @@
     <groupId>com.awakeyo</groupId>
     <artifactId>justloseit</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath/>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <groupId>com.awakeyo</groupId>
@@ -52,11 +52,6 @@
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>${jackson.version}</version>
-    </dependency>
     <!-- Jackson parsing XML library -->
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -85,7 +80,6 @@
           <artifactId>maven-clean-plugin</artifactId>
         </plugin>
 
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -95,6 +89,7 @@
             <encoding>${file.encoding}</encoding>
           </configuration>
         </plugin>
+
       </plugins>
     </pluginManagement>
   </build>

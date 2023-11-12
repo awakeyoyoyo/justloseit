@@ -6,10 +6,11 @@
     <artifactId>justloseit</artifactId>
     <groupId>com.awakeyo</groupId>
     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.awakeyo</groupId>
+  <groupId>com.awake</groupId>
   <artifactId>hotswap</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>hotswap</name>
@@ -65,6 +66,9 @@
   </dependencies>
 
   <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -80,6 +84,31 @@
           <target>${java.version}</target>
           <encoding>${file.encoding}</encoding>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <encoding>${file.encoding}</encoding>
+              <outputDirectory>${project.build.directory}/resource</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/resources/</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

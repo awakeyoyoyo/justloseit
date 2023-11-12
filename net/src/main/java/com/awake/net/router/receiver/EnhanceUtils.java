@@ -71,7 +71,7 @@ public class EnhanceUtils {
 
         enhanceClazz.detach();
 
-        Class<IPacketReceiver> resultClazz = enhanceClazz.toClass();
+        Class<IPacketReceiver> resultClazz = (Class<IPacketReceiver>) enhanceClazz.toClass();
         Constructor<?> resultConstructor = resultClazz.getConstructor(bean.getClass());
         IPacketReceiver receiver = (IPacketReceiver) resultConstructor.newInstance(bean);
         return receiver;
