@@ -1,6 +1,6 @@
 package com.awake;
 
-import com.awake.manager.HotSwapManager;
+import com.awake.orm.manager.HotSwapManager;
 import com.awake.server.HotSwapServiceMBean;
 
 /**

@@ -1,6 +1,6 @@
 package com.awake.consistent;
 
-import com.awake.model.Pair;
+import com.awake.orm.model.Pair;
 import com.awake.net.util.ConsistentHash;
 import com.awake.util.JsonUtils;
 import com.awake.util.base.StringUtils;

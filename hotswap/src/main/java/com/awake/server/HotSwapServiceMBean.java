@@ -1,8 +1,8 @@
 package com.awake.server;
 
 import com.awake.HotSwapContext;
-import com.awake.manager.HotSwapManager;
-import com.awake.model.ClassFileDef;
+import com.awake.orm.manager.HotSwapManager;
+import com.awake.orm.model.ClassFileDef;
 import com.awake.util.FileUtils;
 import com.awake.util.IOUtils;
 import com.awake.util.base.StringUtils;
