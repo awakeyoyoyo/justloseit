@@ -5,7 +5,7 @@ import com.awake.orm.model.IEntity;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class EntityCache implements IEntityCache{
+public class EntityCache <PK extends Comparable<PK>, E extends IEntity<PK>> implements IEntityCache<PK, E> {
     @Override
     public IEntity load(Comparable comparable) {
         return null;
