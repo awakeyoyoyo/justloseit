@@ -99,7 +99,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
     }
 
     @Override
-    public void update(IEntity entity) {
+    public void update(E entity) {
         AssertionUtils.notNull(entity);
 
         var currentPnode = cache.getIfPresent(entity.id());
