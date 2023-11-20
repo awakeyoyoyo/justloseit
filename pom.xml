@@ -53,7 +53,9 @@
         <logback.version>1.2.3</logback.version>
         <!-- 字节码增强 -->
         <javassist.version>3.29.2-GA</javassist.version>
-
+        <!-- database and cache-->
+        <mongodb-driver-sync.version>4.10.2</mongodb-driver-sync.version>
+        <caffeine.version>3.1.8</caffeine.version>
         <!-- network framework -->
         <netty.version>4.1.84.Final</netty.version>
         <jprotobuf.version>2.4.17</jprotobuf.version>
