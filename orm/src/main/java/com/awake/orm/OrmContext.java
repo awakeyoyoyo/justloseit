@@ -26,4 +26,12 @@ public class OrmContext {
     public static boolean isStop() {
         return instance.stop;
     }
+
+    public static IOrmManager getOrmManager() {
+        return null;
+    }
+
+    public static IAccessor getAccessor() {
+        return null;
+    }
 }

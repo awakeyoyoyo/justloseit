@@ -1,6 +1,8 @@
 package com.awake.orm.model;
 
-import com.awake.orm.cache.persister.PersisterStrategy;
+
+import com.awake.orm.config.PersisterStrategy;
+import com.awake.util.ReflectionUtils;
 import lombok.Data;
 
 import java.lang.reflect.Field;
@@ -43,5 +45,9 @@ public class EntityDef {
         return entityDef;
     }
 
+    public IEntity<?> newEntity(Object id) {
+        var entity = ReflectionUtils.newInstance(clazz);
+        return entity;
+    }
 
 }

@@ -106,4 +106,22 @@ public class ThreadUtils {
             return null;
         };
     }
+
+    /**
+     * 通过线程号寻找对应的线程
+     */
+    public static Thread findThread(long threadId) {
+        var group = Thread.currentThread().getThreadGroup();
+        while (group != null) {
+            var threads = new Thread[group.activeCount() * 2];
+            var count = group.enumerate(threads, true);
+            for (var i = 0; i < count; i++) {
+                if (threadId == threads[i].getId()) {
+                    return threads[i];
+                }
+            }
+            group = group.getParent();
+        }
+        return null;
+    }
 }

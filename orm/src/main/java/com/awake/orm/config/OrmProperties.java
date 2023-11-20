@@ -3,6 +3,7 @@ package com.awake.orm.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,16 +18,20 @@ import java.util.Map;
 public class OrmProperties {
     public static final String PREFIX = "awake.orm";
 
-    private String entityPackage;
-
+    /** database */
     private String database;
+
     private String user;
+
     private String password;
+
     private Map<String, String> address;
 
-    private String strategy;
+    /** caches */
+    private List<CacheStrategy> caches;
 
-    private PersisterTypeEnum type;
+    private String entityPackage;
 
-    private String config;
+    /** persister */
+    private List<PersisterStrategy> persisters;
 }
