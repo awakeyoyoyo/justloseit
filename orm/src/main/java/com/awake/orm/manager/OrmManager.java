@@ -1,5 +1,8 @@
 package com.awake.orm.manager;
 
+import com.awake.exception.RunException;
+import com.awake.orm.OrmContext;
+import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.anno.Id;
 import com.awake.orm.anno.Index;
 import com.awake.orm.anno.IndexText;
@@ -11,26 +14,44 @@ import com.awake.orm.model.IEntity;
 import com.awake.orm.model.IndexDef;
 import com.awake.orm.model.IndexTextDef;
 import com.awake.util.AssertionUtils;
+import com.awake.util.JsonUtils;
 import com.awake.util.ReflectionUtils;
+import com.awake.util.base.CollectionUtils;
 import com.awake.util.base.StringUtils;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import org.bson.Document;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.stereotype.Component;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author awakeyoyoyo
  */
-public class OrmManager implements IOrmManager{
+public class OrmManager implements IOrmManager {
+    @Autowired
     private OrmProperties ormConfig;
 
     private MongoClient mongoClient;
@@ -45,6 +66,7 @@ public class OrmManager implements IOrmManager{
     private final Map<Class<? extends IEntity<?>>, IEntityCache<?, ?>> entityCachesMap = new HashMap<>();
 
     private final Map<Class<? extends IEntity<?>>, String> collectionNameMap = new ConcurrentHashMap<>();
+
     @Override
     public void initBefore() {
         var entityDefMap = entityClass();
@@ -55,16 +77,132 @@ public class OrmManager implements IOrmManager{
             entityCachesMap.put(entityDef.getClazz(), entityCaches);
             allEntityCachesUsableMap.put(entityDef.getClazz(), false);
         }
+        CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
+                MongoClientSettings.getDefaultCodecRegistry(),
+                CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+
+        var mongoBuilder = MongoClientSettings
+                .builder()
+                .codecRegistry(pojoCodecRegistry);
+
+        // 设置数据库地址
+        if (CollectionUtils.isNotEmpty(ormConfig.getAddress())) {
+            var hostList = ormConfig.getAddress().values()
+                    .stream()
+                    .map(it -> it.split(StringUtils.COMMA_REGEX))
+                    .flatMap(it -> Arrays.stream(it))
+                    .filter(it -> StringUtils.isNotBlank(it))
+                    .map(it -> StringUtils.trim(it))
+                    .map(it -> it.split(StringUtils.COLON_REGEX))
+                    .map(it -> new ServerAddress(it[0], Integer.parseInt(it[1])))
+                    .collect(Collectors.toList());
+            mongoBuilder.applyToClusterSettings(builder -> builder.hosts(hostList));
+        }
+
+        // 设置数据库账号密码
+        if (StringUtils.isNotBlank(ormConfig.getUser()) && StringUtils.isNotBlank(ormConfig.getPassword())) {
+            mongoBuilder.credential(MongoCredential.createCredential(ormConfig.getUser(), "admin", ormConfig.getPassword().toCharArray()));
+        }
+
+        // 设置连接池的大小
+        var maxConnection = Runtime.getRuntime().availableProcessors() * 2 + 1;
+        mongoBuilder.applyToConnectionPoolSettings(builder -> builder.maxSize(maxConnection).minSize(1));
+
+        mongoClient = MongoClients.create(mongoBuilder.build());
+        mongodbDatabase = mongoClient.getDatabase(ormConfig.getDatabase());
+
+        // 创建索引
+        for (var entityDef : entityDefMap.values()) {
+            var indexDefMap = entityDef.getIndexDefMap();
+            if (CollectionUtils.isNotEmpty(indexDefMap)) {
+                var collection = getCollection(entityDef.getClazz());
+                for (var indexDef : indexDefMap.entrySet()) {
+                    var fieldName = indexDef.getKey();
+                    var index = indexDef.getValue();
+                    var hasIndex = false;
+                    for (var document : collection.listIndexes()) {
+                        var keyDocument = (Document) document.get("key");
+                        if (keyDocument.containsKey(fieldName)) {
+                            hasIndex = true;
+                        }
+                    }
+                    if (!hasIndex) {
+                        var indexOptions = new IndexOptions();
+                        indexOptions.unique(index.isUnique());
+
+                        if (index.getTtlExpireAfterSeconds() > 0) {
+                            indexOptions.expireAfter(index.getTtlExpireAfterSeconds(), TimeUnit.SECONDS);
+                        }
+
+                        if (index.isAscending()) {
+                            collection.createIndex(Indexes.ascending(fieldName), indexOptions);
+                        } else {
+                            collection.createIndex(Indexes.descending(fieldName), indexOptions);
+                        }
+                    }
+                }
+            }
+
+            var indexTextDefMap = entityDef.getIndexTextDefMap();
+            if (CollectionUtils.isNotEmpty(indexTextDefMap)) {
+                AssertionUtils.isTrue(indexTextDefMap.size() == 1
+                        , StringUtils.format("A collection can have only one text index [{}]", JsonUtils.object2String(indexTextDefMap.keySet())));
+                var collection = getCollection(entityDef.getClazz());
+                for (var indexTextDef : indexTextDefMap.entrySet()) {
+                    var fieldName = indexTextDef.getKey();
+                    var hasIndex = false;
+                    for (var document : collection.listIndexes()) {
+                        var keyDocument = (Document) document.get("key");
+                        if (keyDocument.containsKey(fieldName)) {
+                            hasIndex = true;
+                        }
+                    }
+                    if (!hasIndex) {
+                        collection.createIndex(Indexes.text(fieldName));
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public void inject() {
+        var applicationContext = OrmContext.getApplicationContext();
+        var componentBeans = applicationContext.getBeansWithAnnotation(Component.class);
+        for (var bean : componentBeans.values()) {
+            ReflectionUtils.filterFieldsInClass(bean.getClass()
+                    , field -> field.isAnnotationPresent(EntityCacheAutowired.class)
+                    , field -> {
+                        Type type = field.getGenericType();
 
+                        if (!(type instanceof ParameterizedType)) {
+                            // 注入的变量类型需要是泛型类
+                            throw new RuntimeException(StringUtils.format("The variable [{}] is not of type generic", field.getName()));
+                        }
+
+                        Type[] types = ((ParameterizedType) type).getActualTypeArguments();
+                        @SuppressWarnings("unchecked")
+                        var entityClazz = (Class<? extends IEntity<?>>) types[1];
+                        IEntityCache<?, ?> entityCaches = entityCachesMap.get(entityClazz);
+
+                        if (entityCaches == null) {
+                            // entity-package需要配置到可以扫描到EntityCache注解的包
+                            throw new RunException("The EntityCache object does not exist, please check that [entity-package:{}] and [entityCaches:{}] are configured in the correct position", ormConfig.getEntityPackage(), entityClazz);
+                        }
+
+                        ReflectionUtils.makeAccessible(field);
+                        ReflectionUtils.setField(field, bean, entityCaches);
+                        allEntityCachesUsableMap.put(entityClazz, true);
+                    });
+        }
     }
 
     @Override
     public void initAfter() {
-
+        allEntityCachesUsableMap.entrySet().stream()
+                .filter(it -> !it.getValue())
+                .map(it -> it.getKey())
+                .forEach(it -> entityCachesMap.remove(it));
     }
 
     @Override
@@ -84,12 +222,17 @@ public class OrmManager implements IOrmManager{
 
     @Override
     public <E extends IEntity<?>> MongoCollection<E> getCollection(Class<E> entityClazz) {
-        return null;
+        var collectionName = collectionNameMap.get(entityClazz);
+        if (collectionName == null) {
+            collectionName = StringUtils.substringBeforeLast(StringUtils.uncapitalize(entityClazz.getSimpleName()), "Entity");
+            collectionNameMap.put(entityClazz, collectionName);
+        }
+        return mongodbDatabase.getCollection(collectionName, entityClazz);
     }
 
     @Override
     public MongoCollection<Document> getCollection(String collection) {
-        return null;
+        return mongodbDatabase.getCollection(collection);
     }
 
 

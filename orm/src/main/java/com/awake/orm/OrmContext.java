@@ -40,4 +40,8 @@ public class OrmContext {
     public static <E extends IEntity<?>> IQueryBuilder<E> getQuery(Class<E> entityClazz) {
         return instance.query.builder(entityClazz);
     }
+
+    public static ApplicationContext getApplicationContext() {
+        return instance.applicationContext;
+    }
 }
