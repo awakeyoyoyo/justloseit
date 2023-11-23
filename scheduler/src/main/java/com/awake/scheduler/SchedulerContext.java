@@ -67,7 +67,7 @@ public class SchedulerContext implements ApplicationListener<ApplicationContextE
     }
 
     public void injectScheduler() {
-        var componentBeans =  applicationContext.getBeansWithAnnotation(Component.class);
+        var componentBeans = applicationContext.getBeansWithAnnotation(Component.class);
         for (var bean : componentBeans.values()) {
             var clazz = bean.getClass();
             var methods = ReflectionUtils.getMethodsByAnnoInPOJOClass(bean.getClass(), Scheduler.class);
@@ -104,7 +104,7 @@ public class SchedulerContext implements ApplicationListener<ApplicationContextE
                     }
 
                     var scheduler = SchedulerDefinition.valueOf(schedulerMethod.cron(), bean, method);
-                    SchedulerBus.registerScheduler(methodName,scheduler);
+                    SchedulerBus.registerScheduler(methodName, scheduler);
                 }
             } catch (Throwable t) {
                 throw new RuntimeException(t);
@@ -131,6 +131,7 @@ public class SchedulerContext implements ApplicationListener<ApplicationContextE
 
         logger.info("Scheduler shutdown gracefully.");
     }
+
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;

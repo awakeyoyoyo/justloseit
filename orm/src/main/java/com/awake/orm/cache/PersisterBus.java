@@ -1,33 +1,40 @@
 package com.awake.orm.cache;
 
+import com.awake.orm.config.OrmProperties;
+import com.awake.util.base.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.concurrent.ForkJoinPool;
 
 /**
  * @version : 1.0
  * @ClassName: PersisterBus
- * @Description: TODO
+ * @Description: 持久化线程池
  * @Auther: awake
  * @Date: 2023/11/15 16:24
  **/
-public class PersisterBus {
+public class PersisterBus implements InitializingBean {
 
+    @Autowired
+    private OrmProperties ormConfig;
     /**
      * 使用不同的线程池，让线程池之间实现隔离，互不影响
      */
-    private static ForkJoinPool executors;
+    private ForkJoinPool executors;
 
-    public static final int EXECUTOR_SIZE;
+    private static PersisterBus instance;
 
-    static {
-//        var localConfig = NetContext.getConfigManager().getLocalConfig();
-//        var providerConfig = localConfig.getProvider();
-
-//        EXECUTOR_SIZE = (providerConfig == null || StringUtils.isBlank(providerConfig.getThread())) ? (Runtime.getRuntime().availableProcessors() + 1) : Integer.parseInt(providerConfig.getThread());
-        EXECUTOR_SIZE = Runtime.getRuntime().availableProcessors() + 1;
-        executors = new ForkJoinPool(EXECUTOR_SIZE);
-    }
+    public int executorSize;
 
     public static void execute(Runnable runnable) {
-        executors.execute(runnable);
+        instance.executors.execute(runnable);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.executorSize = (StringUtils.isBlank(ormConfig.getThread())) ? (Runtime.getRuntime().availableProcessors() + 1) : Integer.parseInt(ormConfig.getThread());
+        this.executors = new ForkJoinPool(executorSize);
+        instance = this;
     }
 }

@@ -34,4 +34,7 @@ public class OrmProperties {
 
     /** persister */
     private List<PersisterStrategy> persisters;
+
+    /** thread num */
+    private String thread;
 }
