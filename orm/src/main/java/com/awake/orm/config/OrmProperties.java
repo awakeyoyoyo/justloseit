@@ -18,6 +18,8 @@ import java.util.Map;
 public class OrmProperties {
     public static final String PREFIX = "awake.orm";
 
+    private String id;
+
     /** database */
     private String database;
 
