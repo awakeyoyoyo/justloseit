@@ -207,17 +207,27 @@ public class OrmManager implements IOrmManager {
 
     @Override
     public MongoClient mongoClient() {
-        return null;
+        return mongoClient;
     }
 
     @Override
     public <E extends IEntity<?>> IEntityCache<?, E> getEntityCaches(Class<E> clazz) {
-        return null;
+        var usable = allEntityCachesUsableMap.get(clazz);
+        if (usable == null) {
+            throw new RunException("EntityCaches that do not have [] defined", clazz.getCanonicalName());
+        }
+        if (!usable) {
+            // Orm没有使用EntityCacheAutowired，为了节省内存提前释放了它；只有使用EntityCacheAutowired注解的Entity才能被动态获取
+            throw new RunException("Orm does not use [] EntityCacheAutowired annotation, which are released in advance to save memory", clazz.getCanonicalName());
+        }
+        @SuppressWarnings("unchecked")
+        var entityCache = (IEntityCache<?, E>) entityCachesMap.get(clazz);
+        return entityCache;
     }
 
     @Override
     public Collection<IEntityCache<?, ?>> getAllEntityCaches() {
-        return null;
+        return Collections.unmodifiableCollection(entityCachesMap.values());
     }
 
     @Override
