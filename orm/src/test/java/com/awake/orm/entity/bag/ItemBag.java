@@ -1,4 +1,4 @@
-package com.awake.orm.entity;
+package com.awake.orm.entity.bag;
 
 import lombok.Data;
 

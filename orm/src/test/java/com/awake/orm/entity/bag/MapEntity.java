@@ -1,4 +1,4 @@
-package com.awake.orm.entity;
+package com.awake.orm.entity.bag;
 
 import com.awake.orm.anno.EntityCache;
 import com.awake.orm.anno.Id;

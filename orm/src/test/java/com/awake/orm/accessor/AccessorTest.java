@@ -2,9 +2,9 @@ package com.awake.orm.accessor;
 
 import com.awake.orm.OrmContext;
 import com.awake.orm.autoconfigure.OrmAutoConfiguration;
-import com.awake.orm.entity.Item;
-import com.awake.orm.entity.ItemBag;
-import com.awake.orm.entity.MapEntity;
+import com.awake.orm.entity.bag.Item;
+import com.awake.orm.entity.bag.ItemBag;
+import com.awake.orm.entity.bag.MapEntity;
 import com.awake.orm.entity.UserEntity;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
