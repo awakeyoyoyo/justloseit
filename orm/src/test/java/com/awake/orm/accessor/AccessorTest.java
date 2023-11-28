@@ -1,11 +1,11 @@
 package com.awake.orm.accessor;
 
-import com.awake.orm.OrmContext;
-import com.awake.orm.autoconfigure.OrmAutoConfiguration;
+import com.awake.orm.autoconfigure.OrmAutoTestConfiguration;
+import com.awake.orm.entity.UserEntity;
 import com.awake.orm.entity.bag.Item;
 import com.awake.orm.entity.bag.ItemBag;
 import com.awake.orm.entity.bag.MapEntity;
-import com.awake.orm.entity.UserEntity;
+import com.awake.orm.OrmContext;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +22,7 @@ import java.util.Map;
  * @Auther: awake
  * @Date: 2023/11/24 16:49
  **/
-@SpringBootTest(classes = {OrmAutoConfiguration.class})
+@SpringBootTest(classes = {OrmAutoTestConfiguration.class})
 public class AccessorTest {
 
     @Test

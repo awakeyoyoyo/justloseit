@@ -1,7 +1,7 @@
 package com.awake.orm.accessor;
 
 import com.awake.orm.OrmContext;
-import com.awake.orm.autoconfigure.OrmAutoConfiguration;
+import com.awake.orm.autoconfigure.OrmAutoTestConfiguration;
 import com.awake.orm.entity.UserEntity;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
@@ -18,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @Auther: awake
  * @Date: 2023/11/28 16:38
  **/
-@SpringBootTest(classes = {OrmAutoConfiguration.class})
+@SpringBootTest(classes = {OrmAutoTestConfiguration.class})
 public class TransactionTest {
 
     @Test

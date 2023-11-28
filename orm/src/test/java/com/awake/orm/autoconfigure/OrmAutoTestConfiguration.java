@@ -9,6 +9,8 @@ import com.awake.orm.query.MongodbQuery;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -20,7 +22,8 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 @EnableConfigurationProperties({OrmProperties.class})
-public class OrmAutoConfiguration {
+@ComponentScans(value = {@ComponentScan("com.awake.orm.cache")})
+public class OrmAutoTestConfiguration {
 
     @Bean
     @ConditionalOnMissingBean

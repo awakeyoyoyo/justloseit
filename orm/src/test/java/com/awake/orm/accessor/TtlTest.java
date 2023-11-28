@@ -1,7 +1,7 @@
 package com.awake.orm.accessor;
 
 import com.awake.orm.OrmContext;
-import com.awake.orm.autoconfigure.OrmAutoConfiguration;
+import com.awake.orm.autoconfigure.OrmAutoTestConfiguration;
 import com.awake.orm.entity.MailEntity;
 import com.awake.util.time.TimeUtils;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import java.util.Date;
  * @Auther: awake
  * @Date: 2023/11/28 16:40
  **/
-@SpringBootTest(classes = {OrmAutoConfiguration.class})
+@SpringBootTest(classes = {OrmAutoTestConfiguration.class})
 public class TtlTest {
     @Test
     public void ttlTest() {
