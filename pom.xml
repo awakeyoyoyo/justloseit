@@ -27,6 +27,7 @@
         <module>scheduler</module>
         <module>hotswap</module>
         <module>orm</module>
+        <module>storage</module>
 
     </modules>
 
@@ -62,7 +63,10 @@
         <jprotobuf.precompile.version>2.2.2</jprotobuf.precompile.version>
         <!--lombok-->
         <lombok.version>1.18.10</lombok.version>
-
+        <!-- Office document parsing -->
+        <poi.version>5.2.3</poi.version>
+        <csv.version>1.10.0</csv.version>
+        <commons-io.version>2.7</commons-io.version>
         <!-- maven core plugin(maven核心插件) -->
         <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
