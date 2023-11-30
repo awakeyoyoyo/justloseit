@@ -5,7 +5,7 @@ import com.awake.orm.model.IEntity;
 /**
  * @version : 1.0
  * @ClassName: MongodbQuery
- * @Description: TODO
+ * @Description: 查询封装-建造者模式
  * @Auther: awake
  * @Date: 2023/11/22 18:27
  **/

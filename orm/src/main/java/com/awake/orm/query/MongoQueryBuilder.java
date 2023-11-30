@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 /**
  * @version : 1.0
  * @ClassName: MongoQueryBuilder
- * @Description: 查询接口
+ * @Description: 查询接口  建造者模式
  * @Auther: awake
  * @Date: 2023/11/22 18:25
  **/
