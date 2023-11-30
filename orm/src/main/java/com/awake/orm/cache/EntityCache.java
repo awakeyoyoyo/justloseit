@@ -1,6 +1,7 @@
 package com.awake.orm.cache;
 
 import com.awake.orm.OrmContext;
+import com.awake.orm.cache.persister.IOrmPersister;
 import com.awake.orm.cache.persister.PNode;
 import com.awake.orm.model.EntityDef;
 import com.awake.orm.model.IEntity;
@@ -85,6 +86,18 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
                         return new PNode<E>(entity);
                     }
                 });
+
+        if (CollectionUtils.isNotEmpty(entityDef.getIndexDefMap())) {
+            // indexMap
+        }
+
+        if (CollectionUtils.isNotEmpty(entityDef.getIndexTextDefMap())) {
+            // indexText
+        }
+
+        var persisterDef = entityDef.getPersisterStrategy();
+        IOrmPersister persister = persisterDef.getType().createPersister(entityDef, this);
+        persister.start();
     }
 
     @Override
@@ -147,6 +160,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
 
     @Override
     public void persistAll() {
+//        logger.info("EntityCache:[{}] persist All", this.entityDef.getClazz());
         try {
             var allPnodes = cache.asMap().values();
 
