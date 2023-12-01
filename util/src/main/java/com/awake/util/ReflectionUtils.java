@@ -202,6 +202,13 @@ public class ReflectionUtils {
         }
     }
 
+    public static <T> T newInstance(Constructor<T> constructor, Object ... initargs) {
+        try {
+            return constructor.newInstance(initargs);
+        } catch (Exception e) {
+            throw new RunException("[{}] cannot be instantiated", constructor);
+        }
+    }
 
     /**
      * 等于{@link Field#get(Object)}
@@ -362,6 +369,15 @@ public class ReflectionUtils {
             return methodName;
         } catch (NoSuchMethodException e) {
             throw new RunException("field:[{}] has no setMethod in class:[{}]", field.getName(), clazz.getCanonicalName());
+        }
+    }
+
+
+    public static <T> Constructor<T> getConstructor(Class<T> clazz, Class[] params) {
+        try {
+            return clazz.getConstructor(params);
+        } catch (NoSuchMethodException e) {
+            throw new RunException("constructor:[{}] has no setMethod in class:[{}]", params.length, clazz.getCanonicalName());
         }
     }
 
