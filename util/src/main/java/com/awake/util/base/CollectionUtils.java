@@ -1,7 +1,7 @@
 package com.awake.util.base;
 
 import com.awake.util.IOUtils;
-import com.awake.util.base.StringUtils;
+import io.netty.util.internal.MathUtil;
 
 import java.util.*;
 
@@ -99,9 +99,10 @@ public class CollectionUtils {
      * 计算List和HashMap初始化合适的大小，为了安全必须给初始化的集合一个最大上限，防止反序列化一个不合法的包导致内存突然升高
      */
     public static int comfortableCapacity(int capacity) {
-        return capacity < 16
-                ? (capacity < 8 ? 16 : 32)
-                : (capacity < 32 ? 64 : Math.min(capacity << 1, IOUtils.BYTES_PER_MB));
+        return MathUtil.safeFindNextPositivePowerOfTwo(capacity);
+//        return capacity < 16
+//                ? (capacity < 8 ? 16 : 32)
+//                : (capacity < 32 ? 64 : Math.min(capacity << 1, IOUtils.BYTES_PER_MB));
     }
 
 
