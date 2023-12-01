@@ -1,6 +1,10 @@
 package com.awake.util.clazz;
 
 
+import com.awake.exception.RunException;
+import com.awake.util.AssertionUtils;
+import com.awake.util.ReflectionUtils;
+import com.awake.util.base.ArrayUtils;
 import com.awake.util.base.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,10 +21,9 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * @version : 1.0
@@ -215,5 +218,127 @@ public class ClassUtil {
         String packages = "com.awake.exception,com.awake.util";
        System.out.println(scanPackageClass(packages));
     }
+    public static Set<Class<?>> relevantClass(Class<?> clazz) {
+        var classSet = new HashSet<Class<?>>();
+        return relevantClass(clazz, classSet);
+    }
 
+
+    private static Set<Class<?>> relevantClass(Class<?> clazz, Set<Class<?>> classSet) {
+        if (!classSet.add(clazz)) {
+            return classSet;
+        }
+
+        // 是否为一个简单的javabean，为了防止不同层对象混用造成潜在的并发问题，特别是网络层和po层混用
+        // 不能是泛型类
+        AssertionUtils.isTrue(ArrayUtils.isEmpty(clazz.getTypeParameters()), "[class:{}] cannot be generic class", clazz.getCanonicalName());
+
+        var filedList = ReflectionUtils.notStaticAndTransientFields(clazz);
+
+        for (var field : filedList) {
+            // 是一个基本类型变量
+            var fieldType = field.getType();
+            if (isBaseType(fieldType)) {
+                // do nothing
+            } else if (fieldType.isArray()) {
+                // 是一个数组
+                Class<?> arrayClazz = fieldType.getComponentType();
+                relevantClass0(arrayClazz, classSet);
+            } else if (Set.class.isAssignableFrom(fieldType)) {
+                AssertionUtils.isTrue(fieldType.equals(Set.class), "[class:{}]类型声明不正确，必须是Set接口类型", clazz.getCanonicalName());
+
+                var type = field.getGenericType();
+                AssertionUtils.isTrue(type instanceof ParameterizedType, "[class:{}]类型声明不正确，不是泛型类[field:{}]", clazz.getCanonicalName(), field.getName());
+
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+                AssertionUtils.isTrue(types.length == 1, "[class:{}]中Set类型声明不正确，[field:{}]必须声明泛型类", clazz.getCanonicalName(), field.getName());
+
+                relevantClass0(types[0], classSet);
+            } else if (List.class.isAssignableFrom(fieldType)) {
+                // 是一个List
+                AssertionUtils.isTrue(fieldType.equals(List.class), "[class:{}]类型声明不正确，必须是List接口类型", clazz.getCanonicalName());
+
+                var type = field.getGenericType();
+                AssertionUtils.isTrue(type instanceof ParameterizedType, "[class:{}]类型声明不正确，不是泛型类[field:{}]", clazz.getCanonicalName(), field.getName());
+
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+                AssertionUtils.isTrue(types.length == 1, "[class:{}]中List类型声明不正确，[field:{}]必须声明泛型类", clazz.getCanonicalName(), field.getName());
+
+                relevantClass0(types[0], classSet);
+            } else if (Map.class.isAssignableFrom(fieldType)) {
+                if (!fieldType.equals(Map.class)) {
+                    throw new RunException("[class:{}]类型声明不正确，必须是Map接口类型", clazz.getCanonicalName());
+                }
+
+                var type = field.getGenericType();
+                if (!(type instanceof ParameterizedType)) {
+                    throw new RunException("[class:{}]中数组类型声明不正确，[field:{}]不是泛型类", clazz.getCanonicalName(), field.getName());
+                }
+
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+                if (types.length != 2) {
+                    throw new RunException("[class:{}]中数组类型声明不正确，[field:{}]必须声明泛型类", clazz.getCanonicalName(), field.getName());
+                }
+
+                var keyType = types[0];
+                var valueType = types[1];
+                relevantClass0(keyType, classSet);
+                relevantClass0(valueType, classSet);
+            } else {
+                relevantClass(fieldType, classSet);
+            }
+        }
+
+        return classSet;
+    }
+
+    private static void relevantClass0(Type type, Set<Class<?>> classSet) {
+        if (type instanceof ParameterizedType) {
+            // 泛型类
+            Class<?> clazz = (Class<?>) ((ParameterizedType) type).getRawType();
+            if (Set.class.equals(clazz)) {
+                // Set<Set<String>>
+                relevantClass0(((ParameterizedType) type).getActualTypeArguments()[0], classSet);
+                return;
+            } else if (List.class.equals(clazz)) {
+                // List<List<String>>
+                relevantClass0(((ParameterizedType) type).getActualTypeArguments()[0], classSet);
+                return;
+            } else if (Map.class.equals(clazz)) {
+                // Map<List<String>, List<String>>
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+                var keyType = types[0];
+                var valueType = types[1];
+                relevantClass0(keyType, classSet);
+                relevantClass0(valueType, classSet);
+                return;
+            }
+        } else if (type instanceof Class) {
+            Class<?> clazz = ((Class<?>) type);
+            if (isBaseType(clazz)) {
+                // do nothing
+                return;
+            } else if (clazz.getComponentType() != null) {
+                // 是一个二维以上数组
+                throw new RunException("不支持多维数组或集合嵌套数组[type:{}]类型，仅支持一维数组", type);
+            } else if (clazz.equals(List.class) || clazz.equals(Set.class) || clazz.equals(Map.class)) {
+                throw new RunException("不支持数组和集合联合使用[type:{}]类型", type);
+            } else {
+                if (!classSet.add(clazz)) {
+                    return;
+                }
+                relevantClass(clazz, classSet);
+                return;
+            }
+        }
+        throw new RunException("[type:{}]类型不正确", type);
+    }
+
+    private static boolean isBaseType(Class<?> clazz) {
+        return clazz.isPrimitive()
+                || Number.class.isAssignableFrom(clazz)
+                || String.class.isAssignableFrom(clazz)
+                || Boolean.class.isAssignableFrom(clazz)
+                || Character.class.isAssignableFrom(clazz);
+    }
 }
