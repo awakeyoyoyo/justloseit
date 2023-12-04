@@ -26,8 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -53,11 +51,11 @@ public class Router implements IRouter {
      */
     private final FastThreadLocal<Object> serverReceiverAttachmentThreadLocal = new FastThreadLocal<>();
 
-    /**
-     * 作为客户端，会把发送出去的signalAttachment存储在这个地方
-     * key：signalId
-     */
-    private static final Map<Integer, SignalAttachment> signalAttachmentMap = new ConcurrentHashMap<>(1000);
+//    /**
+//     * 作为客户端，会把发送出去的signalAttachment存储在这个地方
+//     * key：signalId
+//     */
+//    private static final Map<Integer, SignalAttachment> signalAttachmentMap = new ConcurrentHashMap<>(1000);
 
     @Override
     public void receive(Session session, Object packet, Object attachment) {
@@ -88,7 +86,7 @@ public class Router implements IRouter {
                 dispatchBySession(session, packet, attachment);
             } else {
                 // 客户端收到服务器应答，客户端发送的时候client为SIGNAL_NATIVE_CLIENT，服务器收到的时候将其设置为SIGNAL_SERVER
-                var removedAttachment = signalAttachmentMap.remove(signalAttachment.getSignalId());
+                var removedAttachment = (SignalAttachment) SignalBridge.removeSignalAttachment(signalAttachment);
                 if (removedAttachment == null) {
                     logger.error("client receives packet:[{}] [{}] and attachment:[{}] [{}] from server, but clientAttachmentMap has no attachment, perhaps timeout exception."
                             , packet.getClass().getSimpleName(), JsonUtils.object2String(packet), attachment.getClass(), JsonUtils.object2String(attachment));
@@ -177,7 +175,7 @@ public class Router implements IRouter {
         clientSignalAttachment.setTaskExecutorHash(taskExecutorHash);
 
         try {
-            signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
+            SignalBridge.addSignalAttachment(clientSignalAttachment);
             // 里面调用的依然是：send方法发送消息
             send(session, packet, clientSignalAttachment);
 
@@ -194,19 +192,19 @@ public class Router implements IRouter {
         } catch (TimeoutException e) {
             throw new NetTimeOutException("syncAsk timeout exception, ask:[{}], attachment:[{}]", JsonUtils.object2String(packet), JsonUtils.object2String(clientSignalAttachment));
         } finally {
-            signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
+            SignalBridge.removeSignalAttachment(clientSignalAttachment);
         }
     }
 
-    @Override
-    public void addSignalAttachment(SignalAttachment clientSignalAttachment) {
-        signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
-    }
-
-    @Override
-    public void removeSignalAttachment(SignalAttachment clientSignalAttachment) {
-        signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
-    }
+//    @Override
+//    public void addSignalAttachment(SignalAttachment clientSignalAttachment) {
+//        signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
+//    }
+//
+//    @Override
+//    public void removeSignalAttachment(SignalAttachment clientSignalAttachment) {
+//        signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
+//    }
 
 
     /**
@@ -250,7 +248,7 @@ public class Router implements IRouter {
             }).whenCompleteAsync((answer, throwable) -> {
                 // 注意：进入这个方法的时机是：在上面的receive方法中，由于是asyncAsk的消息，attachment不为空，会调用CompletableFuture的complete方法
                 try {
-                    signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
+                    SignalBridge.removeSignalAttachment(clientSignalAttachment);
                     // 接收者在同步或异步的消息处理中，又调用了异步的方法，这时候threadServerAttachment不为空
                     if (serverSignalAttachment != null) {
                         serverReceiverAttachmentThreadLocal.set(serverSignalAttachment);
@@ -277,12 +275,12 @@ public class Router implements IRouter {
                 }
 
             }, TaskBus.currentThreadExecutor());
-            signalAttachmentMap.put(clientSignalAttachment.getSignalId(), clientSignalAttachment);
+            SignalBridge.addSignalAttachment(clientSignalAttachment);
             // 等到上层调用whenComplete才会发送消息
             asyncAnswer.setAskCallback(() -> send(session, packet, clientSignalAttachment));
             return asyncAnswer;
         } catch (Exception e) {
-            signalAttachmentMap.remove(clientSignalAttachment.getSignalId());
+            SignalBridge.removeSignalAttachment(clientSignalAttachment);
             throw e;
         }
     }

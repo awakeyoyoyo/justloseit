@@ -91,4 +91,21 @@ public class SignalAttachment implements IAttachment {
         return PROTOCOL_ID;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SignalAttachment that = (SignalAttachment) o;
+        return signalId == that.signalId;
+    }
+
+    @Override
+    public int hashCode() {
+        return signalId;
+    }
+
 }

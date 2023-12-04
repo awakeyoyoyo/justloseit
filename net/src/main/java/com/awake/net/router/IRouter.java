@@ -2,7 +2,6 @@ package com.awake.net.router;
 
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
-import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.net.session.Session;
 import org.springframework.lang.Nullable;
 
@@ -55,7 +54,7 @@ public interface IRouter {
 
     <T> AsyncAnswer<T> asyncAsk(Session session, Object packet, @Nullable Class<T> answerClass, @Nullable Object argument);
 
-    void addSignalAttachment(SignalAttachment clientSignalAttachment);
-
-    void removeSignalAttachment(SignalAttachment clientSignalAttachment);
+//    void addSignalAttachment(SignalAttachment clientSignalAttachment);
+//
+//    void removeSignalAttachment(SignalAttachment clientSignalAttachment);
 }

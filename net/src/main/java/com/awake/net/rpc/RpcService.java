@@ -2,10 +2,10 @@ package com.awake.net.rpc;
 
 import com.awake.NetContext;
 import com.awake.net.config.model.ProtocolModule;
-import com.awake.net.rpc.balancer.AbstractConsumerLoadBalancer;
-import com.awake.net.rpc.balancer.IConsumerLoadBalancer;
 import com.awake.net.packet.common.Error;
 import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.router.SignalBridge;
+import com.awake.net.router.TaskBus;
 import com.awake.net.router.answer.AsyncAnswer;
 import com.awake.net.router.answer.SyncAnswer;
 import com.awake.net.router.attachment.NoAnswerAttachment;
@@ -13,7 +13,8 @@ import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.net.router.exception.ErrorResponseException;
 import com.awake.net.router.exception.NetTimeOutException;
 import com.awake.net.router.exception.UnexpectedProtocolException;
-import com.awake.net.router.TaskBus;
+import com.awake.net.rpc.balancer.AbstractConsumerLoadBalancer;
+import com.awake.net.rpc.balancer.IConsumerLoadBalancer;
 import com.awake.util.JsonUtils;
 import com.awake.util.base.CollectionUtils;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ public class RpcService implements IRpcService {
         clientSignalAttachment.setTaskExecutorHash(taskExecutorHash);
 
         try {
-            NetContext.getRouter().addSignalAttachment(clientSignalAttachment);
+            SignalBridge.addSignalAttachment(clientSignalAttachment);
             // 里面调用的依然是：send方法发送消息
             NetContext.getRouter().send(session, packet, clientSignalAttachment);
 
@@ -97,7 +98,7 @@ public class RpcService implements IRpcService {
         } catch (TimeoutException e) {
             throw new NetTimeOutException("syncAsk timeout exception, ask:[{}], attachment:[{}]", JsonUtils.object2String(packet), JsonUtils.object2String(clientSignalAttachment));
         } finally {
-            NetContext.getRouter().removeSignalAttachment(clientSignalAttachment);
+            SignalBridge.removeSignalAttachment(clientSignalAttachment);
         }
     }
 
