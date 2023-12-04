@@ -1,11 +1,12 @@
 package com.awake.configuration;
 
+import com.awake.configuration.AppConfiguration.NetAutoConfiguration;
 import com.awake.net.config.ConfigManager;
 import com.awake.net.config.model.ConsumerProperties;
 import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ProviderProperties;
-import com.awake.net.rpc.registry.RegisterVO;
 import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.rpc.registry.RegisterVO;
 import io.netty.util.NetUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @Date: 2023/10/13 17:23
  **/
 
-@SpringBootTest(classes = {AppConfiguration.class})
+@SpringBootTest(classes = {NetAutoConfiguration.class})
 public class ConfigurationTest {
 
     @Autowired

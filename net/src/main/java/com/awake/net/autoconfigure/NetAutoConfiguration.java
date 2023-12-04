@@ -10,6 +10,7 @@ import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.protocol.properties.ProtocolProperties;
 import com.awake.net.router.PacketBus;
 import com.awake.net.router.Router;
+import com.awake.net.rpc.RpcService;
 import com.awake.net.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -64,6 +65,13 @@ public class NetAutoConfiguration {
     @ConditionalOnMissingBean
     public Router router() {
         return new Router();
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RpcService rpcService() {
+        return new RpcService();
     }
 
     /**
