@@ -1,6 +1,7 @@
 package com.awake.storage.config;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @version : 1.0
@@ -10,7 +11,10 @@ import lombok.Data;
  * @Date: 2023/11/30 17:35
  **/
 @Data
+@ConfigurationProperties(prefix = StorageProperties.PREFIX)
 public class StorageProperties {
+
+    public static final String PREFIX = "awake.storage";
 
     private String id;
 
