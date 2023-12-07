@@ -18,7 +18,9 @@ public class PathMatchTesting {
     @Test
     public void resourceTest() throws IOException {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource[] resources = resolver.getResources("classpath*:com/awake/storage/**/*.class");
+//        Resource[] resources = resolver.getResources("classpath*:com/awake/storage/**/*.class");
+
+        Resource[] resources = resolver.getResources("classpath:/excel/**/StudentResource.*");
         for (Resource res : resources) {
             System.out.println(res.getDescription());
         }
