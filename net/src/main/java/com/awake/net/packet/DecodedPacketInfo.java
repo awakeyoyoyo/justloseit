@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * @version : 1.0
  * @ClassName: DecodedPacketInfo
- * @Description: TODO
+ * @Description: 解码结果
  * @Auther: awake
  * @Date: 2023/8/3 19:41
  **/

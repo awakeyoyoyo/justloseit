@@ -6,7 +6,7 @@ import org.springframework.lang.Nullable;
 /**
  * @version : 1.0
  * @ClassName: EncodePacketInfo
- * @Description: TODO
+ * @Description: 编码结果
  * @Auther: awake
  * @Date: 2023/8/3 19:44
  **/
