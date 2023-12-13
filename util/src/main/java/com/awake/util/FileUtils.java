@@ -29,6 +29,7 @@ public class FileUtils {
     private static final String WINDOWS_SEPARATOR = StringUtils.BACK_SLASH;
 
 
+
     /**
      * 获取当前系统的换行分隔符
      * <pre>
@@ -38,10 +39,12 @@ public class FileUtils {
      * </pre>
      */
     public static final String LS = System.lineSeparator();
+    public static final String LS_REGEX = "\\r?\\n";
     public static final String UNIX_LS = "\\n";
     public static final String WINDOWS_LS = "\\r\\n";
     // The file copy buffer size (30 MB)
     private static final long FILE_COPY_BUFFER_SIZE = IOUtils.BYTES_PER_MB * 30;
+
 
 
     /**
