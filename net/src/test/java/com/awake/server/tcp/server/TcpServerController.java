@@ -1,12 +1,12 @@
-package com.awake.server.server;
+package com.awake.server.tcp.server;
 
 import com.awake.NetContext;
 import com.awake.net.router.receiver.PacketReceiver;
 import com.awake.net.session.Session;
-import com.awake.server.packet.tcp.TcpHelloRequest;
-import com.awake.server.packet.tcp.TcpHelloRequest1;
-import com.awake.server.packet.tcp.TcpHelloResponse;
-import com.awake.server.packet.tcp.TcpHelloResponse1;
+import com.awake.server.tcp.packet.tcp.TcpHelloRequest;
+import com.awake.server.tcp.packet.tcp.TcpHelloRequest1;
+import com.awake.server.tcp.packet.tcp.TcpHelloResponse;
+import com.awake.server.tcp.packet.tcp.TcpHelloResponse1;
 import com.awake.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

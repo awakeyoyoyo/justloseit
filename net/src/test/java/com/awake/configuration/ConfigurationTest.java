@@ -1,6 +1,7 @@
 package com.awake.configuration;
 
-import com.awake.configuration.AppConfiguration.NetAutoConfiguration;
+
+import com.awake.net.autoconfigure.NetAutoConfiguration;
 import com.awake.net.config.ConfigManager;
 import com.awake.net.config.model.ConsumerProperties;
 import com.awake.net.config.model.NetConfig;

@@ -28,7 +28,7 @@
         <module>hotswap</module>
         <module>orm</module>
         <module>storage</module>
-        <module>protocol-genertor</module>
+        <module>protocol-generator</module>
 
     </modules>
 

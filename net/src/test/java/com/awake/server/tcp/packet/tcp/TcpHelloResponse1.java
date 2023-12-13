@@ -1,4 +1,4 @@
-package com.awake.server.packet.tcp;
+package com.awake.server.tcp.packet.tcp;
 
 import com.awake.GameModuleConstant;
 import com.awake.net.packet.IPacket;
@@ -8,17 +8,16 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 
 /**
  * @version : 1.0
- * @ClassName: TcpHelloResponse
+ * @ClassName: TcpHelloRequest2
  * @Description: TODO
  * @Auther: awake
- * @Date: 2023/9/7 16:18
+ * @Date: 2023/11/6 14:26
  **/
-
-@Packet(protocolId = TcpHelloResponse.PROTOCOL_ID,moduleId = GameModuleConstant.GAME_MODULE_ID)
+@Packet(protocolId = TcpHelloResponse1.PROTOCOL_ID,moduleId = GameModuleConstant.GAME_MODULE_ID)
 @ProtobufClass
-public class TcpHelloResponse implements IPacket {
+public class TcpHelloResponse1 implements IPacket {
     @Ignore
-    public static final int PROTOCOL_ID = 1501;
+    public static final int PROTOCOL_ID = 3001;
 
     private String message;
 
@@ -36,3 +35,4 @@ public class TcpHelloResponse implements IPacket {
         this.message = message;
     }
 }
+

@@ -1,6 +1,6 @@
 package com.awake.protocol;
 
-import com.awake.server.packet.tcp.TcpHelloRequest;
+import com.awake.server.tcp.packet.tcp.TcpHelloRequest;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 

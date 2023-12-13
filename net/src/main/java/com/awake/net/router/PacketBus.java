@@ -2,7 +2,6 @@ package com.awake.net.router;
 
 import com.awake.NetContext;
 import com.awake.exception.RunException;
-import com.awake.net.packet.IPacket;
 import com.awake.net.router.attachment.GatewayAttachment;
 import com.awake.net.router.attachment.IAttachment;
 import com.awake.net.router.receiver.EnhanceUtils;
@@ -10,9 +9,9 @@ import com.awake.net.router.receiver.IPacketReceiver;
 import com.awake.net.router.receiver.PacketReceiver;
 import com.awake.net.router.receiver.PacketReceiverDefinition;
 import com.awake.net.session.Session;
-import com.awake.util.base.ArrayUtils;
 import com.awake.util.AssertionUtils;
 import com.awake.util.ReflectionUtils;
+import com.awake.util.base.ArrayUtils;
 import com.awake.util.base.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +95,7 @@ public class PacketBus {
 
             AssertionUtils.isTrue(Session.class.isAssignableFrom(paramClazzs[0]), "[class:{}] [method:{}],the first parameter must be Session type parameter Exception.", bean.getClass().getName(), method.getName());
 
-            AssertionUtils.isTrue(IPacket.class.isAssignableFrom(paramClazzs[1]), "[class:{}] [method:{}],the second parameter must be IPacket type parameter Exception.", bean.getClass().getName(), method.getName());
+//            AssertionUtils.isTrue(IPacket.class.isAssignableFrom(paramClazzs[1]), "[class:{}] [method:{}],the second parameter must be IPacket type parameter Exception.", bean.getClass().getName(), method.getName());
 
             AssertionUtils.isTrue(paramClazzs.length != 3 || IAttachment.class.isAssignableFrom(paramClazzs[2]), "[class:{}] [method:{}],the third parameter must be IAttachment type parameter Exception.", bean.getClass().getName(), method.getName());
 
