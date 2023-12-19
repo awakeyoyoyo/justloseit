@@ -1,7 +1,6 @@
 package com.awake.net.config.model;
 
 import com.awake.net.rpc.registry.RegisterVO;
-import com.awake.net.protocol.properties.ProtocolProperties;
 import lombok.Data;
 
 import javax.annotation.Resource;
@@ -35,11 +34,6 @@ public class NetConfig {
     @Resource
     private ConsumerProperties consumer;
 
-    /**
-     * 协议配置
-     */
-    @Resource
-    private ProtocolProperties protocolConfig;
 
     public RegisterVO toLocalRegisterVO() {
         return RegisterVO.valueOf(provider, consumer);

@@ -14,6 +14,8 @@ package com.awake.server.websocket.server;
 
 
 import com.awake.NetContext;
+import com.awake.constant.ModuleId;
+import com.awake.net.router.receiver.PacketController;
 import com.awake.net.router.receiver.PacketReceiver;
 import com.awake.net.session.Session;
 import com.awake.server.websocket.packet.WebsocketHelloRequest;
@@ -27,11 +29,12 @@ import org.springframework.stereotype.Component;
  * @author awake
  */
 @Component
+@PacketController(moduleId = ModuleId.gameModule)
 public class WebsocketServerPacketController {
 
     private static final Logger logger = LoggerFactory.getLogger(WebsocketServerPacketController.class);
 
-    @PacketReceiver
+    @PacketReceiver(protocolId = WebsocketHelloRequest.PROTOCOL_ID)
     public void atWebsocketHelloRequest(Session session, WebsocketHelloRequest request) {
         logger.info("receive [packet:{}] from browser", JsonUtils.object2String(request));
 

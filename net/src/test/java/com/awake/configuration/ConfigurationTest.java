@@ -6,7 +6,7 @@ import com.awake.net.config.ConfigManager;
 import com.awake.net.config.model.ConsumerProperties;
 import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ProviderProperties;
-import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.router.PacketManager;
 import com.awake.net.rpc.registry.RegisterVO;
 import io.netty.util.NetUtil;
 import org.junit.jupiter.api.Test;
@@ -27,13 +27,13 @@ public class ConfigurationTest {
     @Autowired
     private NetConfig netConfig;
     @Autowired
-    private ProtocolManager protocolManager;
+    private PacketManager packetManager;
     @Autowired
     private ConfigManager configManager;
     @Test
     public void configurationTest() {
         System.out.println(netConfig);
-        System.out.println(protocolManager);
+        System.out.println(packetManager);
         System.out.println(configManager);
     }
 

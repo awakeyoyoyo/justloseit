@@ -1,19 +1,20 @@
-package com.awake.net.protocol.anno;
+package com.awake.net.router.receiver;
 
 import java.lang.annotation.*;
 
 /**
  * @version : 1.0
- * @ClassName: Packet
+ * @ClassName: PacketController
  * @Description: TODO
  * @Auther: awake
- * @Date: 2023/8/8 11:41
+ * @Date: 2023/12/19 14:27
  **/
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface Packet {
-    int protocolId() default 0;
+public @interface PacketController {
 
     int moduleId();
+
 }
+

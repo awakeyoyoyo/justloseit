@@ -1,9 +1,10 @@
 package com.awake.net.rpc.balancer;
 
 import com.awake.exception.RunException;
-import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.router.PacketManager;
 import com.awake.net.session.Session;
 import com.awake.util.math.RandomUtils;
+
 
 /**
  * @version : 1.0
@@ -24,7 +25,7 @@ public class RandomConsumerLoadBalancer extends AbstractConsumerLoadBalancer {
 
     @Override
     public Session loadBalancer(Object packet, Object argument) {
-        var module = ProtocolManager.moduleByProtocol(packet.getClass());
+        var module = PacketManager.moduleByProtocol(packet.getClass());
         var sessions = getSessionsByModule(module);
 
         if (sessions.isEmpty()) {

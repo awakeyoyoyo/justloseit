@@ -1,9 +1,11 @@
 package com.awake.gateway;
 
 import com.awake.NetContext;
+import com.awake.constant.ModuleId;
 import com.awake.gateway.packet.GatewayToProviderRequest;
 import com.awake.gateway.packet.GatewayToProviderResponse;
 import com.awake.net.router.attachment.GatewayAttachment;
+import com.awake.net.router.receiver.PacketController;
 import com.awake.net.router.receiver.PacketReceiver;
 import com.awake.net.session.Session;
 import com.awake.util.JsonUtils;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
  **/
 
 @Component
+@PacketController(moduleId = ModuleId.gameModule)
 public class GatewayProviderController {
 
     private static final Logger logger = LoggerFactory.getLogger(GatewayProviderController.class);
@@ -28,7 +31,7 @@ public class GatewayProviderController {
     /**
      * 注意：这里第2个请求参数以Request结尾，那么第3个参数必须是 GatewayAttachment类型(参加：PacketBus中扫描时的校验)
      */
-    @PacketReceiver
+    @PacketReceiver(protocolId = GatewayToProviderRequest.PROTOCOL_ID)
     public void atGatewayToProviderRequest(Session session, GatewayToProviderRequest request, GatewayAttachment gatewayAttachment) {
         logger.info("provider receive [packet:{}] from client", JsonUtils.object2String(request));
 

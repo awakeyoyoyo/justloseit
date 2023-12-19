@@ -1,6 +1,8 @@
 package com.awake.register.controller;
 
 import com.awake.NetContext;
+import com.awake.constant.ModuleId;
+import com.awake.net.router.receiver.PacketController;
 import com.awake.net.router.receiver.PacketReceiver;
 import com.awake.net.session.Session;
 import com.awake.register.packet.ProviderMessAnswer;
@@ -19,10 +21,11 @@ import org.springframework.stereotype.Component;
  * @Date: 2023/10/26 16:21
  **/
 @Component
+@PacketController(moduleId = ModuleId.gameModule)
 public class ProviderController {
     private static final Logger logger = LoggerFactory.getLogger(ProviderController.class);
 
-    @PacketReceiver
+    @PacketReceiver(protocolId = ProviderMessAsk.PROTOCOL_ID)
     public void atProviderMessAsk(Session session, ProviderMessAsk ask) {
         logger.info("provider receive [packet:{}] from consumer", JsonUtils.object2String(ask));
 

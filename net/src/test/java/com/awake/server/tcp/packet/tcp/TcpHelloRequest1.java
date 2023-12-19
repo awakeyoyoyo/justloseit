@@ -1,8 +1,6 @@
 package com.awake.server.tcp.packet.tcp;
 
-import com.awake.GameModuleConstant;
 import com.awake.net.packet.IPacket;
-import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 
@@ -13,7 +11,6 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
  * @Auther: awake
  * @Date: 2023/11/6 14:26
  **/
-@Packet(protocolId = TcpHelloRequest1.PROTOCOL_ID,moduleId = GameModuleConstant.GAME_MODULE_ID)
 @ProtobufClass
 public class TcpHelloRequest1 implements IPacket {
     @Ignore

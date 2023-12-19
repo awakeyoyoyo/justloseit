@@ -1,9 +1,9 @@
 package com.awake.net.config;
 
 import com.awake.net.config.model.NetConfig;
+import com.awake.net.router.PacketManager;
 import com.awake.net.rpc.registry.IRegistry;
 import com.awake.net.rpc.registry.ZookeeperRegistry;
-import com.awake.net.protocol.ProtocolManager;
 import com.awake.util.AssertionUtils;
 import com.awake.util.base.CollectionUtils;
 import com.awake.util.base.StringUtils;
@@ -58,7 +58,7 @@ public class ConfigManager implements IConfigManager {
                 int moduleId = providerModule.getProtocolModule().getId();
 
                 // 从protocol中读值
-                var protocolModule = ProtocolManager.moduleByModuleId(moduleId);
+                var protocolModule = PacketManager.moduleByModuleId(moduleId);
                 AssertionUtils.isTrue(protocolModule != null, "服务提供者[name:{}]在协议文件中不存在", protocolModuleName);
                 // 协议那边只注册moduleId
                 // 提供服务才将其模块名初始化
@@ -80,7 +80,7 @@ public class ConfigManager implements IConfigManager {
                 var protocolModuleName = consumerModule.getProtocolModule().getName();
                 int moduleId = consumerModule.getProtocolModule().getId();
 
-                var protocolModule = ProtocolManager.moduleByModuleId(moduleId);
+                var protocolModule = PacketManager.moduleByModuleId(moduleId);
                 AssertionUtils.isTrue(protocolModule != null, "服务消费者[name:{}]在协议文件中不存在", protocolModuleName);
                 // 协议那边只注册moduleId
                 // 提供服务才将其模块名初始化

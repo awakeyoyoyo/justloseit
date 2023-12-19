@@ -2,7 +2,7 @@ package com.awake.net.rpc.balancer;
 
 import com.awake.NetContext;
 import com.awake.net.config.model.ProtocolModule;
-import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.router.PacketManager;
 import com.awake.net.rpc.registry.RegisterVO;
 import com.awake.net.session.Session;
 import com.awake.util.base.StringUtils;
@@ -64,7 +64,7 @@ public abstract class AbstractConsumerLoadBalancer implements IConsumerLoadBalan
             return false;
         }
 
-        var module = ProtocolManager.moduleByProtocol(packet.getClass());
+        var module = PacketManager.moduleByProtocol(packet.getClass());
         return registerVO.getProviderConfig().getProviders().contains(module);
     }
 }

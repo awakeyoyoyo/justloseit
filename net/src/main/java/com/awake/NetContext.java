@@ -1,11 +1,10 @@
 package com.awake;
 
 import com.awake.net.config.IConfigManager;
-import com.awake.net.rpc.IRpcService;
-import com.awake.net.protocol.IProtocolManager;
+import com.awake.net.router.IPacketManager;
 import com.awake.net.router.IRouter;
-import com.awake.net.router.PacketBus;
 import com.awake.net.router.TaskBus;
+import com.awake.net.rpc.IRpcService;
 import com.awake.net.server.AbstractClient;
 import com.awake.net.server.AbstractServer;
 import com.awake.net.session.ISessionManager;
@@ -47,15 +46,10 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static IRpcService consumer;
 
-    private static PacketBus packetBus;
+    private static IPacketManager packetManager;
 
     private static ApplicationContext applicationContext;
 
-    private static IProtocolManager protocolManager;
-
-    public static IProtocolManager getProtocolManager() {
-        return protocolManager;
-    }
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
@@ -69,13 +63,12 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             NetContext.instance = this;
             applicationContext = event.getApplicationContext();
             configManager = applicationContext.getBean(IConfigManager.class);
-            packetBus = applicationContext.getBean(PacketBus.class);
+            packetManager = applicationContext.getBean(IPacketManager.class);
             router = applicationContext.getBean(IRouter.class);
             sessionManager = applicationContext.getBean(ISessionManager.class);
-            protocolManager = applicationContext.getBean(IProtocolManager.class);
             consumer = applicationContext.getBean(IRpcService.class);
             //初始化packet
-            packetBus.init(event.getApplicationContext());
+            packetManager.init(event.getApplicationContext());
             configManager.initRegistry();
             consumer.init();
             stopWatch.tag("[Net]");
@@ -146,6 +139,11 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     public static IRpcService getConsumer() {
         return consumer;
+    }
+
+
+    public static IPacketManager getPacketManager() {
+        return packetManager;
     }
 
 }

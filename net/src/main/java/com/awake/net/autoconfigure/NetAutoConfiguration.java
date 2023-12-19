@@ -6,9 +6,8 @@ import com.awake.net.config.model.ConsumerProperties;
 import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ProviderProperties;
 import com.awake.net.config.model.RegistryProperties;
-import com.awake.net.protocol.ProtocolManager;
-import com.awake.net.protocol.properties.ProtocolProperties;
-import com.awake.net.router.PacketBus;
+
+import com.awake.net.router.PacketManager;
 import com.awake.net.router.Router;
 import com.awake.net.rpc.RpcService;
 import com.awake.net.session.SessionManager;
@@ -27,8 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties({RegistryProperties.class
         , ProviderProperties.class
-        , ConsumerProperties.class
-        , ProtocolProperties.class})
+        , ConsumerProperties.class})
 public class NetAutoConfiguration {
 
     /**
@@ -49,14 +47,6 @@ public class NetAutoConfiguration {
         return new ConfigManager();
     }
 
-    /**
-     * 协议解析
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public ProtocolManager protocolManager() {
-        return new ProtocolManager();
-    }
 
     /**
      * 路由
@@ -79,8 +69,8 @@ public class NetAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public PacketBus packetBus() {
-        return new PacketBus();
+    public PacketManager packetManager() {
+        return new PacketManager();
     }
 
     /**
