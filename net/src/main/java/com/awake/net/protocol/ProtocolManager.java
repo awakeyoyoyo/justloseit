@@ -1,10 +1,11 @@
 package com.awake.net.protocol;
 
 import com.awake.net.config.model.ProtocolModule;
-import com.awake.net.protocol.anno.Packet;
 import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.protocol.properties.ProtocolProperties;
+import com.awake.orm.model.Pair;
 import com.awake.util.AssertionUtils;
+import com.awake.util.ReflectionUtils;
 import com.awake.util.base.StringUtils;
 import com.awake.util.clazz.ClassUtil;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
@@ -16,7 +17,10 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,6 +41,12 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     public static final String ATTACHMENT_PACKET = "com.awake.net.router.attachment";
     public static final String COMMON_PACKET = "com.awake.net.packet.common";
     public static final String GATEWAY_PACKET = "com.awake.net.gateway.core.packet";
+
+    public static final String COMMON_MODULE = "com.awake.net.gateway.module";
+
+    public static final String MODULE_NAME_RULE = "Module";
+
+    public static final String MODULE_ID_NAME_RULE = "ModuleId";
     @Resource
     private ProtocolProperties protocolProperties;
 
@@ -91,7 +101,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     @Override
     public int getProtocolId(Class<?> packetClazz) {
         for (ProtocolDefinition definition : protocolDefinitionHashMap.values()) {
-            if (definition.getProtocolClass().equals(packetClazz)){
+            if (definition.getProtocolClass().equals(packetClazz)) {
                 return definition.getProtocolId();
             }
         }
@@ -101,25 +111,59 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     @Override
     public void afterPropertiesSet() {
         String scanProtocolPacket = protocolProperties.getScanProtocolPacket();
-        String scanPackage = StringUtils.joinWith(StringUtils.COMMA, GATEWAY_PACKET, ATTACHMENT_PACKET, COMMON_PACKET, scanProtocolPacket);
-        logger.info("[ProtocolManager] scan packages [{}]", scanPackage);
-        Set<Class> packageClass = ClassUtil.scanPackageClass(scanPackage);
+        String scanProtocolPackages = StringUtils.joinWith(StringUtils.COMMA, GATEWAY_PACKET, ATTACHMENT_PACKET, COMMON_PACKET, scanProtocolPacket);
+        logger.info("[ProtocolManager] scan protocol packages [{}]", scanProtocolPackages);
+        Set<Class> packageClass = ClassUtil.scanPackageClass(scanProtocolPackages);
+
+        String scanModulePacket = protocolProperties.getScanModulePacket();
+        String scaModulePackages = StringUtils.joinWith(StringUtils.COMMA, COMMON_MODULE, scanModulePacket);
+        Set<Class> moduleClass = scanModuleClass(scaModulePackages);
+        logger.info("[ProtocolManager] scan module packages [{}]", scaModulePackages);
         if (packageClass.isEmpty()) {
             logger.warn("There are no protocol class.");
             return;
         }
-        for (Class clazz : packageClass) {
-            Annotation packetAnnotation = clazz.getAnnotation(Packet.class);
-            if (packetAnnotation == null) {
-                continue;
+        if (moduleClass.isEmpty()) {
+            logger.warn("There are no module class.");
+            return;
+        }
+        Map<String, Pair<Integer, Integer>> protocolName2ModuleIdAndProtocolIdMap = new HashMap<>();
+        for (Class<?> moduleClazz : moduleClass) {
+            //模块id
+            String moduleName = StringUtils.substringBeforeFirst(moduleClazz.getSimpleName(), MODULE_NAME_RULE);
+            Field moduleIdField = ReflectionUtils.getFieldByNameInPOJOClass(moduleClazz, MODULE_ID_NAME_RULE);
+            var moduleId = (int) ReflectionUtils.getField(moduleIdField, null);
+
+            Field[] fields = moduleClazz.getDeclaredFields();
+            for (Field field : fields) {
+                String fileName = field.getName();
+                if (fileName.contains(MODULE_ID_NAME_RULE)) {
+                    continue;
+                }
+                int protocolId = (int) ReflectionUtils.getField(field, null);
+                if (protocolName2ModuleIdAndProtocolIdMap.containsKey(fileName)) {
+                    throw new IllegalArgumentException(StringUtils.format("[protocol class:{}]  duplicate protocol registration", fileName));
+                }
+                protocolName2ModuleIdAndProtocolIdMap.put(fileName, new Pair(moduleId, protocolId));
             }
+            //注册模块->
+            if (modules[moduleId] == null) {
+                modules[moduleId] = new ProtocolModule(moduleId, moduleName);
+            }
+        }
+
+        for (Class clazz : packageClass) {
             Annotation protoAnnotation = clazz.getAnnotation(ProtobufClass.class);
             if (protoAnnotation == null) {
                 throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a ProtobufClass anno!", clazz.getName()));
             }
-            Packet packet = (Packet) packetAnnotation;
-            var protocolId = packet.protocolId();
-            var moduleId = packet.moduleId();
+            var moduleIdAndProtocolIdPair = protocolName2ModuleIdAndProtocolIdMap.get(clazz.getSimpleName());
+            if (moduleIdAndProtocolIdPair == null) {
+                throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a moduleId nad protocolId !", clazz.getName()));
+            }
+            var protocolId = moduleIdAndProtocolIdPair.getValue();
+            var moduleId = moduleIdAndProtocolIdPair.getKey();
+
             if (protocolDefinitionHashMap.containsKey(protocolId)) {
                 throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a unique protocolId : [{}]!", clazz.getName(), protocolId));
             }
@@ -129,10 +173,6 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             //注册协议
             protocolDefinitionHashMap.put(protocolId, protocolDefinition);
             protocols[protocolId] = protocolDefinition;
-            //注册模块->
-            if (modules[moduleId] == null) {
-                modules[moduleId] = new ProtocolModule(moduleId, "");
-            }
             protocolName2ProtocolIdHashMap.put(clazz.getSimpleName(), protocolId);
         }
         if (protocolDefinitionHashMap.isEmpty()) {
@@ -142,6 +182,19 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             logger.info("register packet :[{}]", protocolDefinition);
         }
     }
+
+    private Set<Class> scanModuleClass(String scaModulePackages) {
+        Set<Class> result=new HashSet<>();
+        Set<Class> moduleClass = ClassUtil.scanPackageClass(scaModulePackages);
+        for (Class moduleClazz : moduleClass) {
+            if (!moduleClazz.getSimpleName().contains(MODULE_NAME_RULE)){
+                continue;
+            }
+            result.add(moduleClazz);
+        }
+        return moduleClass;
+    }
+
 
     public static void main(String[] args) {
 

@@ -4,6 +4,8 @@ import com.awake.util.base.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @version : 1.0
  * @ClassName: ProtocolModule
@@ -15,11 +17,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProtocolModule {
 
-    public static final ProtocolModule DEFAULT_PROTOCOL_MODULE = new ProtocolModule((byte) 0, "default");
-
     private int id;
 
     private String name;
+
+    private List<Integer> protocolIds;
 
     public ProtocolModule(int id, String name) {
         if (id < 0) {

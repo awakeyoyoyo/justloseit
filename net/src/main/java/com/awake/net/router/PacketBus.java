@@ -47,8 +47,6 @@ public class PacketBus {
     public static final String NET_NOTICE_SUFFIX = "Notice";
 
 
-    public static final String NET_COMMON_MODULE = "common";
-
 
     private static final Logger logger = LoggerFactory.getLogger(PacketBus.class);
 

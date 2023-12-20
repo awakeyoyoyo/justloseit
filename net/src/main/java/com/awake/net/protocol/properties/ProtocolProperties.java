@@ -18,5 +18,5 @@ public class ProtocolProperties {
 
     private String scanProtocolPacket;
 
-
+    private String scanModulePacket;
 }
