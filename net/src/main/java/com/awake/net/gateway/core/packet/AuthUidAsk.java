@@ -1,5 +1,7 @@
 package com.awake.net.gateway.core.packet;
 
+import com.awake.net.packet.common.ModuleConstant;
+import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
@@ -12,6 +14,7 @@ import lombok.Data;
  * @Date: 2023/10/11 17:55
  **/
 
+@Packet(protocolId = AuthUidAsk.PROTOCOL_ID, moduleId = ModuleConstant.GATEWAY_MODULE_ID)
 @ProtobufClass
 @Data
 public class AuthUidAsk {

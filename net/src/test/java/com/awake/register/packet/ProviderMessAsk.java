@@ -1,6 +1,7 @@
 package com.awake.register.packet;
 
 import com.awake.net.packet.IPacket;
+import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
@@ -13,6 +14,7 @@ import lombok.Data;
  * @Date: 2023/10/25 18:18
  **/
 
+@Packet(protocolId = ProviderMessAsk.PROTOCOL_ID, moduleId = 3)
 @ProtobufClass
 @Data
 public class ProviderMessAsk implements IPacket {

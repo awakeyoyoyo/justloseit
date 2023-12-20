@@ -2,9 +2,9 @@ package com.awake.net.rpc.balancer;
 
 import com.awake.NetContext;
 import com.awake.exception.RunException;
-import com.awake.net.router.PacketManager;
 import com.awake.orm.model.Pair;
 import com.awake.net.config.model.ProtocolModule;
+import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.session.Session;
 import com.awake.net.util.ConsistentHash;
 import com.awake.net.util.FastTreeMapIntLong;
@@ -28,7 +28,7 @@ public class ConsistentHashConsumerLoadBalancer extends AbstractConsumerLoadBala
 
 
     private volatile int lastClientSessionChangeId = 0;
-    private static final AtomicReferenceArray<FastTreeMapIntLong> consistentHashMap = new AtomicReferenceArray<>(PacketManager.MAX_MODULE_NUM);
+    private static final AtomicReferenceArray<FastTreeMapIntLong> consistentHashMap = new AtomicReferenceArray<>(ProtocolManager.MAX_MODULE_NUM);
     private static final int VIRTUAL_NODE_NUMS = 200;
 
     private ConsistentHashConsumerLoadBalancer() {
@@ -54,18 +54,18 @@ public class ConsistentHashConsumerLoadBalancer extends AbstractConsumerLoadBala
         // 如果更新时间不匹配，则更新到最新的服务提供者
         var currentClientSessionChangeId = NetContext.getSessionManager().getClientSessionChangeId();
         if (currentClientSessionChangeId != lastClientSessionChangeId) {
-            for (byte i = 0; i < PacketManager.MAX_MODULE_NUM; i++) {
+            for (byte i = 0; i < ProtocolManager.MAX_MODULE_NUM; i++) {
                 var consistentHash = consistentHashMap.get(i);
                 if (consistentHash == null) {
                     continue;
                 }
-                var module = PacketManager.moduleByModuleId(i);
+                var module = ProtocolManager.moduleByModuleId(i);
                 updateModuleToConsistentHash(module);
             }
             lastClientSessionChangeId = currentClientSessionChangeId;
         }
 
-        var module = PacketManager.moduleByProtocol(packet.getClass());
+        var module = ProtocolManager.moduleByProtocol(packet.getClass());
         var fastTreeMap = consistentHashMap.get(module.getId());
         if (fastTreeMap == null) {
             fastTreeMap = updateModuleToConsistentHash(module);

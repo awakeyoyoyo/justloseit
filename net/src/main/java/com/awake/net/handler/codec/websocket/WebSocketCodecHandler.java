@@ -3,8 +3,8 @@ package com.awake.net.handler.codec.websocket;
 import com.awake.NetContext;
 import com.awake.net.packet.DecodedPacketInfo;
 import com.awake.net.packet.EncodedPacketInfo;
+import com.awake.net.protocol.definition.ProtocolDefinition;
 import com.awake.net.router.attachment.IAttachment;
-import com.awake.net.router.receiver.ProtocolDefinition;
 import com.awake.util.IOUtils;
 import com.awake.util.base.StringUtils;
 import com.baidu.bjf.remoting.protobuf.Codec;
@@ -58,7 +58,7 @@ public class WebSocketCodecHandler extends MessageToMessageCodec<WebSocketFrame,
 
         Object packet;
         Object attachment = null;
-        ProtocolDefinition packetDefinition = NetContext.getPacketManager().getProtocolDefinition(packetProtocolId);
+        ProtocolDefinition packetDefinition = NetContext.getProtocolManager().getProtocolDefinition(packetProtocolId);
         if (packetDefinition==null){
             throw new IllegalArgumentException(StringUtils.format("illegal packetProtocolId no register [packetProtocolId:{}]", packetProtocolId));
         }
@@ -72,7 +72,7 @@ public class WebSocketCodecHandler extends MessageToMessageCodec<WebSocketFrame,
             //附加包id
             int attachmentProtocolId = sliceByteBuf.readInt();
             //附加包
-            ProtocolDefinition attachmentDefinition = NetContext.getPacketManager().getProtocolDefinition(attachmentProtocolId);
+            ProtocolDefinition attachmentDefinition = NetContext.getProtocolManager().getProtocolDefinition(attachmentProtocolId);
             Codec attachmentCodec = ProtobufProxy.create(attachmentDefinition.getProtocolClass());
             byte[] attachmentBytes = new byte[attachmentLength];
             sliceByteBuf.readBytes(attachmentBytes);
@@ -91,7 +91,7 @@ public class WebSocketCodecHandler extends MessageToMessageCodec<WebSocketFrame,
     protected void encode(ChannelHandlerContext channelHandlerContext, EncodedPacketInfo packetInfo, List<Object> list) throws IOException {
         var byteBuf = channelHandlerContext.alloc().ioBuffer();
         Object packet = packetInfo.getPacket();
-        int protocolId = NetContext.getPacketManager().getProtocolId(packet.getClass());
+        int protocolId = NetContext.getProtocolManager().getProtocolId(packet.getClass());
         Object attachmentObj = packetInfo.getAttachment();
         //默認有包頭長度4byte
         int packetLength = PACKET_HEAD_LENGTH;

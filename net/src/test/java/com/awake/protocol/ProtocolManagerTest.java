@@ -1,6 +1,7 @@
 package com.awake.protocol;
 
-import com.awake.net.router.PacketManager;import com.awake.net.router.receiver.ProtocolDefinition;
+import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.protocol.definition.ProtocolDefinition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +18,10 @@ import java.util.Map.Entry;
 @SpringBootTest(classes = {ApplicationConfiguration.class})
 public class ProtocolManagerTest {
     @Autowired
-    private PacketManager packetManager;
+    private ProtocolManager protocolManager;
     @Test
     public void startServer() {
-        for (Entry<Integer, ProtocolDefinition> entry : packetManager.getProtocolDefinitionHashMap().entrySet()) {
+        for (Entry<Integer, ProtocolDefinition> entry : protocolManager.getProtocolDefinitionHashMap().entrySet()) {
 
             System.out.println("protocolId:"+entry.getKey()+"- classSimpleName:"+entry.getValue().getProtocolClass().getSimpleName());
         }

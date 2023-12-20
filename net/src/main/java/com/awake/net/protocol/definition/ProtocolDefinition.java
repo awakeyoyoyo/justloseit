@@ -1,4 +1,4 @@
-package com.awake.net.router.definition;
+package com.awake.net.protocol.definition;
 
 import lombok.Data;
 

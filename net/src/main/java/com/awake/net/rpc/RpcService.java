@@ -3,7 +3,7 @@ package com.awake.net.rpc;
 import com.awake.NetContext;
 import com.awake.net.config.model.ProtocolModule;
 import com.awake.net.packet.common.Error;
-import com.awake.net.router.PacketManager;
+import com.awake.net.protocol.ProtocolManager;
 import com.awake.net.router.SignalBridge;
 import com.awake.net.router.TaskBus;
 import com.awake.net.router.answer.AsyncAnswer;
@@ -62,7 +62,7 @@ public class RpcService implements IRpcService {
     @Override
     public void send(Object packet, Object argument) {
         try {
-            var loadBalancer = loadBalancer(PacketManager.moduleByProtocol(packet.getClass()));
+            var loadBalancer = loadBalancer(ProtocolManager.moduleByProtocol(packet.getClass()));
             var session = loadBalancer.loadBalancer(packet, argument);
             var taskExecutorHash = TaskBus.calTaskExecutorHash(argument);
             NetContext.getRouter().send(session, packet, NoAnswerAttachment.valueOf(taskExecutorHash));
@@ -73,7 +73,7 @@ public class RpcService implements IRpcService {
 
     @Override
     public <T> SyncAnswer<T> syncAsk(Object packet, Class<T> answerClass, Object argument) throws Exception {
-        var loadBalancer = loadBalancer(PacketManager.moduleByProtocol(packet.getClass()));
+        var loadBalancer = loadBalancer(ProtocolManager.moduleByProtocol(packet.getClass()));
         var session = loadBalancer.loadBalancer(packet, argument);
         // 下面的代码逻辑同Router的syncAsk，如果修改的话，记得一起修改
         var clientSignalAttachment = new SignalAttachment();
@@ -104,7 +104,7 @@ public class RpcService implements IRpcService {
 
     @Override
     public <T> AsyncAnswer<T> asyncAsk(Object packet, Class<T> answerClass, Object argument) {
-        var loadBalancer = loadBalancer(PacketManager.moduleByProtocol(packet.getClass()));
+        var loadBalancer = loadBalancer(ProtocolManager.moduleByProtocol(packet.getClass()));
         var session = loadBalancer.loadBalancer(packet, argument);
         var asyncAnswer = NetContext.getRouter().asyncAsk(session, packet, answerClass, argument);
 

@@ -1,6 +1,8 @@
 package com.awake.net.router.attachment;
 
 import com.awake.net.packet.common.AttachmentType;
+import com.awake.net.packet.common.ModuleConstant;
+import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import lombok.Data;
@@ -12,6 +14,7 @@ import lombok.Data;
  * @Auther: awake
  * @Date: 2023/9/6 11:44
  **/
+@Packet(protocolId = SignalOnlyAttachment.PROTOCOL_ID, moduleId = ModuleConstant.COMMON_MODULE_ID)
 @ProtobufClass
 @Data
 public class SignalOnlyAttachment implements IAttachment {

@@ -17,7 +17,6 @@ import com.awake.net.router.attachment.SignalAttachment;
 import com.awake.net.router.exception.ErrorResponseException;
 import com.awake.net.router.exception.NetTimeOutException;
 import com.awake.net.router.exception.UnexpectedProtocolException;
-import com.awake.net.router.receiver.IPacketReceiver;
 import com.awake.net.session.Session;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.JsonUtils;
@@ -295,8 +294,7 @@ public class Router implements IRouter {
             }
             // 调用PacketReceiver,进行真正的业务处理,这个submit只是根据packet找到protocolId，然后调用对应的消息处理方法
             // 这个在哪个线程处理取决于：这个上层的PacketReceiverTask被丢到了哪个线程中
-            IPacketReceiver receiver = NetContext.getPacketManager().getPacketReceiver(packet);
-            receiver.invoke(session, packet, attachment);
+            PacketBus.route(session, packet, attachment);
         } catch (Exception e) {
             EventBus.publicEvent(ServerExceptionEvent.valueOf(session, packet, attachment, e));
             logger.error(StringUtils.format("e[uid:{}][sid:{}] unknown exception", session.getUid(), session.getSid(), e.getMessage()), e);

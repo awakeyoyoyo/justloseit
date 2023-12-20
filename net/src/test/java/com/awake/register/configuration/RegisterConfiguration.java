@@ -7,7 +7,9 @@ import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ProviderProperties;
 import com.awake.net.config.model.RegistryProperties;
 import com.awake.net.rpc.RpcService;
-import com.awake.net.router.PacketManager;
+import com.awake.net.protocol.ProtocolManager;
+import com.awake.net.protocol.properties.ProtocolProperties;
+import com.awake.net.router.PacketBus;
 import com.awake.net.router.Router;
 import com.awake.net.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +33,8 @@ public class RegisterConfiguration {
     @Configuration
     @EnableConfigurationProperties({RegistryProperties.class
             , ProviderProperties.class
-            , ConsumerProperties.class})
+            , ConsumerProperties.class
+            , ProtocolProperties.class})
     public static class NetAutoConfiguration {
 
         //配置-整合
@@ -48,6 +51,12 @@ public class RegisterConfiguration {
             return new ConfigManager();
         }
 
+        //协议解析
+        @Bean
+        @ConditionalOnMissingBean
+        public ProtocolManager protocolManager() {
+            return new ProtocolManager();
+        }
 
         //路由
         @Bean
@@ -65,8 +74,8 @@ public class RegisterConfiguration {
         //协议管理
         @Bean
         @ConditionalOnMissingBean
-        public PacketManager packetManager() {
-            return new PacketManager();
+        public PacketBus packetBus() {
+            return new PacketBus();
         }
 
         //会话状态管理
