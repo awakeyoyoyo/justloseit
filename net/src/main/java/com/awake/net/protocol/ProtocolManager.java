@@ -42,7 +42,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     public static final String COMMON_PACKET = "com.awake.net.packet.common";
     public static final String GATEWAY_PACKET = "com.awake.net.gateway.core.packet";
 
-    public static final String COMMON_MODULE = "com.awake.net.gateway.module";
+    public static final String COMMON_MODULE = "com.awake.net.module";
 
     public static final String MODULE_NAME_RULE = "Module";
 
@@ -153,6 +153,13 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
         }
 
         for (Class clazz : packageClass) {
+            //适配 拥有接口的协议类
+            if (clazz.isInterface()) {
+                continue;
+            }
+            if (clazz.isEnum()) {
+                continue;
+            }
             Annotation protoAnnotation = clazz.getAnnotation(ProtobufClass.class);
             if (protoAnnotation == null) {
                 throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a ProtobufClass anno!", clazz.getName()));

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date: 2023/9/7 16:21
  **/
 @Configuration
-@ComponentScans(value = {@ComponentScan("com.awake.server")})
+@ComponentScans(value = {@ComponentScan("com.awake.server.tcp")})
 public class ApplicationConfiguration {
 
 

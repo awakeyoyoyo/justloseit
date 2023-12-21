@@ -12,15 +12,12 @@
 
 package com.awake.server.websocket.packet;
 
-import com.awake.GameModuleConstant;
-import com.awake.net.protocol.anno.Packet;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 
 /**
  * @author godotg
  */
-@Packet(protocolId = WebsocketHelloResponse.PROTOCOL_ID,moduleId = GameModuleConstant.GAME_MODULE_ID)
 @ProtobufClass
 public class WebsocketHelloResponse {
     @Ignore
