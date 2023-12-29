@@ -1,4 +1,4 @@
-package com.awake.server.module;
+package com.awake.module;
 
 /**
  * @version : 1.0
@@ -15,4 +15,12 @@ public interface GameTestModule {
     int TcpHelloRequest1 = 2002;
     int TcpHelloResponse1 = 2003;
 
+    int WebsocketHelloRequest=1600;
+    int WebsocketHelloResponse=1601;
+
+    int GatewayToProviderRequest=5001;
+    int GatewayToProviderResponse=5002;
+
+    int ProviderMessAsk=1300;
+    int ProviderMessAnswer=1301;
 }
