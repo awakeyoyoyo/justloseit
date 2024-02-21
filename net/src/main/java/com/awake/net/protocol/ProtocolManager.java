@@ -162,7 +162,8 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             }
             Annotation protoAnnotation = clazz.getAnnotation(ProtobufClass.class);
             if (protoAnnotation == null) {
-                throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a ProtobufClass anno!", clazz.getName()));
+                continue;
+//                throw new IllegalArgumentException(StringUtils.format("[packet class:{}] must have a ProtobufClass anno!", clazz.getName()));
             }
             var moduleIdAndProtocolIdPair = protocolName2ModuleIdAndProtocolIdMap.get(clazz.getSimpleName());
             if (moduleIdAndProtocolIdPair == null) {

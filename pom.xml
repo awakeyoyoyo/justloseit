@@ -63,7 +63,7 @@
         <jprotobuf.version>2.4.17</jprotobuf.version>
         <jprotobuf.precompile.version>2.2.2</jprotobuf.precompile.version>
         <!--lombok-->
-        <lombok.version>1.18.10</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <!-- Office document parsing -->
         <poi.version>5.2.3</poi.version>
         <csv.version>1.10.0</csv.version>

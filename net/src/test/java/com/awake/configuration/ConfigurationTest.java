@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @Date: 2023/10/13 17:23
  **/
 
-@SpringBootTest(classes = {NetAutoConfiguration.class})
+@SpringBootTest(classes = {TestConfiguration.class})
 public class ConfigurationTest {
 
     @Autowired

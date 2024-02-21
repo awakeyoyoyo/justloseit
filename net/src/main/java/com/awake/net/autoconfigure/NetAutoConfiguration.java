@@ -7,7 +7,8 @@ import com.awake.net.config.model.NetConfig;
 import com.awake.net.config.model.ProviderProperties;
 import com.awake.net.config.model.RegistryProperties;
 
-import com.awake.net.router.PacketManager;
+
+import com.awake.net.router.PacketBus;
 import com.awake.net.router.Router;
 import com.awake.net.rpc.RpcService;
 import com.awake.net.session.SessionManager;
@@ -69,8 +70,8 @@ public class NetAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    public PacketManager packetManager() {
-        return new PacketManager();
+    public PacketBus packetBus() {
+        return new PacketBus();
     }
 
     /**
