@@ -1,8 +1,12 @@
 package com.awake.net2;
 
+import com.awake.net2.protocol.IProtocolManager;
+import com.awake.net2.router.IRouter;
 import com.awake.net2.server.AbstractClient;
 import com.awake.net2.server.AbstractServer;
 import com.awake.net2.session.ISessionManager;
+import com.awake.util.IOUtils;
+import com.awake.util.time.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -32,11 +36,11 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static ApplicationContext applicationContext;
 
-//    private static IProtocolManager protocolManager;
+    private static IProtocolManager protocolManager;
 
-//    public static IProtocolManager getProtocolManager() {
-//        return protocolManager;
-//    }
+    public static IProtocolManager getProtocolManager() {
+        return protocolManager;
+    }
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
@@ -53,7 +57,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 //            packetBus = applicationContext.getBean(PacketBus.class);
 //            router = applicationContext.getBean(IRouter.class);
             sessionManager = applicationContext.getBean(ISessionManager.class);
-//            protocolManager = applicationContext.getBean(IProtocolManager.class);
+            protocolManager = applicationContext.getBean(IProtocolManager.class);
             //初始化packet
 //            packetBus.init(applicationContext);
             stopWatch.tag("[Net]");
@@ -112,9 +116,9 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
         return sessionManager;
     }
 
-//    public static IRouter getRouter() {
-//        return router;
-//    }
+    public static IRouter getRouter() {
+        return null;
+    }
 //
 //
 //    public static IConfigManager getConfigManager() {
