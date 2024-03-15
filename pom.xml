@@ -29,6 +29,7 @@
         <module>orm</module>
         <module>storage</module>
         <module>protocol-generator</module>
+        <module>net2</module>
 
     </modules>
 
