@@ -12,4 +12,12 @@ import lombok.Data;
 public class CmdPacket {
     private int protoId;
     private byte[] packetData;
+
+
+    public static CmdPacket valueOf(int protoId, byte[] packetData){
+        CmdPacket cmdPacket=new CmdPacket();
+        cmdPacket.setProtoId(protoId);
+        cmdPacket.setPacketData(packetData);
+        return cmdPacket;
+    }
 }
