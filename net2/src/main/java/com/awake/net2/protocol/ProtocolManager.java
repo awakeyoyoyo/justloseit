@@ -8,6 +8,7 @@ import com.awake.util.base.StringUtils;
 import com.awake.util.clazz.ClassUtil;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,10 +26,9 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(ProtocolManager.class);
 
-    public static final String COMMON_PACKET = "com.awake.net.packet.common";
-    public static final String GATEWAY_PACKET = "com.awake.net.gateway.core.packet";
+    public static final String COMMON_PACKET = "com.awake.net2.packet.common";
 
-    public static final String COMMON_MODULE = "com.awake.net.module";
+    public static final String COMMON_MODULE = "com.awake.net2.module";
 
     public static final String MODULE_NAME_RULE = "Module";
 
@@ -63,7 +63,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
     @Override
     public void afterPropertiesSet() {
         String scanProtocolPacket = protocolProperties.getScanProtocolPacket();
-        String scanProtocolPackages = StringUtils.joinWith(StringUtils.COMMA, GATEWAY_PACKET, COMMON_PACKET, scanProtocolPacket);
+        String scanProtocolPackages = StringUtils.joinWith(StringUtils.COMMA, COMMON_PACKET, scanProtocolPacket);
         logger.info("[ProtocolManager] scan protocol packages [{}]", scanProtocolPackages);
         Set<Class> packageClass = ClassUtil.scanPackageClass(scanProtocolPackages);
 
@@ -164,5 +164,13 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
             result.add(moduleClazz);
         }
         return moduleClass;
+    }
+
+    public static HashMap<Integer, ProtocolDefinition> getProtocolDefinitionHashMap() {
+        return protocolDefinitionHashMap;
+    }
+
+    public static HashMap<Integer, Set<Integer>> getModuleId2ProtocolId() {
+        return moduleId2ProtocolId;
     }
 }
