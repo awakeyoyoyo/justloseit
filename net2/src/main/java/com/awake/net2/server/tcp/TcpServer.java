@@ -29,9 +29,5 @@ public class TcpServer extends AbstractServer<SocketChannel> {
         channel.pipeline().addLast(new ServerRouterHandler());
     }
 
-    @Override
-    public void start() {
-
-    }
 }
 

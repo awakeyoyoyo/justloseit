@@ -122,6 +122,6 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     }
 
     public static IRouter getRouter() {
-        return null;
+        return router;
     }
 }

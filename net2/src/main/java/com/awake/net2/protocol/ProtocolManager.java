@@ -56,7 +56,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
 
     @Override
     public int getProtocolId(Class<?> packetClazz) {
-        return 0;
+        return protocolName2ProtocolIdHashMap.get(packetClazz.getSimpleName());
     }
 
 
