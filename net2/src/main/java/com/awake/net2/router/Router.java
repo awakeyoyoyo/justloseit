@@ -1,12 +1,19 @@
 package com.awake.net2.router;
 
 import com.awake.event.manger.EventBus;
+import com.awake.net2.NetContext;
 import com.awake.net2.event.ServerExceptionEvent;
+import com.awake.net2.packet.CmdPacket;
 import com.awake.net2.packet.common.Heartbeat;
+import com.awake.net2.protocol.definition.ProtocolDefinition;
 import com.awake.net2.session.Session;
 import com.awake.util.base.StringUtils;
+import com.baidu.bjf.remoting.protobuf.Codec;
+import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * @Author：lqh
@@ -16,8 +23,28 @@ public class Router implements IRouter {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
 
     @Override
-    public void send(Session session, Object packet) {
-
+    public void send(Session session,int protoId, Object packet) {
+        if (session == null) {
+            logger.error("session is null and can not be sent.");
+            return;
+        }
+        if (packet == null) {
+            logger.error("packet is null and can not be sent.");
+            return;
+        }
+        try {
+            ProtocolDefinition protocolDefinition = NetContext.getProtocolManager().getProtocolDefinition(protoId);
+            Class protocolClass = protocolDefinition.getProtocolClass();
+            Codec cmdPacketCodec = ProtobufProxy.create(protocolClass);
+            CmdPacket cmdPacket = CmdPacket.valueOf(protoId, cmdPacketCodec.encode(packet));
+            var channel = session.getChannel();
+            if (!channel.isActive() || !channel.isWritable()) {
+                logger.warn("send msg error, protocol=[{}] isActive=[{}] isWritable=[{}]", packet.getClass().getSimpleName(), channel.isActive(), channel.isWritable());
+            }
+            channel.writeAndFlush(cmdPacket);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
