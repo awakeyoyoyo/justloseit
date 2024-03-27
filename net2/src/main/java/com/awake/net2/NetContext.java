@@ -2,10 +2,16 @@ package com.awake.net2;
 
 import com.awake.net2.protocol.IProtocolManager;
 import com.awake.net2.router.IRouter;
+import com.awake.net2.router.PacketBus;
+import com.awake.net2.router.TaskBus;
 import com.awake.net2.server.AbstractClient;
 import com.awake.net2.server.AbstractServer;
 import com.awake.net2.session.ISessionManager;
+import com.awake.scheduler.SchedulerContext;
+import com.awake.thread.pool.model.ThreadActorPoolModel;
+import com.awake.util.ExceptionUtils;
 import com.awake.util.IOUtils;
+import com.awake.util.ReflectionUtils;
 import com.awake.util.time.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +21,8 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
+
+import java.lang.reflect.Field;
 
 /**
  * @Author：lqh
@@ -28,11 +36,9 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static ISessionManager sessionManager;
 
-//    private static IConfigManager configManager;
-//
-//    private static IRouter router;
-//
-//    private static PacketBus packetBus;
+    private static IRouter router;
+
+    private static PacketBus packetBus;
 
     private static ApplicationContext applicationContext;
 
@@ -53,13 +59,12 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
              */
             NetContext.instance = this;
             applicationContext = event.getApplicationContext();
-//            configManager = applicationContext.getBean(IConfigManager.class);
-//            packetBus = applicationContext.getBean(PacketBus.class);
-//            router = applicationContext.getBean(IRouter.class);
+            packetBus = applicationContext.getBean(PacketBus.class);
+            router = applicationContext.getBean(IRouter.class);
             sessionManager = applicationContext.getBean(ISessionManager.class);
             protocolManager = applicationContext.getBean(IProtocolManager.class);
             //初始化packet
-//            packetBus.init(applicationContext);
+            packetBus.init(applicationContext);
             stopWatch.tag("[Net]");
             stopWatch.stop();
             logger.info("Net started successfully");
@@ -80,7 +85,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     }
 
     public synchronized void shutdownBefore() {
-//        SchedulerContext.shutdown();
+        SchedulerContext.shutdown();
     }
 
     public synchronized void shutdownAfter() {
@@ -94,17 +99,17 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
         AbstractClient.shutdown();
         AbstractServer.shutdownAllServers();
 
-//        // 关闭TaskBus
-//        try {
-//            Field field = TaskBus.class.getDeclaredField("executors");
-//            ReflectionUtils.makeAccessible(field);
-//
-//            var poolModel = (ThreadActorPoolModel) ReflectionUtils.getField(field, null);
-//            poolModel.shutdown();
-//        } catch (Throwable e) {
-//            logger.error("Net thread pool failed shutdown: " + ExceptionUtils.getMessage(e));
-//            return;
-//        }
+        // 关闭TaskBus
+        try {
+            Field field = TaskBus.class.getDeclaredField("executors");
+            ReflectionUtils.makeAccessible(field);
+
+            var poolModel = (ThreadActorPoolModel) ReflectionUtils.getField(field, null);
+            poolModel.shutdown();
+        } catch (Throwable e) {
+            logger.error("Net thread pool failed shutdown: " + ExceptionUtils.getMessage(e));
+            return;
+        }
         logger.info("Net shutdown gracefully.");
     }
 
@@ -119,13 +124,4 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     public static IRouter getRouter() {
         return null;
     }
-//
-//
-//    public static IConfigManager getConfigManager() {
-//        return configManager;
-//    }
-//
-//    public static IRpcService getConsumer() {
-//        return consumer;
-//    }
 }
