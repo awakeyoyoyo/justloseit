@@ -68,6 +68,10 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
      */
     public static final int ATTACHMENT_LENGTH_LEN = 4;
 
+    /**
+     * 信號包协议号长度，一个int字节长度
+     */
+    public static final int ATTACHMENT_ID_LENGTH = 4;
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws IOException {
         // 不够读一个int
@@ -132,11 +136,10 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
         int protocolId = NetContext.getProtocolManager().getProtocolId(packet.getClass());
         Object attachmentObj = packetInfo.getAttachment();
         //默認有包頭長度4byte
-        int packetLength = PACKET_HEAD_LENGTH;
         Codec packetCodec = ProtobufProxy.create(packet.getClass());
         byte[] packetBytes = packetCodec.encode(packet);
         // 主包長度+協議號
-        packetLength += packetBytes.length + PROTOCOL_ID_LENGTH;
+        int packetLength = packetBytes.length + PROTOCOL_ID_LENGTH + ATTACHMENT_LENGTH_LEN;
 
         byte[] attachmentBytes = null;
         int attachmentProtocolId = 0;
@@ -147,7 +150,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<EncodedPacketIn
             attachmentBytes = attachmentCodec.encode(iAttachment);
             attachmentLength = attachmentBytes.length;
             attachmentProtocolId = iAttachment.protocolId();
-            packetLength += attachmentLength + ATTACHMENT_LENGTH_LEN;
+            packetLength += attachmentLength + ATTACHMENT_ID_LENGTH;
         }
         // 包头 包长度
         out.writeInt(packetLength);
