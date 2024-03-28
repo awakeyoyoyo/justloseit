@@ -29,11 +29,10 @@ public class WebSocketCodecHandler extends MessageToMessageCodec<WebSocketFrame,
     protected void encode(ChannelHandlerContext channelHandlerContext, CmdPacket cmdPacket, List<Object> list) throws Exception {
         var byteBuf = channelHandlerContext.alloc().ioBuffer();
         //包头默认长度
-        int packetLength = PACKET_HEAD_LENGTH;
         Codec packetCodec = ProtobufProxy.create(CmdPacket.class);
         byte[] packetBytes = packetCodec.encode(cmdPacket);
         // 主包長度+協議號
-        packetLength += packetBytes.length;
+        int packetLength = packetBytes.length;
 
         // 包头 包长度
         byteBuf.writeInt(packetLength);
@@ -66,8 +65,11 @@ public class WebSocketCodecHandler extends MessageToMessageCodec<WebSocketFrame,
         }
 
         ByteBuf sliceByteBuf = in.readSlice(length);
+        int readableBytes = sliceByteBuf.readableBytes();
+        byte[] packetBytes = new byte[readableBytes];
+        sliceByteBuf.readBytes(packetBytes);
         Codec cmdPacketCodec = ProtobufProxy.create(CmdPacket.class);
-        CmdPacket cmdPacket = (CmdPacket) cmdPacketCodec.decode(sliceByteBuf.array());
+        CmdPacket cmdPacket = (CmdPacket) cmdPacketCodec.decode(packetBytes);
         list.add(cmdPacket);
     }
 }
