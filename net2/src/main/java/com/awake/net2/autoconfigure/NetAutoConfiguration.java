@@ -1,6 +1,7 @@
 package com.awake.net2.autoconfigure;
 
 import com.awake.net2.NetContext;
+import com.awake.net2.protocol.ProtocolManager;
 import com.awake.net2.protocol.properties.ProtocolProperties;
 import com.awake.net2.router.PacketBus;
 import com.awake.net2.router.Router;
@@ -46,6 +47,12 @@ public class NetAutoConfiguration {
         return new SessionManager();
     }
 
+    //协议解析
+    @Bean
+    @ConditionalOnMissingBean
+    public ProtocolManager protocolManager() {
+        return new ProtocolManager();
+    }
     /**
      * 上下文管理
      */

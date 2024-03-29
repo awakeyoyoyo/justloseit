@@ -13,7 +13,7 @@
     <groupId>com.awake</groupId>
     <artifactId>storage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>orm</name>
+    <name>storage</name>
     <description>storage module for justloseit</description>
 
     <dependencies>
