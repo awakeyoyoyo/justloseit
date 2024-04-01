@@ -80,8 +80,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             consumer.init();
             stopWatch.tag("[Net]");
             stopWatch.stop();
-            logger.info("Net started successfully");
             logger.info(stopWatch.toString());
+            logger.info("[Net] started successfully");
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();

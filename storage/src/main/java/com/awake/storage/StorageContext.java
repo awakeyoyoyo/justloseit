@@ -76,8 +76,8 @@ public class StorageContext implements ApplicationListener<ApplicationContextEve
             instance.storageManager.initAfter();
             stopWatch.tag("[Storage]");
             stopWatch.stop();
-            logger.info("Storage started successfully");
             logger.info(stopWatch.toString());
+            logger.info("[Storage] started successfully");
         } else if (event instanceof ContextClosedEvent) {
 
         }

@@ -1,5 +1,6 @@
 package com.awake.event;
 
+import com.awake.util.time.Stopwatch;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,9 +55,15 @@ public class EventContext implements ApplicationListener<ApplicationContextEvent
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
+            var stopWatch = new Stopwatch();
+            stopWatch.start();
             // 初始化上下文
             EventContext.instance = this;
             applicationContext = event.getApplicationContext();
+            stopWatch.tag("[Event]");
+            stopWatch.stop();
+            logger.info(stopWatch.toString());
+            logger.info("[Event] started successfully");
         } else if (event instanceof ContextClosedEvent) {
             shutdown();
         }

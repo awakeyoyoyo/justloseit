@@ -65,10 +65,10 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             protocolManager = applicationContext.getBean(IProtocolManager.class);
             //初始化packet
             packetBus.init(applicationContext);
-            stopWatch.tag("[Net]");
+            stopWatch.tag("[Net2]");
             stopWatch.stop();
-            logger.info("Net started successfully");
             logger.info(stopWatch.toString());
+            logger.info("[Net2] started successfully");
         } else if (event instanceof ContextClosedEvent) {
             shutdownBefore();
             shutdownAfter();

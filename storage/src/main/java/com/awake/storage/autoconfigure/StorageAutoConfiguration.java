@@ -20,4 +20,15 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({StorageProperties.class})
 public class StorageAutoConfiguration {
 
+    @Bean
+    @ConditionalOnMissingBean
+    public StorageManager storageManager() {
+        return new StorageManager();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public StorageContext storageContext() {
+        return new StorageContext();
+    }
 }

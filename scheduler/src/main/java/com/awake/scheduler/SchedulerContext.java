@@ -7,6 +7,7 @@ import com.awake.util.ReflectionUtils;
 import com.awake.util.base.ArrayUtils;
 import com.awake.util.base.StringUtils;
 import com.awake.util.base.ThreadUtils;
+import com.awake.util.time.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -54,12 +55,17 @@ public class SchedulerContext implements ApplicationListener<ApplicationContextE
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
+            var stopWatch = new Stopwatch();
+            stopWatch.start();
             // 初始化上下文
             SchedulerContext.instance = this;
             instance.applicationContext = event.getApplicationContext();
             SchedulerBus.init();
             injectScheduler();
-            logger.info("Scheduler started successfully");
+            stopWatch.tag("[Scheduler]");
+            stopWatch.stop();
+            logger.info(stopWatch.toString());
+            logger.info("[Scheduler] started successfully");
         } else if (event instanceof ContextClosedEvent) {
             // 反射获取executor,关闭掉
             shutdown();
