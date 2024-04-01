@@ -54,6 +54,7 @@ public class OrmManager implements IOrmManager {
     @Autowired
     private OrmProperties ormConfig;
 
+    @Autowired
     private MongoClient mongoClient;
 
     private MongoDatabase mongodbDatabase;
@@ -77,40 +78,7 @@ public class OrmManager implements IOrmManager {
             entityCachesMap.put(entityDef.getClazz(), entityCaches);
             allEntityCachesUsableMap.put(entityDef.getClazz(), false);
         }
-        CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
-                MongoClientSettings.getDefaultCodecRegistry(),
-                CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-
-        var mongoBuilder = MongoClientSettings
-                .builder()
-                .codecRegistry(pojoCodecRegistry);
-
-        // 设置数据库地址
-        if (CollectionUtils.isNotEmpty(ormConfig.getAddress())) {
-            var hostList = ormConfig.getAddress().values()
-                    .stream()
-                    .map(it -> it.split(StringUtils.COMMA_REGEX))
-                    .flatMap(it -> Arrays.stream(it))
-                    .filter(it -> StringUtils.isNotBlank(it))
-                    .map(it -> StringUtils.trim(it))
-                    .map(it -> it.split(StringUtils.COLON_REGEX))
-                    .map(it -> new ServerAddress(it[0], Integer.parseInt(it[1])))
-                    .collect(Collectors.toList());
-            mongoBuilder.applyToClusterSettings(builder -> builder.hosts(hostList));
-        }
-
-        // 设置数据库账号密码
-        if (StringUtils.isNotBlank(ormConfig.getUser()) && StringUtils.isNotBlank(ormConfig.getPassword())) {
-            mongoBuilder.credential(MongoCredential.createCredential(ormConfig.getUser(), "admin", ormConfig.getPassword().toCharArray()));
-        }
-
-        // 设置连接池的大小
-        var maxConnection = Runtime.getRuntime().availableProcessors() * 2 + 1;
-        mongoBuilder.applyToConnectionPoolSettings(builder -> builder.maxSize(maxConnection).minSize(1));
-
-        mongoClient = MongoClients.create(mongoBuilder.build());
         mongodbDatabase = mongoClient.getDatabase(ormConfig.getDatabase());
-
         // 创建索引
         for (var entityDef : entityDefMap.values()) {
             var indexDefMap = entityDef.getIndexDefMap();
