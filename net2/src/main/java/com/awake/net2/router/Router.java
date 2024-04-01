@@ -42,6 +42,7 @@ public class Router implements IRouter {
                 logger.warn("send msg error, protocol=[{}] isActive=[{}] isWritable=[{}]", packet.getClass().getSimpleName(), channel.isActive(), channel.isWritable());
             }
             channel.writeAndFlush(cmdPacket);
+            logger.info("send msg successful, protocol class=[{}] protoId=[{}]", packet.getClass().getSimpleName(), protoId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
