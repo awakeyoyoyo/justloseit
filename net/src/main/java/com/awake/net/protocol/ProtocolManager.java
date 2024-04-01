@@ -186,9 +186,9 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
         if (protocolDefinitionHashMap.isEmpty()) {
             logger.warn("There are no protocolDefinitions.");
         }
-        for (ProtocolDefinition protocolDefinition : protocolDefinitionHashMap.values()) {
-            logger.info("register packet :[{}]", protocolDefinition);
-        }
+//        for (ProtocolDefinition protocolDefinition : protocolDefinitionHashMap.values()) {
+//            logger.info("register packet :[{}]", protocolDefinition);
+//        }
     }
 
     private Set<Class> scanModuleClass(String scaModulePackages) {
