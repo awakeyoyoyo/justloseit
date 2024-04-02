@@ -5,6 +5,8 @@ import com.awake.net2.session.Session;
 import com.awake.orm.OrmContext;
 import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.cache.EntityCache;
+import com.awake.storage.anno.StorageAutowired;
+import com.awake.storage.model.IStorage;
 import com.awake.util.base.StringUtils;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
@@ -13,6 +15,7 @@ import com.hello.packet.ErrorResponse;
 import com.hello.packet.LoginResponse;
 import com.hello.packet.RegisterResponse;
 import com.hello.protomodule.GameModule;
+import com.hello.resource.FilterWordResource;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +26,9 @@ import org.springframework.stereotype.Service;
 public class RoleService {
     @EntityCacheAutowired
     private EntityCache<String, RoleEntity> roleEntityEntityCache;
+
+    @StorageAutowired
+    public IStorage<Integer, FilterWordResource> filterWordResources;
 
     public void atLoginRequest(Session session, String userName, String password) {
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
@@ -37,6 +43,13 @@ public class RoleService {
     }
 
     public void atRegisterRequest(Session session, String userName, String password) {
+        for (FilterWordResource filterWordResource : filterWordResources.getAll()) {
+            if (userName.contains(filterWordResource.getFilter())) {
+                NetContext.getRouter().send(session, GameModule.ErrorResponse,
+                        ErrorResponse.valueOf(ErrorCode.USER_NAME_ILLEGAL));
+                return;
+            }
+        }
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
         if (!StringUtils.isEmpty(roleEntity.id())) {
             NetContext.getRouter().send(session, GameModule.ErrorResponse,
