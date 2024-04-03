@@ -36,6 +36,6 @@ public class HelloClientApplication {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        NetContext.getRouter().send(session, GameModule.LoginRequest, LoginRequest.valueOf("awakeyoyoyo", "lqh777***"));
+        NetContext.getRouter().send(session, GameModule.LoginRequest, LoginRequest.valueOf("awakeyoyoyo1", "lqh777***"));
     }
 }

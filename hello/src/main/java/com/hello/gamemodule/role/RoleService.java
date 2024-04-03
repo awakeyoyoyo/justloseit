@@ -39,7 +39,7 @@ public class RoleService {
         }
 
         NetContext.getRouter().send(session, GameModule.LoginResponse,
-                LoginResponse.valueOf(roleEntity.getRid(), roleEntity.getUserName(), roleEntity.getPassword()));
+                LoginResponse.valueOf(roleEntity.getRid(), roleEntity.getId(), roleEntity.getPassword()));
     }
 
     public void atRegisterRequest(Session session, String userName, String password) {
@@ -59,11 +59,11 @@ public class RoleService {
 
         roleEntity.setRid(GameContext.getInstance().getIdManager().generalRoleId());
         roleEntity.setPassword(password);
-        roleEntity.setUserName(userName);
+        roleEntity.setId(userName);
 
         OrmContext.getAccessor().insert(roleEntity);
 
         NetContext.getRouter().send(session, GameModule.RegisterResponse,
-                RegisterResponse.valueOf(roleEntity.getRid(), roleEntity.getUserName(), roleEntity.getPassword()));
+                RegisterResponse.valueOf(roleEntity.getRid(), roleEntity.getId(), roleEntity.getPassword()));
     }
 }

@@ -10,14 +10,14 @@ import com.awake.orm.model.IEntity;
  */
 @EntityCache
 public class RoleEntity implements IEntity<String> {
-    private long rid;
     @Id
-    private String userName;
+    private String id;
+    private long rid;
     private String password;
 
     @Override
     public String id() {
-        return userName;
+        return id;
     }
 
     public long getRid() {
@@ -28,12 +28,12 @@ public class RoleEntity implements IEntity<String> {
         this.rid = rid;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getId() {
+        return id;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPassword() {
