@@ -140,6 +140,6 @@ public class SchedulerContext implements ApplicationListener<ApplicationContextE
 
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return 31;
     }
 }

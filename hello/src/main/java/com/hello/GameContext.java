@@ -45,12 +45,12 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
+        //最低优先级处理，组件初始化完毕再初始化游戏上下文
         if (event instanceof ContextRefreshedEvent) {
+            // 注意此时所有组件都已经注销完了，此时一般不做任何处理
             instance=this;
             idManager.initIdValue();
-        } else if (event instanceof ContextClosedEvent) {
-            //...
-            idManager.saveIdValue();
+            logger.info("Game started successfully.");
         }
     }
 

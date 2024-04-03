@@ -55,6 +55,10 @@ public class IdManager {
      */
     public long generalRoleId(){
         int serverId = GameContext.getInstance().getGameServerProperties().getServerId();
+        atomicRoleId.incrementAndGet();
+        IdEntity roleIdEntity = idEntityEntityCache.load(IdConstant.ROLE_ID);
+        roleIdEntity.setValue(atomicRoleId.get());
+        idEntityEntityCache.update(roleIdEntity);
         return Long.parseLong(String.valueOf(serverId) + atomicRoleId.incrementAndGet());
     }
 }
