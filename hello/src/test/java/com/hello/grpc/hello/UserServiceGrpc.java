@@ -1,8 +1,9 @@
-package com.hello.cross.hello;
+package com.hello.grpc.hello;
 
 
 
-import com.hello.cross.pojo.Hello;
+
+import com.hello.grpc.pojo.Hello;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 

@@ -1,6 +1,7 @@
-package com.hello.cross.hello;
+package com.hello.grpc.hello;
 
-import com.hello.cross.pojo.Hello;
+
+import com.hello.grpc.pojo.Hello;
 import io.grpc.stub.StreamObserver;
 
 import java.time.LocalDate;
