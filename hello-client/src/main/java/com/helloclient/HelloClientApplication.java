@@ -5,14 +5,18 @@ import com.awake.net2.server.tcp.TcpClient;
 import com.awake.net2.session.Session;
 import com.awake.net2.util.NetUtils;
 import com.awake.util.net.HostAndPort;
+import com.helloclient.cross.hello.UserServiceGrpc;
+import com.helloclient.cross.pojo.Hello;
 import com.helloclient.packet.LoginRequest;
 import com.helloclient.packet.RegisterRequest;
 import com.helloclient.protomodule.GameModule;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Hello world!
+ * com.helloclient.cross.pojo.Hello world!
  */
 @SpringBootApplication
 public class HelloClientApplication {
@@ -37,5 +41,19 @@ public class HelloClientApplication {
             throw new RuntimeException(e);
         }
         NetContext.getRouter().send(session, GameModule.LoginRequest, LoginRequest.valueOf("awakeyoyoyo1", "lqh777***"));
+
+        //测试Grpc
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 8088)
+                .usePlaintext()
+                .build();
+
+        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc.newBlockingStub(channel);
+        Hello.UserRequest request = Hello.UserRequest.newBuilder()
+                .setName("jay chou")
+                .build();
+
+        Hello.UserResponse response = stub.findUserInfo(request);
+        System.out.println(response);
+        channel.shutdown();
     }
 }
