@@ -1,4 +1,4 @@
-package com.helloclient.grpc.hello;
+package com.helloclient.grpc.synchello;
 
 import com.helloclient.grpc.pojo.Hello;
 import io.grpc.ManagedChannel;
