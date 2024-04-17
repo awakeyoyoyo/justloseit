@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+message UserRequest {
+  string name = 1;
+}
+
+message UserResponse {
+  string name = 1;
+  string birthday = 2;
+  string city = 3;
+}
+
+message UserFindRequest {
+  string city = 1;
+}
+
+message UserFindResponse {
+  string name = 1;
+  string birthday = 2;
+  string city = 3;
+}
+
+message UserInsertRequest {
+  string name = 1;
+  string birthday = 2;
+  string city = 3;}
+
+message UserInsertResponse {
+  int32 userNum = 1;
+}
+
+message UserFilterRequest {
+  string name = 1;
+  string birthday = 2;
+  string city = 3;
+}
+
+message UserFilterResponse {
+  int32 userNum = 1;
+}
+
+service UserService {
+  //查找用户信息
+  rpc findUserInfo(UserRequest) returns (UserResponse){};
+  //通过城市查询 每查询到一个就返回一个
+  rpc findUserByCity(UserFindRequest) returns (stream UserFindResponse){};
+  //插入多个user 最后返回总的结果
+  rpc insertUser(stream UserInsertRequest) returns (UserInsertResponse) {}
+  //服务端有新增的user就推送给客户端， filter可以根据实际情况来选择筛选条件
+  rpc listerUser(stream UserFilterRequest) returns (UserFilterResponse) {}
+}
+
