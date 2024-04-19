@@ -5,6 +5,7 @@ import com.awake.net2.protocol.ProtocolManager;
 import com.awake.net2.protocol.properties.ProtocolProperties;
 import com.awake.net2.router.PacketBus;
 import com.awake.net2.router.Router;
+import com.awake.net2.rpc.properties.RpcProperties;
 import com.awake.net2.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date：2024/3/27 14:21
  */
 @Configuration
-@EnableConfigurationProperties({ProtocolProperties.class})
+@EnableConfigurationProperties({ProtocolProperties.class, RpcProperties.class})
 public class NetAutoConfiguration {
 
 

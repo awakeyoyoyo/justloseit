@@ -3,6 +3,7 @@ package com.helloclient.grpc.user.client;
 import com.helloclient.grpc.user.pojo.User;
 import com.helloclient.grpc.user.service.UserServiceGrpc;
 import io.grpc.*;
+import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public class UserClient {
     private static final Logger logger = LoggerFactory.getLogger(UserClient.class);
     private final UserServiceGrpc.UserServiceBlockingStub blockingStub;
 
-
+    private final UserServiceGrpc.UserServiceStub asyncStub;
 
     /** Construct client for accessing HelloWorld server using the existing channel. */
     public UserClient(Channel channel) {
@@ -26,6 +27,8 @@ public class UserClient {
 
         // Passing Channels to code makes code easier to test and makes it easier to reuse Channels.
         blockingStub = UserServiceGrpc.newBlockingStub(channel);
+        asyncStub = UserServiceGrpc.newStub(channel);
+
     }
 
 
@@ -42,6 +45,21 @@ public class UserClient {
         }
         logger.info("Greeting: " + response.getName());
     }
+//
+//    /** Say hello to server. */
+//    public void asyncGreet(String name) {
+//        logger.info("Will try to greet " + name + " ...");
+//        User.UserRequest request = User.UserRequest.newBuilder().setName(name).build();
+//        User.UserResponse response;
+//        try {
+//            StreamObserver<User.UserResponse> responseObserver
+//            response = asyncStub.findUserInfo(request,);
+//        } catch (StatusRuntimeException e) {
+//            logger.info("RPC failed: {0}", e.getStatus());
+//            return;
+//        }
+//        logger.info("Greeting: " + response.getName());
+//    }
 
     public static void main(String[] args) throws Exception {
         String user = "world";
@@ -64,5 +82,6 @@ public class UserClient {
             // again leave it running.
             channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
         }
+
     }
 }
