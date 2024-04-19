@@ -34,11 +34,11 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
 
     public static final String MODULE_ID_NAME_RULE = "ModuleId";
 
-    private static HashMap<Integer, ProtocolDefinition> protocolDefinitionHashMap = new HashMap<>();
+    private static Map<Integer, ProtocolDefinition> protocolDefinitionHashMap = new HashMap<>();
 
-    private static HashMap<Integer, Set<Integer>> moduleId2ProtocolId=new HashMap<>();
+    private static Map<Integer, Set<Integer>> moduleId2ProtocolId=new HashMap<>();
 
-    private static HashMap<String, Integer> protocolName2ProtocolIdHashMap = new HashMap<>();
+    private static Map<String, Integer> protocolName2ProtocolIdHashMap = new HashMap<>();
     @Resource
     private ProtocolProperties protocolProperties;
 
@@ -166,11 +166,11 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
         return moduleClass;
     }
 
-    public static HashMap<Integer, ProtocolDefinition> getProtocolDefinitionHashMap() {
+    public static Map<Integer, ProtocolDefinition> getProtocolDefinitionHashMap() {
         return protocolDefinitionHashMap;
     }
 
-    public static HashMap<Integer, Set<Integer>> getModuleId2ProtocolId() {
+    public static Map<Integer, Set<Integer>> getModuleId2ProtocolId() {
         return moduleId2ProtocolId;
     }
 }
