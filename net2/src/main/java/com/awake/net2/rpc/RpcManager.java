@@ -1,7 +1,5 @@
 package com.awake.net2.rpc;
 
-import com.awake.net2.protocol.ProtocolManager;
-import com.awake.net2.protocol.properties.ProtocolProperties;
 import com.awake.net2.rpc.properties.RpcProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +19,6 @@ public class RpcManager implements IRpcManager, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
+        //扫描注解
     }
 }

@@ -3,13 +3,14 @@ package com.awake.net2.rpc.anno;
 import java.lang.annotation.*;
 
 /**
- * Rpc服务实现
+ * Rpc服务注册
  * @Author：lqh
- * @Date：2024/3/29 14:46
+ * @Date：2024/3/29 14:51
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface RpcServer {
+public @interface RpcService {
 
+    String serviceName() default "";
 }
