@@ -14,13 +14,9 @@ import java.util.List;
 public class RpcProperties {
     public static final String PREFIX = "awake.net.rpc";
 
-    private String scanRpcServerPacket;
+    private String rpcProviderPort;      //提供服务的端口 命名格式 moduleId_port,moduleId_port,moduleId_port
 
-    private String scanRpcClientPacket;
-
-    private List<String> rpcProviderPort;      //提供服务的端口 命名格式 serviceName_port,serviceName_port,serviceName_port
-
-    private List<String> rpcConsumerHosts;     //消费的服务  命名格式 serviceName_host:port,serviceName_host:port
+    private String rpcConsumerHosts;     //消费的服务  命名格式 moduleId_host:port,moduleId_host:port
 }
 
 /**
