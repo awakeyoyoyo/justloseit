@@ -4,10 +4,7 @@ import com.awake.util.base.CollectionUtils;
 import com.awake.util.base.StringUtils;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,4 +68,26 @@ public class HostAndPort {
         return StringUtils.format("{}:{}", this.host.trim(), this.port);
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        HostAndPort that = (HostAndPort) o;
+        return port == that.port && Objects.equals(host, that.host);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(host, port);
+    }
+
+    @Override
+    public String toString() {
+        return toHostAndPortStr();
+    }
 }

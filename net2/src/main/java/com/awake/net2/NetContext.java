@@ -4,6 +4,7 @@ import com.awake.net2.protocol.IProtocolManager;
 import com.awake.net2.router.IRouter;
 import com.awake.net2.router.PacketBus;
 import com.awake.net2.router.TaskBus;
+import com.awake.net2.rpc.IRpcManager;
 import com.awake.net2.server.AbstractClient;
 import com.awake.net2.server.AbstractServer;
 import com.awake.net2.session.ISessionManager;
@@ -44,6 +45,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static IProtocolManager protocolManager;
 
+    private static IRpcManager rpcManager;
+
     public static IProtocolManager getProtocolManager() {
         return protocolManager;
     }
@@ -63,8 +66,10 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             router = applicationContext.getBean(IRouter.class);
             sessionManager = applicationContext.getBean(ISessionManager.class);
             protocolManager = applicationContext.getBean(IProtocolManager.class);
+            rpcManager = applicationContext.getBean(IRpcManager.class);
             //初始化packet
             packetBus.init(applicationContext);
+            rpcManager.start();
             stopWatch.tag("[Net2]");
             stopWatch.stop();
             logger.info(stopWatch.toString());
@@ -98,6 +103,9 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
         // 关闭客户端和服务器
         AbstractClient.shutdown();
         AbstractServer.shutdownAllServers();
+
+        // 关闭Rpc服务
+        rpcManager.shutdown();
 
         // 关闭TaskBus
         try {

@@ -2,6 +2,7 @@ package com.awake.configuration;
 
 
 import com.awake.net2.protocol.ProtocolManager;
+import com.awake.net2.rpc.RpcManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,9 +17,12 @@ public class ConfigurationTest {
 
     @Autowired
     private ProtocolManager protocolManager;
+
+    @Autowired
+    private RpcManager rpcManager;
     @Test
     public void configurationTest() {
-        System.out.println(protocolManager);
+        System.out.println(rpcManager);
     }
 
 }

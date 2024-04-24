@@ -5,6 +5,7 @@ import com.awake.net2.protocol.ProtocolManager;
 import com.awake.net2.protocol.properties.ProtocolProperties;
 import com.awake.net2.router.PacketBus;
 import com.awake.net2.router.Router;
+import com.awake.net2.rpc.RpcManager;
 import com.awake.net2.rpc.properties.RpcProperties;
 import com.awake.net2.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -53,6 +54,13 @@ public class NetAutoConfiguration {
     @ConditionalOnMissingBean
     public ProtocolManager protocolManager() {
         return new ProtocolManager();
+    }
+
+    //协议解析
+    @Bean
+    @ConditionalOnMissingBean
+    public RpcManager rpcManager() {
+        return new RpcManager();
     }
     /**
      * 上下文管理

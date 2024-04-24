@@ -32,12 +32,6 @@
             <artifactId>grpc-stub</artifactId>
             <version>${grpc.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>annotations-api</artifactId>
-            <version>${annotations-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
 
         <dependency>

@@ -5,6 +5,8 @@ import com.awake.net2.protocol.ProtocolManager;
 import com.awake.net2.protocol.properties.ProtocolProperties;
 import com.awake.net2.router.PacketBus;
 import com.awake.net2.router.Router;
+import com.awake.net2.rpc.RpcManager;
+import com.awake.net2.rpc.properties.RpcProperties;
 import com.awake.net2.session.SessionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScans(value = {@ComponentScan("com.awake.server")})
 public class TestConfiguration {
     @Configuration
-    @EnableConfigurationProperties({ProtocolProperties.class})
+    @EnableConfigurationProperties({ProtocolProperties.class, RpcProperties.class})
     public static class NetAutoConfiguration {
 
         //协议解析
@@ -52,6 +54,12 @@ public class TestConfiguration {
             return new NetContext();
         }
 
+        //协议解析
+        @Bean
+        @ConditionalOnMissingBean
+        public RpcManager rpcManager() {
+            return new RpcManager();
+        }
         /**
          * 会话状态管理
          */
