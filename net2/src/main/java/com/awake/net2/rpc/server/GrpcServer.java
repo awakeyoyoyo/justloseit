@@ -30,13 +30,6 @@ public class GrpcServer {
      */
     public void start() throws IOException {
         server.start();
-        System.out.println("Server started, listening on " + server.getPort());
-        //程序退出时关闭资源
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.err.println("*** shutting down gRPC server since JVM is shutting down");
-            GrpcServer.this.stop();
-            System.err.println("*** server shut down");
-        }));
     }
 
     /**

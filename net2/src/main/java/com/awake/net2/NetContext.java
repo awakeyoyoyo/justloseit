@@ -132,4 +132,8 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
     public static IRouter getRouter() {
         return router;
     }
+
+    public static IRpcManager getRpcManager() {
+        return rpcManager;
+    }
 }

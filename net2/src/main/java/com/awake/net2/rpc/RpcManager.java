@@ -2,12 +2,15 @@ package com.awake.net2.rpc;
 
 import com.awake.exception.RunException;
 import com.awake.net2.NetContext;
+import com.awake.net2.rpc.anno.RpcService;
 import com.awake.net2.rpc.anno.RpcServiceImpl;
+import com.awake.net2.rpc.client.AbstractGrpcClient;
 import com.awake.net2.rpc.pojo.GrpcClientDefinition;
 import com.awake.net2.rpc.pojo.ModuleIdAndPort;
 import com.awake.net2.rpc.pojo.GrpcServiceDefinition;
 import com.awake.net2.rpc.properties.RpcProperties;
 import com.awake.net2.rpc.server.GrpcServer;
+import com.awake.net2.server.AbstractClient;
 import com.awake.util.net.HostAndPort;
 import io.grpc.*;
 import org.slf4j.Logger;
@@ -47,6 +50,9 @@ public class RpcManager implements IRpcManager, InitializingBean {
      */
     private Map<Integer, ManagedChannel> moduleId2Channel = new HashMap<>();
 
+    /**
+     * 地址2channel
+     */
     private Map<HostAndPort, ManagedChannel> hostAndPortChannelMap = new HashMap<>();
 
     @Override
@@ -166,6 +172,18 @@ public class RpcManager implements IRpcManager, InitializingBean {
             }
         }
 
+        var applicationContext = NetContext.getApplicationContext();
+        var serviceBeans = applicationContext.getBeansWithAnnotation(RpcService.class);
+        for (var bean : serviceBeans.values()) {
+            if (!(bean instanceof AbstractGrpcClient)) {
+                throw new RunException("The RpcService is no extend AbstractClient, please check that [RpcService class:{}]", bean);
+            }
+            RpcService rpcService = bean.getClass().getAnnotation(RpcService.class);
+            AbstractGrpcClient client= (AbstractGrpcClient) bean;
+            client.setChannel(getRpcServiceChannel(rpcService.moduleId()));
+            //初始化stub
+            client.initStub();
+        }
 
     }
 
@@ -178,5 +196,10 @@ public class RpcManager implements IRpcManager, InitializingBean {
         for (ManagedChannel channel : hostAndPortChannelMap.values()) {
             channel.shutdown();
         }
+    }
+
+    @Override
+    public ManagedChannel getRpcServiceChannel(int moduleId) {
+        return moduleId2Channel.get(moduleId);
     }
 }

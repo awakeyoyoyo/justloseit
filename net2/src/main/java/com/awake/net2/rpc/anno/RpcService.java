@@ -12,5 +12,5 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface RpcService {
 
-    String serviceName() default "";
+    int moduleId() default 0;
 }
