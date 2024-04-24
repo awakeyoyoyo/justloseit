@@ -1,4 +1,4 @@
-package com.hello.entity;
+package com.hello.gamemodule.role.entity;
 
 import com.awake.orm.anno.EntityCache;
 import com.awake.orm.anno.Id;

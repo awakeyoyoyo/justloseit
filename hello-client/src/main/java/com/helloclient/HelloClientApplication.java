@@ -25,20 +25,20 @@ public class HelloClientApplication {
 
         var tcpClient = new TcpClient(HostAndPort.valueOf(NetUtils.getLocalhostStr(), SERVER_PORT));
         Session session = tcpClient.start();
-//        System.out.println("hello world");
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        NetContext.getRouter().send(session, GameModule.RegisterRequest, RegisterRequest.valueOf("awakeyoyoyo1", "lqh777***"));
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//        NetContext.getRouter().send(session, GameModule.LoginRequest, LoginRequest.valueOf("awakeyoyoyo1", "lqh777***"));
+        System.out.println("hello world");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        NetContext.getRouter().send(session, GameModule.RegisterRequest, RegisterRequest.valueOf("awakeyoyoyo1", "lqh777***"));
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        NetContext.getRouter().send(session, GameModule.LoginRequest, LoginRequest.valueOf("awakeyoyoyo1", "lqh777***"));
 
         UserClient.getIns().greet("lqhao");
         try {

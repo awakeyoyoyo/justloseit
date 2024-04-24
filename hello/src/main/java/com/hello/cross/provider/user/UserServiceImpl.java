@@ -1,7 +1,6 @@
-package com.hello.cross.user;
+package com.hello.cross.provider.user;
 
 import com.awake.net2.rpc.anno.RpcServiceImpl;
-import com.hello.cross.pojo.User;
 import io.grpc.stub.StreamObserver;
 import org.springframework.stereotype.Service;
 

@@ -4,8 +4,7 @@ import com.awake.orm.OrmContext;
 import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.cache.EntityCache;
 import com.hello.GameContext;
-import com.hello.common.IdConstant;
-import com.hello.entity.IdEntity;
+import com.hello.gamemodule.Id.entity.IdEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicLong;

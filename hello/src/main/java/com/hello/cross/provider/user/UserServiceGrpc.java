@@ -1,8 +1,6 @@
-package com.hello.cross.user;
+package com.hello.cross.provider.user;
 
 
-
-import com.hello.cross.pojo.User;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 

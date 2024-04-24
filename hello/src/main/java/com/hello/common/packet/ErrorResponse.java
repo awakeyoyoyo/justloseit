@@ -1,4 +1,4 @@
-package com.hello.packet;
+package com.hello.common.packet;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 

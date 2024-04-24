@@ -8,9 +8,12 @@ import com.awake.util.base.ArrayUtils;
 import com.awake.util.base.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
@@ -98,12 +101,12 @@ public class ClassUtil {
 
 
     /**
-     * 根据扫描包的,查询下面的所有类
+     * 根据扫描包的,查询下面的所有类   注解排查
      *
      * @param scanPackages 扫描的package路径
      * @return
      */
-    public static Set<Class> scanPackageClass(String scanPackages) {
+    public static Set<Class> scanPackageClass(String scanPackages,String annoName) {
         if (StringUtils.isBlank(scanPackages)) {
             return Collections.EMPTY_SET;
         }
@@ -111,7 +114,7 @@ public class ClassUtil {
         Set<String> packages = checkPackage(scanPackages);
         ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
         MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
-        Set<Class> clazzSet = new HashSet();
+        Set<Class> result = new HashSet();
         for (String basePackage : packages) {
             if (StringUtils.isBlank(basePackage)) {
                 continue;
@@ -122,15 +125,34 @@ public class ClassUtil {
                 Resource[] resources = resourcePatternResolver.getResources(packageSearchPath);
                 for (Resource resource : resources) {
                     //检查resource，这里的resource都是class
-                    String className = loadClassName(metadataReaderFactory, resource);
-                    clazzSet.add(Class.forName(className));
+                    if (resource.isReadable()) {
+                        MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(resource);
+                        AnnotationMetadata annoMeta = metadataReader.getAnnotationMetadata();
+                        if (StringUtils.isEmpty(annoName)) {
+                            ClassMetadata clazzMeta = metadataReader.getClassMetadata();
+                            result.add(Class.forName(clazzMeta.getClassName()));
+                        } else if (annoMeta.hasAnnotation(annoName)) {
+                            ClassMetadata clazzMeta = metadataReader.getClassMetadata();
+                            result.add(Class.forName(clazzMeta.getClassName()));
+                        }
+                    }
                 }
             } catch (Exception e) {
                 log.error("获取包下面的类信息失败,package:" + basePackage, e);
             }
 
         }
-        return clazzSet;
+        return result;
+    }
+
+    /**
+     * 根据扫描包的,查询下面的所有类
+     *
+     * @param scanPackages 扫描的package路径
+     * @return
+     */
+    public static Set<Class> scanPackageClass(String scanPackages){
+       return scanPackageClass(scanPackages,null);
     }
 
     /**

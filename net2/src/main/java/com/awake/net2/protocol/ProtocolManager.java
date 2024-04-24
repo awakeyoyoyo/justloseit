@@ -12,6 +12,11 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.ClassMetadata;
+import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
+import org.springframework.core.type.classreading.MetadataReader;
 
 import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
@@ -65,7 +70,7 @@ public class ProtocolManager implements IProtocolManager, InitializingBean {
         String scanProtocolPacket = protocolProperties.getScanProtocolPacket();
         String scanProtocolPackages = StringUtils.joinWith(StringUtils.COMMA, COMMON_PACKET, scanProtocolPacket);
         logger.info("[ProtocolManager] scan protocol packages [{}]", scanProtocolPackages);
-        Set<Class> packageClass = ClassUtil.scanPackageClass(scanProtocolPackages);
+        Set<Class> packageClass = ClassUtil.scanPackageClass(scanProtocolPackages,ProtobufClass.class.getName());
 
         String scanModulePacket = protocolProperties.getScanModulePacket();
         String scaModulePackages = StringUtils.joinWith(StringUtils.COMMA, COMMON_MODULE, scanModulePacket);

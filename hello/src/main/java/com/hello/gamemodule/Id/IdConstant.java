@@ -1,4 +1,4 @@
-package com.hello.common;
+package com.hello.gamemodule.Id;
 
 /**
  * @Author：lqh

@@ -2,8 +2,8 @@ package com.hello.gamemodule.role;
 
 import com.awake.net2.router.receiver.PacketReceiver;
 import com.awake.net2.session.Session;
-import com.hello.packet.LoginRequest;
-import com.hello.packet.RegisterRequest;
+import com.hello.gamemodule.role.packet.LoginRequest;
+import com.hello.gamemodule.role.packet.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
