@@ -8,6 +8,7 @@ import io.grpc.ManagedChannel;
  */
 public interface IRpcManager {
     void init();
+
     void start();
 
     void shutdown();

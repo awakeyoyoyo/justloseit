@@ -113,7 +113,7 @@ public class PacketBus {
                 PacketReceiverDefinition receiverDefinition = new PacketReceiverDefinition(bean, method, packetClazz);
                 IPacketReceiver enhanceReceiverDefinition = EnhanceUtils.createPacketReceiver(receiverDefinition);
                 receiverMap.put(protocolId, enhanceReceiverDefinition);
-                logger.info("Register successfully! [class:{}] [method:{}] [packet:{}]", bean.getClass().getName(), methodName, packetName);
+//                logger.info("Register successfully! [class:{}] [method:{}] [packet:{}]", bean.getClass().getName(), methodName, packetName);
             } catch (Throwable t) {
                 throw new RunException("Registration protocol [class:{}] unknown exception", packetClazz.getSimpleName(), t);
             }
