@@ -14,7 +14,7 @@ import com.hello.entity.RoleEntity;
 import com.hello.packet.ErrorResponse;
 import com.hello.packet.LoginResponse;
 import com.hello.packet.RegisterResponse;
-import com.hello.protomodule.GameModule;
+import com.hello.module.GameModule;
 import com.hello.resource.FilterWordResource;
 import org.springframework.stereotype.Service;
 

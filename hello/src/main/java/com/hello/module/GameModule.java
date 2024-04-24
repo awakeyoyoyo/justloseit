@@ -1,4 +1,4 @@
-package com.hello.protomodule;
+package com.hello.module;
 
 /**
  * 定义号模块号 以及其协议号

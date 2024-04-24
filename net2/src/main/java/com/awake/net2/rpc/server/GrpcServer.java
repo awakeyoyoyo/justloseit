@@ -16,7 +16,7 @@ public class GrpcServer {
 
     private Server server;
 
-    public GrpcServer(int port, List<BindableService> services) throws IOException {
+    public GrpcServer(int port, List<BindableService> services) {
         //初始化Server参数
         ServerBuilder builder = ServerBuilder.forPort(port);
         for(BindableService bs:services){

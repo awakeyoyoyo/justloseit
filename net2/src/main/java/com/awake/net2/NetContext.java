@@ -69,6 +69,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             rpcManager = applicationContext.getBean(IRpcManager.class);
             //初始化packet
             packetBus.init(applicationContext);
+            rpcManager.init();
             rpcManager.start();
             stopWatch.tag("[Net2]");
             stopWatch.stop();

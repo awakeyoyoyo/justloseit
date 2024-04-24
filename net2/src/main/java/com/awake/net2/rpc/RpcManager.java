@@ -25,7 +25,7 @@ import java.util.*;
  * @Author：lqh
  * @Date：2024/3/29 14:45
  */
-public class RpcManager implements IRpcManager, InitializingBean {
+public class RpcManager implements IRpcManager {
     private static final Logger logger = LoggerFactory.getLogger(RpcManager.class);
 
     @Resource
@@ -55,13 +55,6 @@ public class RpcManager implements IRpcManager, InitializingBean {
      */
     private Map<HostAndPort, ManagedChannel> hostAndPortChannelMap = new HashMap<>();
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //初始化Rpc服务提供者信息
-        initRpcServer();
-        //初始化Rpc消费者信息
-        initRpcClient();
-    }
 
 
     //初始化
@@ -99,7 +92,7 @@ public class RpcManager implements IRpcManager, InitializingBean {
      *
      * @throws IOException
      */
-    private void initRpcServer() throws IOException {
+    private void initRpcServer()  {
         var rpcProviderPort = rpcProperties.getRpcProviderPort();
         if (rpcProviderPort==null){
             logger.info("[RpcManager] no rpc service support");
@@ -146,6 +139,14 @@ public class RpcManager implements IRpcManager, InitializingBean {
                 moduleId2ServerMap.put(grpcServiceDefinition.getModuleId(), grpcServer);
             }
         }
+    }
+
+    @Override
+    public void init() {
+        //初始化Rpc服务提供者信息
+        initRpcServer();
+        //初始化Rpc消费者信息
+        initRpcClient();
     }
 
     @Override
