@@ -45,6 +45,9 @@ public class IdManager {
      */
     public void saveIdValue() {
         IdEntity roleIdEntity = idEntityEntityCache.load(IdConstant.ROLE_ID);
+        if (roleIdEntity.getValue()==atomicRoleId.get()){
+            return;
+        }
         roleIdEntity.setValue(atomicRoleId.get());
         idEntityEntityCache.update(roleIdEntity);
     }
