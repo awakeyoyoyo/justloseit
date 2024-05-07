@@ -29,6 +29,8 @@ public class OrmProperties {
 
     private Map<String, String> address;
 
+    private String authSource;
+
     /** caches */
     private List<CacheStrategy> caches;
 

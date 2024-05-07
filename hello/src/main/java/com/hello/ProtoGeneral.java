@@ -1,11 +1,9 @@
 package com.hello;
-
-import com.baidu.bjf.remoting.protobuf.ProtobufIDLProxy;
-
-import java.io.File;
-import java.io.FileInputStream;
+import com.baidu.bjf.remoting.protobuf.ProtobufIDLGenerator;
+import com.hello.gamemodule.role.packet.LoginRequest;
 import java.io.IOException;
-import java.io.InputStream;
+
+
 
 /**
  *
@@ -16,7 +14,7 @@ import java.io.InputStream;
 public class ProtoGeneral {
 
     public static void main(String[] args) throws IOException {
-        InputStream fis =new FileInputStream("F:\\justloseit\\hello\\src\\main\\java\\org\\hello\\one_message.proto");
-        ProtobufIDLProxy.generateSource(fis, new File("F:\\test"));
+        String code = ProtobufIDLGenerator.getIDL(LoginRequest.class);
+        System.out.println(code);
     }
 }

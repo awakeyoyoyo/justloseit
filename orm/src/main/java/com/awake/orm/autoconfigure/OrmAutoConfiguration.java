@@ -67,7 +67,11 @@ public class OrmAutoConfiguration {
 
         // 设置数据库账号密码
         if (StringUtils.isNotBlank(ormConfig.getUser()) && StringUtils.isNotBlank(ormConfig.getPassword())) {
-            mongoBuilder.credential(MongoCredential.createCredential(ormConfig.getUser(), "admin", ormConfig.getPassword().toCharArray()));
+            var authSource = "admin";
+            if (ormConfig.getAuthSource() != null) {
+                authSource = ormConfig.getAuthSource();
+            }
+            mongoBuilder.credential(MongoCredential.createCredential(ormConfig.getUser(), authSource, ormConfig.getPassword().toCharArray()));
         }
 
         // 设置连接池的大小
