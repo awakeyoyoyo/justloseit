@@ -92,7 +92,7 @@ public class OrmContext implements ApplicationListener<ApplicationContextEvent>,
 
     @Override
     public int getOrder() {
-        return 1;
+        return 4;
     }
 
     public static synchronized void shutdownBefore() {

@@ -71,6 +71,6 @@ public class EventContext implements ApplicationListener<ApplicationContextEvent
 
     @Override
     public int getOrder() {
-        return 30;
+        return 0;
     }
 }

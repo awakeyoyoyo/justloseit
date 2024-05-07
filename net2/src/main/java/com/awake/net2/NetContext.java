@@ -87,7 +87,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     @Override
     public int getOrder() {
-        return 0;
+        return 2;
     }
 
     public synchronized void shutdownBefore() {
