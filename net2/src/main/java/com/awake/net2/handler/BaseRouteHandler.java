@@ -2,13 +2,12 @@ package com.awake.net2.handler;
 
 import com.awake.net2.NetContext;
 import com.awake.net2.packet.CmdPacket;
+import com.awake.net2.packet.common.Heartbeat;
 import com.awake.net2.protocol.definition.ProtocolDefinition;
 import com.awake.net2.session.Session;
 import com.awake.net2.util.SessionUtils;
-import com.awake.util.base.StringUtils;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -32,6 +31,10 @@ public class BaseRouteHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         CmdPacket cmdPacket = (CmdPacket) msg;
+        if (cmdPacket.getProtoId() == Heartbeat.PROTOCOL_ID) {
+            logger.info("heartbeat from {}", SessionUtils.sessionSimpleInfo(session));
+            return;
+        }
         //解析协议包
         ProtocolDefinition protocolDefinition = NetContext.getProtocolManager().getProtocolDefinition(cmdPacket.getProtoId());
         Codec cmdPacketCodec = ProtobufProxy.create(protocolDefinition.getProtocolClass());

@@ -4,7 +4,6 @@ import com.awake.event.manger.EventBus;
 import com.awake.net2.NetContext;
 import com.awake.net2.event.ServerExceptionEvent;
 import com.awake.net2.packet.CmdPacket;
-import com.awake.net2.packet.common.Heartbeat;
 import com.awake.net2.protocol.definition.ProtocolDefinition;
 import com.awake.net2.session.Session;
 import com.awake.util.base.StringUtils;
@@ -50,10 +49,6 @@ public class Router implements IRouter {
 
     @Override
     public void receive(Session session, Object packet) {
-        if (packet.getClass() == Heartbeat.class) {
-            logger.info("heartbeat");
-            return;
-        }
         dispatchBySession(session, packet);
     }
 

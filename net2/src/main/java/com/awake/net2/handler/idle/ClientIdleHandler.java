@@ -24,11 +24,9 @@ import java.io.IOException;
 public class ClientIdleHandler extends ChannelDuplexHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientIdleHandler.class);
-    private static final Codec cmdPacketCodec = ProtobufProxy.create(Heartbeat.class);
-    private static final Heartbeat heartbeat = new Heartbeat();
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws IOException {
-        CmdPacket cmdPacket = CmdPacket.valueOf(Heartbeat.PROTOCOL_ID, cmdPacketCodec.encode(heartbeat));
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
+        CmdPacket cmdPacket = CmdPacket.valueOf(Heartbeat.PROTOCOL_ID, new byte[]{});
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent) evt;
             if (event.state() == IdleState.ALL_IDLE) {
