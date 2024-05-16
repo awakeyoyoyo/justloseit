@@ -1,10 +1,8 @@
 package com.awake.net2.handler.codec;
 
-import com.awake.net2.packet.CmdPacket;
+import com.awake.net2.packet.Net2Msg;
 import com.awake.util.IOUtils;
 import com.awake.util.base.StringUtils;
-import com.baidu.bjf.remoting.protobuf.Codec;
-import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
@@ -16,7 +14,7 @@ import java.util.List;
  * @Author：lqh
  * @Date：2024/3/15 11:28
  */
-public class JProtobufTcpCodecHandler extends ByteToMessageCodec<CmdPacket> {
+public class JProtobufTcpCodecHandler extends ByteToMessageCodec<Net2Msg.CmdPacket> {
 
     /**
      * 包体的头部的长度，一个int字节长度
@@ -24,11 +22,9 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<CmdPacket> {
     public static final int PACKET_HEAD_LENGTH = 4;
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, CmdPacket cmdPacket, ByteBuf out) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Net2Msg.CmdPacket cmdPacket, ByteBuf out) throws Exception {
         //包头默认长度
-
-        Codec packetCodec = ProtobufProxy.create(CmdPacket.class);
-        byte[] packetBytes = packetCodec.encode(cmdPacket);
+        byte[] packetBytes = cmdPacket.toByteArray();
         // 主包長度+協議號
         int packetLength = packetBytes.length;
 
@@ -63,8 +59,7 @@ public class JProtobufTcpCodecHandler extends ByteToMessageCodec<CmdPacket> {
         int readableBytes = sliceByteBuf.readableBytes();
         byte[] packetBytes = new byte[readableBytes];
         sliceByteBuf.readBytes(packetBytes);
-        Codec cmdPacketCodec = ProtobufProxy.create(CmdPacket.class);
-        CmdPacket cmdPacket = (CmdPacket) cmdPacketCodec.decode(packetBytes);
+        Net2Msg.CmdPacket cmdPacket = Net2Msg.CmdPacket.parseFrom(packetBytes);
         out.add(cmdPacket);
     }
 }

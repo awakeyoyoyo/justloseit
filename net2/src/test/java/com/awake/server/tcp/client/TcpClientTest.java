@@ -4,7 +4,7 @@ import com.awake.configuration.TestConfiguration;
 import com.awake.module.GameModule;
 import com.awake.net2.NetContext;
 import com.awake.net2.server.tcp.TcpClient;
-import com.awake.packet.tcp.TcpHelloRequest;
+import com.awake.packet.TestMsg;
 import com.awake.util.base.ThreadUtils;
 import com.awake.util.net.HostAndPort;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,8 @@ public class TcpClientTest {
 
         for (int i = 0; i < 1000; i++) {
             ThreadUtils.sleep(2000);
-            NetContext.getRouter().send(session, GameModule.TcpHelloRequest, TcpHelloRequest.valueOf("Hello, this is the tcp client!"));
+            TestMsg.TcpHelloRequest.Builder request = TestMsg.TcpHelloRequest.newBuilder().setMsg("Hello, this is the tcp client!");
+            NetContext.getRouter().send(session, GameModule.TcpHelloRequest, request.build());
         }
 
         ThreadUtils.sleep(Long.MAX_VALUE);

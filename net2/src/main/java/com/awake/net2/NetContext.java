@@ -1,6 +1,5 @@
 package com.awake.net2;
 
-import com.awake.net2.protocol.IProtocolManager;
 import com.awake.net2.router.IRouter;
 import com.awake.net2.router.PacketBus;
 import com.awake.net2.router.TaskBus;
@@ -43,13 +42,9 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static ApplicationContext applicationContext;
 
-    private static IProtocolManager protocolManager;
 
     private static IRpcManager rpcManager;
 
-    public static IProtocolManager getProtocolManager() {
-        return protocolManager;
-    }
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
@@ -65,7 +60,6 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             packetBus = applicationContext.getBean(PacketBus.class);
             router = applicationContext.getBean(IRouter.class);
             sessionManager = applicationContext.getBean(ISessionManager.class);
-            protocolManager = applicationContext.getBean(IProtocolManager.class);
             rpcManager = applicationContext.getBean(IRpcManager.class);
             //初始化packet
             packetBus.init(applicationContext);

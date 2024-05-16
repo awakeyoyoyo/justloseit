@@ -18,8 +18,8 @@ import com.awake.module.GameModule;
 import com.awake.net2.NetContext;
 import com.awake.net2.router.receiver.PacketReceiver;
 import com.awake.net2.session.Session;
-import com.awake.packet.websocket.WebsocketHelloRequest;
-import com.awake.packet.websocket.WebsocketHelloResponse;
+
+import com.awake.packet.TestMsg;
 import com.awake.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +33,13 @@ public class WebsocketServerPacketController {
 
     private static final Logger logger = LoggerFactory.getLogger(WebsocketServerPacketController.class);
 
-    @PacketReceiver
-    public void atWebsocketHelloRequest(Session session, WebsocketHelloRequest request) {
-        logger.info("receive [packet:{}] from browser", JsonUtils.object2String(request));
+    @PacketReceiver(protoId = GameModule.WebsocketHelloRequest)
+    public void atWebsocketHelloRequest1(Session session, TestMsg.WebsocketHelloRequest1 request) {
+        logger.info("receive [packet msg:{}] from browser", request.getMsg());
 
-        var response = new WebsocketHelloResponse();
-        response.setMessage("Hello, this is the websocket server! -> " + request.getMessage());
+        var response = TestMsg.WebsocketHelloResponse1.newBuilder().setMsg("Hello, this is the websocket server! -> " + request.getMsg());
 
-        NetContext.getRouter().send(session, GameModule.WebsocketHelloResponse, response);
+        NetContext.getRouter().send(session, GameModule.WebsocketHelloResponse, response.build());
     }
 
 }

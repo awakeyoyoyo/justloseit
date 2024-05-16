@@ -5,9 +5,7 @@ import com.awake.configuration.TestConfiguration;
 import com.awake.module.GameModule;
 import com.awake.net2.NetContext;
 import com.awake.net2.server.webscoket.WebsocketClient;
-import com.awake.packet.websocket.WebsocketHelloRequest;
-import com.awake.packet.websocket.WebsocketHelloResponse;
-import com.awake.util.JsonUtils;
+import com.awake.packet.TestMsg;
 import com.awake.util.base.ThreadUtils;
 import com.awake.util.net.HostAndPort;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolConfig;
@@ -16,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.function.Consumer;
 
 /**
  * @version : 1.0
@@ -41,12 +37,13 @@ public class WebSocketClientTest {
         var client = new WebsocketClient(HostAndPort.valueOf("127.0.0.1:9000"), webSocketClientProtocolConfig);
         var session = client.start();
 
-        var request = new WebsocketHelloRequest();
-        request.setMessage("Hello, this is the websocket client!");
+        var request = TestMsg.WebsocketHelloRequest1.newBuilder()
+                        .setMsg("Hello, this is the websocket client!");
+
 
         for (int i = 0; i < 1000; i++) {
             ThreadUtils.sleep(1000);
-            NetContext.getRouter().send(session, GameModule.WebsocketHelloRequest, request);
+            NetContext.getRouter().send(session, GameModule.WebsocketHelloRequest, request.build());
         }
 
         ThreadUtils.sleep(Long.MAX_VALUE);

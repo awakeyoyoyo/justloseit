@@ -4,8 +4,7 @@ import com.awake.module.GameModule;
 import com.awake.net2.NetContext;
 import com.awake.net2.router.receiver.PacketReceiver;
 import com.awake.net2.session.Session;
-import com.awake.packet.tcp.TcpHelloRequest;
-import com.awake.packet.tcp.TcpHelloResponse;
+import com.awake.packet.TestMsg;
 import com.awake.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +19,13 @@ public class TcpServerController {
 
     private static final Logger logger = LoggerFactory.getLogger(TcpServerController.class);
 
-    @PacketReceiver
-    public void atTcpHelloRequest(Session session, TcpHelloRequest request) {
-        logger.info("receive [packet:{}] from client", JsonUtils.object2String(request));
+    @PacketReceiver(protoId = GameModule.TcpHelloRequest)
+    public void atTcpHelloRequest(Session session, TestMsg.TcpHelloRequest request) {
+        logger.info("receive [packet msg:{}] from client", request.getMsg());
 
-        var response = new TcpHelloResponse();
-        response.setMessage("Hello, this is the tcp server!");
+        var response = TestMsg.TcpHelloResponse.newBuilder().setMsg("Hello, this is the tcp server!");
 
-        NetContext.getRouter().send(session, GameModule.TcpHelloResponse, response);
+
+        NetContext.getRouter().send(session, GameModule.TcpHelloResponse, response.build());
     }
 }

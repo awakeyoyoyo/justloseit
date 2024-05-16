@@ -31,6 +31,10 @@ public class PacketReceiverDefinition implements IPacketReceiver {
      */
     private Class<?> packetClazz;
 
+    /**
+     * The protocol class parser date method
+     */
+    private Method protobufParser;
 
     public PacketReceiverDefinition(Object bean, Method method, Class<?> packetClazz) {
         this.bean = bean;

@@ -1,8 +1,6 @@
 package com.awake.configuration;
 
 import com.awake.net2.NetContext;
-import com.awake.net2.protocol.ProtocolManager;
-import com.awake.net2.protocol.properties.ProtocolProperties;
 import com.awake.net2.router.PacketBus;
 import com.awake.net2.router.Router;
 import com.awake.net2.rpc.RpcManager;
@@ -23,15 +21,8 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScans(value = {@ComponentScan("com.awake.server")})
 public class TestConfiguration {
     @Configuration
-    @EnableConfigurationProperties({ProtocolProperties.class, RpcProperties.class})
+    @EnableConfigurationProperties({RpcProperties.class})
     public static class NetAutoConfiguration {
-
-        //协议解析
-        @Bean
-        @ConditionalOnMissingBean
-        public ProtocolManager protocolManager() {
-            return new ProtocolManager();
-        }
 
         //路由
         @Bean

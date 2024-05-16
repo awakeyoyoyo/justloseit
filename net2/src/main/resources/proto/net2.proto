@@ -1,0 +1,11 @@
+syntax = "proto3";
+option java_outer_classname = "Net2Msg";
+
+message CmdPacket{
+  int32 protoId = 1;
+  bytes packetData = 2;
+}
+
+message HeartBeat{
+
+}

@@ -15,9 +15,10 @@ package com.awake.server.websocket.client;
 
 
 
+import com.awake.module.GameModule;
 import com.awake.net2.router.receiver.PacketReceiver;
 import com.awake.net2.session.Session;
-import com.awake.packet.websocket.WebsocketHelloResponse;
+import com.awake.packet.TestMsg;
 import com.awake.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,9 @@ public class WebsocketClientPacketController {
 
     private static final Logger logger = LoggerFactory.getLogger(WebsocketClientPacketController.class);
 
-    @PacketReceiver
-    public void atWebsocketHelloResponse(Session session, WebsocketHelloResponse response) {
-        logger.info("websocket client receive [packet:{}] from server", JsonUtils.object2String(response));
+    @PacketReceiver(protoId = GameModule.WebsocketHelloResponse)
+    public void atWebsocketHelloResponse1(Session session, TestMsg.WebsocketHelloResponse1 response) {
+        logger.info("websocket client receive [packet msg:{}] from server", response.getMsg());
     }
 
 }

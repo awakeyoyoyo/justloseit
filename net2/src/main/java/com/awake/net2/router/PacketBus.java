@@ -11,11 +11,12 @@ import com.awake.util.AssertionUtils;
 import com.awake.util.ReflectionUtils;
 import com.awake.util.base.ArrayUtils;
 import com.awake.util.base.StringUtils;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.GeneratedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -43,10 +44,11 @@ public class PacketBus {
     public static final String NET_NOTICE_SUFFIX = "Notice";
 
 
-
     private static final Logger logger = LoggerFactory.getLogger(PacketBus.class);
 
     private static final Map<Integer, IPacketReceiver> receiverMap = new HashMap<>();
+
+    private static final Map<Integer, Method> praseFromMap = new HashMap<>();
 
     public void init(ApplicationContext applicationContext) {
         // 注册协议接收器
@@ -60,11 +62,18 @@ public class PacketBus {
     /**
      * The routing of the message
      */
-    public static void route(Session session, Object packet) {
-        IPacketReceiver receiver = receiverMap.get(NetContext.getProtocolManager().getProtocolId(packet.getClass()));
-        if (receiver == null) {
-            String name = packet.getClass().getSimpleName();
-            throw new RuntimeException(StringUtils.format("no any packetReceiver:[at{}] found for this packet:[{}] or no GatewayAttachment sent back if this server is gateway", name, name));
+    public static void route(Session session, int protoId, ByteString byteString) {
+        IPacketReceiver receiver = receiverMap.get(protoId);
+        Method method = praseFromMap.get(protoId);
+        if (receiver == null || method == null) {
+            throw new RuntimeException(StringUtils.format("no any packetReceiver:[at{}] found for this packet:[{}] or no GatewayAttachment sent back if this server is gateway", protoId, protoId));
+        }
+        GeneratedMessage packet = null;
+        try {
+            packet = (GeneratedMessage) method.invoke(null, byteString);
+        } catch (Exception e) {
+            logger.error("proto parse err, protoId=" + protoId + ", e=", e);
+            return;
         }
         receiver.invoke(session, packet);
     }
@@ -102,14 +111,17 @@ public class PacketBus {
 
             int protocolId = Integer.MIN_VALUE;
             try {
-                protocolId = NetContext.getProtocolManager().getProtocolId(packetClazz);
+                PacketReceiver annotation = method.getAnnotation(PacketReceiver.class);
+                AssertionUtils.isTrue(!praseFromMap.containsKey(annotation.protoId()), "[class:{}] [method:{}],the protoId:{} is repeatedly.", bean.getClass().getName(), method.getName(),annotation.protoId());
+                protocolId = annotation.protoId();
+                Method parseFrom = packetClazz.getMethod("parseFrom", ByteString.class);
+                praseFromMap.put(protocolId, parseFrom);
             } catch (Exception e) {
                 throw new RunException("[class:{}][protocolId:{}] has no registration, please register for this protocol", packetClazz.getSimpleName(), protocolId);
             }
 
             try {
                 AssertionUtils.isNull(receiverMap.get(protocolId), "duplicate protocol registration, @PacketReceiver [class:{}] is repeatedly received [at{}]", packetClazz.getSimpleName(), packetClazz.getSimpleName());
-
                 PacketReceiverDefinition receiverDefinition = new PacketReceiverDefinition(bean, method, packetClazz);
                 IPacketReceiver enhanceReceiverDefinition = EnhanceUtils.createPacketReceiver(receiverDefinition);
                 receiverMap.put(protocolId, enhanceReceiverDefinition);

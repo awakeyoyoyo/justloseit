@@ -1,0 +1,28 @@
+syntax = "proto3";
+option java_outer_classname = "TestMsg";
+
+message TcpHelloRequest{
+  string msg = 1;
+}
+
+message TcpHelloResponse{
+  string msg = 1;
+}
+
+message TcpHelloRequest1{
+  string msg = 1;
+}
+
+message TcpHelloResponse1{
+  string msg = 1;
+}
+
+
+message WebsocketHelloRequest1{
+  string msg = 1;
+}
+
+message WebsocketHelloResponse1{
+  string msg = 1;
+}
+
