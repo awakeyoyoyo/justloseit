@@ -34,12 +34,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>${protobuf-java.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.awake</groupId>
             <artifactId>event</artifactId>
             <version>${justloseit.event.version}</version>

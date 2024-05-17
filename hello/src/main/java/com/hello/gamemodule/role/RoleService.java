@@ -10,11 +10,10 @@ import com.awake.storage.model.IStorage;
 import com.awake.util.base.StringUtils;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
-import com.hello.common.packet.ErrorResponse;
+import com.hello.common.ErrorFactory;
 import com.hello.gamemodule.role.entity.RoleEntity;
-import com.hello.gamemodule.role.packet.LoginResponse;
-import com.hello.gamemodule.role.packet.RegisterResponse;
 import com.hello.common.module.GameModule;
+import com.hello.packet.LoginMsg;
 import com.hello.resource.FilterWordResource;
 import org.springframework.stereotype.Service;
 
@@ -34,26 +33,29 @@ public class RoleService {
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
         if (StringUtils.isEmpty(roleEntity.id()) || !roleEntity.getPassword().equals(password)) {
             NetContext.getRouter().send(session, GameModule.ErrorResponse,
-                    ErrorResponse.valueOf(ErrorCode.ERROR_PARAMS));
+                    ErrorFactory.create(ErrorCode.ERROR_PARAMS));
             return;
         }
 
         NetContext.getRouter().send(session, GameModule.LoginResponse,
-                LoginResponse.valueOf(roleEntity.getRid(), roleEntity.getId(), roleEntity.getPassword()));
+                LoginMsg.LoginResponse.newBuilder()
+                        .setRid(roleEntity.getRid())
+                        .setPassword(roleEntity.getPassword())
+                        .setUserName(roleEntity.getId()).build());
     }
 
     public void atRegisterRequest(Session session, String userName, String password) {
         for (FilterWordResource filterWordResource : filterWordResources.getAll()) {
             if (userName.contains(filterWordResource.getFilter())) {
                 NetContext.getRouter().send(session, GameModule.ErrorResponse,
-                        ErrorResponse.valueOf(ErrorCode.USER_NAME_ILLEGAL));
+                        ErrorFactory.create(ErrorCode.USER_NAME_ILLEGAL));
                 return;
             }
         }
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
         if (!StringUtils.isEmpty(roleEntity.id())) {
             NetContext.getRouter().send(session, GameModule.ErrorResponse,
-                    ErrorResponse.valueOf(ErrorCode.USER_NAME_EXIT));
+                    ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
             return;
         }
 
@@ -63,7 +65,9 @@ public class RoleService {
 
         OrmContext.getAccessor().insert(roleEntity);
 
+        LoginMsg.RegisterResponse.Builder response = LoginMsg.RegisterResponse.newBuilder().setRid(roleEntity.getRid()).setPassword(roleEntity.getPassword())
+                .setUserName(roleEntity.getId());
         NetContext.getRouter().send(session, GameModule.RegisterResponse,
-                RegisterResponse.valueOf(roleEntity.getRid(), roleEntity.getId(), roleEntity.getPassword()));
+                response.build());
     }
 }

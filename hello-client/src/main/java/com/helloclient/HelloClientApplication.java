@@ -6,10 +6,8 @@ import com.awake.net2.session.Session;
 import com.awake.net2.util.NetUtils;
 import com.awake.util.net.HostAndPort;
 import com.helloclient.cross.service.user.UserClient;
-import com.helloclient.packet.LoginRequest;
-import com.helloclient.packet.RegisterRequest;
+import com.helloclient.packet.LoginMsg;
 import com.helloclient.protomodule.GameModule;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -31,14 +29,16 @@ public class HelloClientApplication {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        NetContext.getRouter().send(session, GameModule.RegisterRequest, RegisterRequest.valueOf("awakeyoyoyo1", "lqh777***"));
+        LoginMsg.RegisterRequest.Builder registerRequest = LoginMsg.RegisterRequest.newBuilder().setPassword("lqh777***")
+                .setUserName("awakeyoyoyo1");
+        NetContext.getRouter().send(session, GameModule.RegisterRequest,registerRequest.build());
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        NetContext.getRouter().send(session, GameModule.LoginRequest, LoginRequest.valueOf("awakeyoyoyo1", "lqh777***"));
+        LoginMsg.LoginRequest.Builder loginRequest = LoginMsg.LoginRequest.newBuilder().setPassword("lqh777***").setUserName("awakeyoyoyo1");
+        NetContext.getRouter().send(session, GameModule.LoginRequest,loginRequest.build());
 
         UserClient.getIns().greet("lqhao");
         try {

@@ -1,0 +1,11 @@
+syntax = "proto3";
+option java_outer_classname = "RpcMsg";
+
+message ErrorResponse{
+  int32 errorCode = 1;
+  repeated string  params = 2;
+}
+
+message HeartBeat{
+
+}

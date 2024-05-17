@@ -3,6 +3,7 @@ package com.awake.net2.router;
 import com.awake.net2.session.Session;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.GeneratedMessageV3;
 
 /**
  * @Author：lqh
@@ -16,7 +17,7 @@ public interface IRouter {
      * @param session
      * @param packet
      */
-    void send(Session session,int protoId, GeneratedMessage packet);
+    void send(Session session,int protoId, GeneratedMessageV3 packet);
 
     /**
      * 在服务端收到数据后，会调用这个方法. 这个方法在BaseRouteHandler.java的channelRead中被调用

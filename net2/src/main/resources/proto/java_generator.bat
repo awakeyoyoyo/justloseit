@@ -8,6 +8,7 @@ if not exist %folder_name% (
     echo Folder %folder_name% has been created.
 ) else (
     echo The folder %folder_name% already exists.
+    del /Q ".\%folder_name%\*.*"
 )
 
 for %%i in (*.proto) do (

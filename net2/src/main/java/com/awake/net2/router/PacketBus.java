@@ -13,6 +13,7 @@ import com.awake.util.base.ArrayUtils;
 import com.awake.util.base.StringUtils;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.GeneratedMessageV3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -68,9 +69,9 @@ public class PacketBus {
         if (receiver == null || method == null) {
             throw new RuntimeException(StringUtils.format("no any packetReceiver:[at{}] found for this packet:[{}] or no GatewayAttachment sent back if this server is gateway", protoId, protoId));
         }
-        GeneratedMessage packet = null;
+        GeneratedMessageV3 packet = null;
         try {
-            packet = (GeneratedMessage) method.invoke(null, byteString);
+            packet = (GeneratedMessageV3) method.invoke(null, byteString);
         } catch (Exception e) {
             logger.error("proto parse err, protoId=" + protoId + ", e=", e);
             return;

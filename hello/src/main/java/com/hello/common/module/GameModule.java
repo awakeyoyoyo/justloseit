@@ -7,8 +7,6 @@ package com.hello.common.module;
  */
 public interface GameModule {
 
-    int ModuleId = 1;
-
     // 协议
     /**
      * 错误码

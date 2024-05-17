@@ -7,6 +7,7 @@ import com.awake.net2.session.Session;
 import com.awake.util.base.StringUtils;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.GeneratedMessageV3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ public class Router implements IRouter {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
 
     @Override
-    public void send(Session session, int protoId, GeneratedMessage packet) {
+    public void send(Session session, int protoId, GeneratedMessageV3 packet) {
         if (session == null) {
             logger.error("session is null and can not be sent.");
             return;
