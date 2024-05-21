@@ -1,11 +1,12 @@
-package com.hello.common.module;
+package com.hello.common;
 
 /**
  * 定义号模块号 以及其协议号
+ *
  * @Author：lqh
  * @Date：2024/3/29 9:55
  */
-public interface GameModule {
+public interface GameProtoId {
 
     // 协议
     /**

@@ -12,7 +12,7 @@ import com.hello.GameContext;
 import com.hello.common.ErrorCode;
 import com.hello.common.ErrorFactory;
 import com.hello.gamemodule.role.entity.RoleEntity;
-import com.hello.common.module.GameModule;
+import com.hello.common.GameProtoId;
 import com.hello.packet.LoginMsg;
 import com.hello.resource.FilterWordResource;
 import org.springframework.stereotype.Service;
@@ -32,12 +32,12 @@ public class RoleService {
     public void atLoginRequest(Session session, String userName, String password) {
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
         if (StringUtils.isEmpty(roleEntity.id()) || !roleEntity.getPassword().equals(password)) {
-            NetContext.getRouter().send(session, GameModule.ErrorResponse,
+            NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
                     ErrorFactory.create(ErrorCode.ERROR_PARAMS));
             return;
         }
 
-        NetContext.getRouter().send(session, GameModule.LoginResponse,
+        NetContext.getRouter().send(session, GameProtoId.LoginResponse,
                 LoginMsg.LoginResponse.newBuilder()
                         .setRid(roleEntity.getRid())
                         .setPassword(roleEntity.getPassword())
@@ -47,14 +47,14 @@ public class RoleService {
     public void atRegisterRequest(Session session, String userName, String password) {
         for (FilterWordResource filterWordResource : filterWordResources.getAll()) {
             if (userName.contains(filterWordResource.getFilter())) {
-                NetContext.getRouter().send(session, GameModule.ErrorResponse,
+                NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
                         ErrorFactory.create(ErrorCode.USER_NAME_ILLEGAL));
                 return;
             }
         }
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
         if (!StringUtils.isEmpty(roleEntity.id())) {
-            NetContext.getRouter().send(session, GameModule.ErrorResponse,
+            NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
                     ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
             return;
         }
@@ -67,7 +67,7 @@ public class RoleService {
 
         LoginMsg.RegisterResponse.Builder response = LoginMsg.RegisterResponse.newBuilder().setRid(roleEntity.getRid()).setPassword(roleEntity.getPassword())
                 .setUserName(roleEntity.getId());
-        NetContext.getRouter().send(session, GameModule.RegisterResponse,
+        NetContext.getRouter().send(session, GameProtoId.RegisterResponse,
                 response.build());
     }
 }

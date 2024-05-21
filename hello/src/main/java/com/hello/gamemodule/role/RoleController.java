@@ -2,7 +2,7 @@ package com.hello.gamemodule.role;
 
 import com.awake.net2.router.receiver.PacketReceiver;
 import com.awake.net2.session.Session;
-import com.hello.common.module.GameModule;
+import com.hello.common.GameProtoId;
 import com.hello.packet.LoginMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,12 +17,12 @@ public class RoleController {
     @Autowired
     private  RoleService roleService;
 
-    @PacketReceiver(protoId = GameModule.LoginRequest)
+    @PacketReceiver(protoId = GameProtoId.LoginRequest)
     public void atLoginRequest(Session session, LoginMsg.LoginRequest loginRequest) throws Exception {
         roleService.atLoginRequest(session,loginRequest.getUserName(),loginRequest.getPassword());
     }
 
-    @PacketReceiver(protoId = GameModule.RegisterRequest)
+    @PacketReceiver(protoId = GameProtoId.RegisterRequest)
     public void atRegisterRequest(Session session, LoginMsg.RegisterRequest registerRequest) throws Exception {
         roleService.atRegisterRequest(session,registerRequest.getUserName(),registerRequest.getPassword());
     }

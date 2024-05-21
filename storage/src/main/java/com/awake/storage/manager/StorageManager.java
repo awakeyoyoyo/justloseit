@@ -267,7 +267,7 @@ public class StorageManager implements IStorageManager {
         }
     }
 
-    private Resource resource(Class<?> clazz) {
+    public Resource resource(Class<?> clazz) {
 
         return scanResourceFile(clazz);
 

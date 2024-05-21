@@ -2,6 +2,7 @@ package com.awake.storage.manager;
 
 import com.awake.storage.config.StorageProperties;
 import com.awake.storage.model.IStorage;
+import org.springframework.core.io.Resource;
 
 import java.util.Map;
 
@@ -37,4 +38,6 @@ public interface IStorageManager {
     void updateStorage(Class<?> clazz, IStorage<?, ?> storage);
 
     StorageProperties storageConfig();
+
+    Resource resource(Class<?> clazz);
 }
