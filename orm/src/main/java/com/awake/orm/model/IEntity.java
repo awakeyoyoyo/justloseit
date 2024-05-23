@@ -12,7 +12,10 @@ public interface IEntity<PK extends Comparable<PK>>   {
      */
     PK id();
 
-
+    /**
+     * 设置文档主键
+     */
+    void setId(PK id);
     /**
      * 一个文档的写入到数据库的version版本，version的get和set方法
      * <p>

@@ -30,14 +30,14 @@ public class HelloClientApplication {
             throw new RuntimeException(e);
         }
         LoginMsg.RegisterRequest.Builder registerRequest = LoginMsg.RegisterRequest.newBuilder().setPassword("lqh777***")
-                .setUserName("awakeyoyoyo1");
+                .setUserName("awakeyoyoyo2");
         NetContext.getRouter().send(session, GameModule.RegisterRequest,registerRequest.build());
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        LoginMsg.LoginRequest.Builder loginRequest = LoginMsg.LoginRequest.newBuilder().setPassword("lqh777***").setUserName("awakeyoyoyo1");
+        LoginMsg.LoginRequest.Builder loginRequest = LoginMsg.LoginRequest.newBuilder().setPassword("lqh777***").setUserName("awakeyoyoyo2");
         NetContext.getRouter().send(session, GameModule.LoginRequest,loginRequest.build());
 
         UserClient.getIns().greet("lqhao");

@@ -34,6 +34,11 @@ public class IdEntity implements IEntity<Integer> {
         return id;
     }
 
+    @Override
+    public void setId(Integer id) {
+        this.id=id;
+    }
+
     public int getId() {
         return id;
     }

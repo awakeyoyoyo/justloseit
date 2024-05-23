@@ -16,6 +16,11 @@ public interface IEntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> 
     E load(PK pk);
 
     /**
+     * 从数据库中加载数据到缓存，如果数据库不存在则插入一个id为传入id的默认值，并且将这个默认值加入缓存
+     */
+    E loadAndInsert(PK pk);
+
+    /**
      * 更新缓存中的数据，只更新缓存的时间戳，并通过一定策略写入到数据库
      */
     void update(E entity);

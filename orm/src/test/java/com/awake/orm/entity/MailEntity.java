@@ -50,5 +50,10 @@ public class MailEntity implements IEntity<String> {
         return id;
     }
 
+    @Override
+    public void setId(String id) {
+        this.id=  id;
+    }
+
 
 }

@@ -79,7 +79,9 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
                         // 如果数据库中不存在则给一个默认值
                         if (entity == null) {
                             @SuppressWarnings("unchecked")
-                            var newEntity = (E) entityDef.newEntity(pk);
+                            var newEntity = (E) entityDef.newEntity();
+                            newEntity.setId(pk);
+                            OrmContext.getAccessor().insert(newEntity);
                             return new PNode<E>(newEntity);
                         }
 
@@ -103,18 +105,39 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
     @Override
     public E load(PK pk) {
         AssertionUtils.notNull(pk);
-        try {
-            return cache.get(pk).getEntity();
-        } catch (Exception e) {
-            logger.error("数据库[{}]缓存[pk:{}]加载发生exception异常", entityDef.getClazz().getSimpleName(), pk, e);
-        } catch (Throwable t) {
-            logger.error("数据库[{}]缓存[pk:{}]加载发生error异常", entityDef.getClazz().getSimpleName(), pk, t);
+        var pnode = cache.get(pk);
+        if (pnode != null) {
+            return pnode.getEntity();
         }
-
-        logger.warn("数据库[{}]无法加载缓存[pk:{}]，返回默认值", entityDef.getClazz().getSimpleName(), pk);
         @SuppressWarnings("unchecked")
-        var entity = (E) entityDef.newEntity(pk);
-        var pnode = new PNode<E>(entity);
+        var entity = (E) OrmContext.getAccessor().load(pk, (Class<IEntity<?>>) entityDef.getClazz());
+        // 如果数据库中不存在则给一个默认值
+        if (entity == null) {
+            logger.warn("数据库[{}]无法加载缓存[pk:{}]，返回默认值", entityDef.getClazz().getSimpleName(), pk);
+            entity = (E) entityDef.newEntity();
+        }
+        pnode = new PNode<>(entity);
+        cache.put(pk, pnode);
+        return entity;
+    }
+
+    @Override
+    public E loadAndInsert(PK pk) {
+        AssertionUtils.notNull(pk);
+        var pnode = cache.get(pk);
+        if (pnode != null) {
+            return pnode.getEntity();
+        }
+        @SuppressWarnings("unchecked")
+        var entity = (E) OrmContext.getAccessor().load(pk, (Class<IEntity<?>>) entityDef.getClazz());
+
+        // 如果数据库中不存在则初始化一个
+        if (entity == null) {
+            entity = (E) entityDef.newEntity();
+            entity.setId(pk);
+            OrmContext.getAccessor().insert(entity);
+        }
+        pnode = new PNode<>(entity);
         cache.put(pk, pnode);
         return entity;
     }

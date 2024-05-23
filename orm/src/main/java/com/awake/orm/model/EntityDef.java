@@ -45,7 +45,7 @@ public class EntityDef {
         return entityDef;
     }
 
-    public IEntity<?> newEntity(Object id) {
+    public IEntity<?> newEntity() {
         var entity = ReflectionUtils.newInstance(clazz);
         return entity;
     }
