@@ -52,18 +52,18 @@ public class RoleService {
                 return;
             }
         }
-        RoleEntity roleEntity = roleEntityEntityCache.load(userName);
-        if (!StringUtils.isEmpty(roleEntity.id())) {
-            NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
-                    ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
-            return;
-        }
+        RoleEntity roleEntity = roleEntityEntityCache.loadAndInsert(userName);
+//        if (!StringUtils.isEmpty(roleEntity.id())) {
+//            NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
+//                    ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
+//            return;
+//        }
 
         roleEntity.setRid(GameContext.getInstance().getIdManager().generalRoleId());
         roleEntity.setPassword(password);
         roleEntity.setId(userName);
 
-        OrmContext.getAccessor().insert(roleEntity);
+        OrmContext.getAccessor().update(roleEntity);
 
         LoginMsg.RegisterResponse.Builder response = LoginMsg.RegisterResponse.newBuilder().setRid(roleEntity.getRid()).setPassword(roleEntity.getPassword())
                 .setUserName(roleEntity.getId());

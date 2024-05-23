@@ -72,20 +72,8 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
                 })
                 .build(new CacheLoader<PK, PNode<E>>() {
                     @Override
-                    public @Nullable PNode<E> load(@NonNull PK pk) {
-                        @SuppressWarnings("unchecked")
-                        var entity = (E) OrmContext.getAccessor().load(pk, (Class<IEntity<?>>) entityDef.getClazz());
-
-                        // 如果数据库中不存在则给一个默认值
-                        if (entity == null) {
-                            @SuppressWarnings("unchecked")
-                            var newEntity = (E) entityDef.newEntity();
-                            newEntity.setId(pk);
-                            OrmContext.getAccessor().insert(newEntity);
-                            return new PNode<E>(newEntity);
-                        }
-
-                        return new PNode<E>(entity);
+                    public @Nullable PNode<E> load(PK pk) throws Exception {
+                        return null;
                     }
                 });
 
