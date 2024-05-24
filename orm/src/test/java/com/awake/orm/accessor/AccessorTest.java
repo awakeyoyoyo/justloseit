@@ -82,7 +82,7 @@ public class AccessorTest {
         OrmContext.getAccessor().delete(11, MapEntity.class);
 
         var entity = new MapEntity();
-        entity.setId(11);
+        entity.setId(11L);
 
         var bagMap = new HashMap<String, ItemBag>();
         entity.setBagMap(bagMap);
