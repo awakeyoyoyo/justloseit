@@ -56,6 +56,11 @@ public class UserEntity implements IEntity<Long> {
     }
 
     @Override
+    public void setId(Long id) {
+        this.id=id;
+    }
+
+    @Override
     public String toString() {
         return "UserEntity{" +
                 "id=" + id +
