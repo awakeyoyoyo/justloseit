@@ -56,7 +56,7 @@ public class IdManager {
      * @return
      */
     public long generalRoleId(){
-        int serverId = GameContext.getInstance().getGameServerProperties().getServerId();
+        int serverId = GameContext.getIns().getGameServerProperties().getServerId();
         atomicRoleId.incrementAndGet();
         IdEntity roleIdEntity = idEntityEntityCache.load(IdConstant.ROLE_ID);
         roleIdEntity.setValue(atomicRoleId.get());

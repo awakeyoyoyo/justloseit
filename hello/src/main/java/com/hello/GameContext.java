@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class GameContext implements ApplicationListener<ApplicationContextEvent>,Ordered{
     private static final Logger logger = LoggerFactory.getLogger(GameContext.class);
 
-    private static GameContext instance;
+    private static GameContext ins;
 
     @Autowired
     private GameServerProperties gameServerProperties;
@@ -39,8 +38,8 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
     }
 
 
-    public static GameContext getInstance() {
-        return instance;
+    public static GameContext getIns() {
+        return ins;
     }
 
     @Override
@@ -48,7 +47,7 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
         //最低优先级处理，组件初始化完毕再初始化游戏上下文
         if (event instanceof ContextRefreshedEvent) {
             // 注意此时所有组件都已经注销完了，此时一般不做任何处理
-            instance=this;
+            ins =this;
             idManager.initIdValue();
             logger.info("Game started successfully.");
         }
@@ -57,5 +56,16 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;
+    }
+
+    /**
+     * 获取注入spring 服务组件
+     * @param clazz
+     * @return
+     * @param <T>
+     */
+    public <T> T getComponet(Class<T> clazz) {
+        T bean = applicationContext.getBean(clazz);
+        return bean;
     }
 }

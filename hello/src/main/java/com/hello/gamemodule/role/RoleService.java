@@ -59,7 +59,7 @@ public class RoleService {
 //            return;
 //        }
 
-        roleEntity.setRid(GameContext.getInstance().getIdManager().generalRoleId());
+        roleEntity.setRid(GameContext.getIns().getIdManager().generalRoleId());
         roleEntity.setPassword(password);
         roleEntity.setId(userName);
 
