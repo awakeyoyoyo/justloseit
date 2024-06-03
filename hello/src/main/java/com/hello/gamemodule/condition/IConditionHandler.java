@@ -1,6 +1,6 @@
 package com.hello.gamemodule.condition;
 
-import com.hello.resource.model.ConditionConf;
+import com.hello.resource.model.Condition;
 
 /**
  * @Author：lqh
@@ -13,6 +13,6 @@ public interface IConditionHandler {
      * @param roleId
      * @return
      */
-    boolean verify(long roleId, ConditionConf conditionConf);
+    boolean verify(long roleId, Condition condition);
 
 }

@@ -2,8 +2,11 @@ package com.hello.resource;
 
 import com.awake.storage.anno.Id;
 import com.awake.storage.anno.Storage;
-import com.hello.resource.model.ConditionConf;
+import com.hello.resource.model.Condition;
+import com.hello.resource.model.Reward;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * @Author：lqh
@@ -47,12 +50,12 @@ public class MissionResource {
     /**
      * 奖励
      */
-    private String rewards;
+    private List<Reward> rewards;
 
     /**
      * 接取任务条件
      */
-    private ConditionConf acceptConditionConf;
+    private Condition acceptCondition;
 
     /**
      * 下一场任务id

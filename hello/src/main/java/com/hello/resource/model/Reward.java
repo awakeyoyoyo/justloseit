@@ -7,7 +7,7 @@ import lombok.Getter;
  * @Date：2024/6/3 20:20
  */
 @Getter
-public class ItemConf {
+public class Reward {
 
     /**
      * 物品类型

@@ -2,7 +2,7 @@ package com.hello.resource;
 
 import com.awake.storage.anno.Id;
 import com.awake.storage.anno.Storage;
-import com.hello.resource.model.ConditionConf;
+import com.hello.resource.model.Condition;
 import lombok.Data;
 
 import java.util.List;
@@ -30,6 +30,6 @@ public class MissionGroupResource {
     /**
      * 任务组激活条件
      */
-    private List<ConditionConf> conditionConfs;
+    private List<Condition> conditions;
 
 }

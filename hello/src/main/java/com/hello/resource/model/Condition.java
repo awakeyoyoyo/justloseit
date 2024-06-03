@@ -7,7 +7,7 @@ import lombok.Getter;
  * @Date：2024/6/3 20:10
  */
 @Getter
-public class ConditionConf {
+public class Condition {
 
     /**
      * 条件类型

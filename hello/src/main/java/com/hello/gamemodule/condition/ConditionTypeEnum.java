@@ -1,6 +1,6 @@
 package com.hello.gamemodule.condition;
 
-import com.hello.resource.model.ConditionConf;
+import com.hello.resource.model.Condition;
 
 /**
  * 条件类型枚举
@@ -27,7 +27,7 @@ public enum ConditionTypeEnum implements IConditionHandler {
     }
 
     @Override
-    public boolean verify(long roleId, ConditionConf conditionConf) {
-        return conditionHandler.verify(roleId, conditionConf);
+    public boolean verify(long roleId, Condition condition) {
+        return conditionHandler.verify(roleId, condition);
     }
 }
