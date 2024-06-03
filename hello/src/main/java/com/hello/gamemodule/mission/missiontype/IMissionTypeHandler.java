@@ -1,7 +1,12 @@
 package com.hello.gamemodule.mission.missiontype;
 
+import com.hello.gamemodule.mission.progresscondition.IProgressConditionParams;
+import com.hello.gamemodule.mission.struct.Mission;
+import com.hello.resource.MissionResource;
+
 /**
  * 任务类型 处理器
+ *
  * @Author：lqh
  * @Date：2024/5/30 15:39
  */
@@ -10,20 +15,26 @@ public interface IMissionTypeHandler {
     /**
      * 初始化任务
      */
-    void initMission();
+    Mission initMission(long roleId, MissionResource missionResource);
 
     /**
-     * 执行-任务  采集/采矿等
+     * 更新-任务
      */
-    void doMission();
+    void updateMission(long roleId, Mission mission, MissionResource missionResource, IProgressConditionParams iProgressConditionParams);
 
     /**
      * 完成任务
      */
-    void completeMission();
+    void completeMission(long roleId, Mission mission, MissionResource missionResource);
+
+    /**
+     * 完成任务
+     */
+    boolean canCompleteMission(long roleId, Mission mission, MissionResource missionResource);
 
     /**
      * 触发下一个任务
      */
-    void triggerNextMission();
+    boolean isTriggerNextMission(MissionResource missionResource);
+
 }

@@ -1,7 +1,7 @@
-package com.hello.gamemodule.mission.condition.handler;
+package com.hello.gamemodule.mission.progresscondition.handler;
 
-import com.hello.gamemodule.mission.condition.IProgressConditionHandler;
-import com.hello.gamemodule.mission.condition.params.RoleLevelIConditionParams;
+import com.hello.gamemodule.mission.progresscondition.IProgressConditionHandler;
+import com.hello.gamemodule.mission.progresscondition.params.RoleLevelIProgressConditionParams;
 import com.hello.gamemodule.mission.struct.Mission;
 
 /**
@@ -10,7 +10,7 @@ import com.hello.gamemodule.mission.struct.Mission;
  * @Author：lqh
  * @Date：2024/5/28 20:00
  */
-public class RoleLevelIProgressConditionHandler implements IProgressConditionHandler<RoleLevelIConditionParams> {
+public class RoleLevelIProgressConditionHandler implements IProgressConditionHandler<RoleLevelIProgressConditionParams> {
     private static final RoleLevelIProgressConditionHandler ins = new RoleLevelIProgressConditionHandler();
 
     private RoleLevelIProgressConditionHandler() {}
@@ -20,16 +20,16 @@ public class RoleLevelIProgressConditionHandler implements IProgressConditionHan
     }
 
     @Override
-    public void updateProgress(long roleId, Mission mission, RoleLevelIConditionParams conditionParams) {
+    public void updateProgress(long roleId, Mission mission, RoleLevelIProgressConditionParams conditionParams) {
         int level = conditionParams.getLevel();
         mission.setProgress(level);
     }
 
     @Override
-    public RoleLevelIConditionParams valueOfPrams(Object... objects) {
+    public RoleLevelIProgressConditionParams valueOfPrams(Object... objects) {
         long roleId = (long) objects[0];
         int roleLevel = (int) objects[1];
-        return RoleLevelIConditionParams.valueOf(roleId,roleLevel);
+        return RoleLevelIProgressConditionParams.valueOf(roleId,roleLevel);
     }
 
     @Override

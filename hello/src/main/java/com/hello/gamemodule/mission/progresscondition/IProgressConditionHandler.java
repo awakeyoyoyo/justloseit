@@ -1,4 +1,4 @@
-package com.hello.gamemodule.mission.condition;
+package com.hello.gamemodule.mission.progresscondition;
 
 import com.hello.gamemodule.mission.struct.Mission;
 
@@ -7,7 +7,7 @@ import com.hello.gamemodule.mission.struct.Mission;
  * @Author：lqh
  * @Date：2024/5/28 19:51
  */
-public interface IProgressConditionHandler<T extends IConditionParams> {
+public interface IProgressConditionHandler<T extends IProgressConditionParams> {
 
     /**
      * 初始化进度

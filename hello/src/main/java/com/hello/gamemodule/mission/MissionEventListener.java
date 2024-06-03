@@ -2,7 +2,7 @@ package com.hello.gamemodule.mission;
 
 import com.awake.event.anno.EventReceiver;
 import com.hello.gamemodule.function.FunctionOpenEvent;
-import com.hello.gamemodule.mission.condition.ProgressConditionTypeEnum;
+import com.hello.gamemodule.mission.progresscondition.ProgressConditionTypeEnum;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

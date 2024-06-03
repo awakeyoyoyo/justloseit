@@ -1,6 +1,6 @@
-package com.hello.gamemodule.mission.condition;
+package com.hello.gamemodule.mission.progresscondition;
 
-import com.hello.gamemodule.mission.condition.handler.RoleLevelIProgressConditionHandler;
+import com.hello.gamemodule.mission.progresscondition.handler.RoleLevelIProgressConditionHandler;
 import com.hello.gamemodule.mission.struct.Mission;
 
 /**
@@ -53,12 +53,12 @@ public enum ProgressConditionTypeEnum implements IProgressConditionHandler{
 
     @Override
     @SuppressWarnings("unchecked")
-    public void updateProgress(long roleId, Mission mission, IConditionParams IConditionParams) {
-        IProgressConditionHandler.updateProgress(roleId, mission, IConditionParams);
+    public void updateProgress(long roleId, Mission mission, IProgressConditionParams IProgressConditionParams) {
+        IProgressConditionHandler.updateProgress(roleId, mission, IProgressConditionParams);
     }
 
     @Override
-    public IConditionParams valueOfPrams(Object... objects) {
+    public IProgressConditionParams valueOfPrams(Object... objects) {
         return IProgressConditionHandler.valueOfPrams(objects);
     }
 }

@@ -2,6 +2,7 @@ package com.hello.resource;
 
 import com.awake.storage.anno.Id;
 import com.awake.storage.anno.Storage;
+import com.hello.resource.model.ConditionConf;
 import lombok.Data;
 
 /**
@@ -17,10 +18,16 @@ public class MissionResource {
      */
     @Id
     private int confId;
+
     /**
      * 任务组id
      */
     private int groupId;
+
+    /**
+     * 任务类型
+     */
+    private int missionType;
 
     /**
      * 任务进度条件
@@ -45,5 +52,10 @@ public class MissionResource {
     /**
      * 接取任务条件
      */
-    private String acceptCondition;
+    private ConditionConf acceptConditionConf;
+
+    /**
+     * 下一场任务id
+     */
+    private int nextMissionId;
 }

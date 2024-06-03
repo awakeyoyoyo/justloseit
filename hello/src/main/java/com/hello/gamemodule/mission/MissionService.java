@@ -5,10 +5,10 @@ import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.cache.EntityCache;
 import com.awake.storage.anno.StorageAutowired;
 import com.awake.storage.model.IStorage;
-import com.hello.gamemodule.mission.condition.ProgressConditionTypeEnum;
-import com.hello.gamemodule.mission.constant.MissionStatus;
+import com.hello.gamemodule.mission.progresscondition.ProgressConditionTypeEnum;
 import com.hello.gamemodule.mission.entity.MissionEntity;
 import com.hello.gamemodule.mission.missiongroup.MissionGroupEnum;
+import com.hello.gamemodule.mission.missiontype.MissionTypeEnum;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
 import org.springframework.stereotype.Service;
@@ -73,15 +73,12 @@ public class MissionService {
      */
     public Mission initMission(long roleId, int missionConfId) {
         MissionResource missionResource = missionResources.get(missionConfId);
-        Mission mission = Mission.valueOf(missionResource.getConfId(),
-                missionResource.getGroupId(), MissionStatus.MISSION_ACCEPT_STATUS);
-
-        ProgressConditionTypeEnum conditionTypeEnum = ProgressConditionTypeEnum.getConditionTypeEnum(missionResource.getProgressConditionType());
-        if (conditionTypeEnum == null) {
-            throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionConfId);
+        int missionType = missionResource.getMissionType();
+        MissionTypeEnum missionGroupEnum = MissionTypeEnum.getMissionGroupEnum(missionType);
+        if (missionGroupEnum == null) {
+            throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
         }
-        conditionTypeEnum.initProgress(roleId, mission);
-        return mission;
+        return missionGroupEnum.initMission(roleId,missionResource);
     }
 
 
@@ -93,13 +90,18 @@ public class MissionService {
      * @param params
      */
     public void updateMission(long roleId, ProgressConditionTypeEnum progressConditionTypeEnum, Object... params) {
-
         int progressConditionType = progressConditionTypeEnum.getProgressConditionType();
-
         MissionEntity missionEntity = missionEntityCache.load(roleId);
         List<Mission> missions = missionEntity.getConditionType2Mission().get(progressConditionType);
         for (Mission mission : missions) {
-            progressConditionTypeEnum.updateProgress(roleId, mission, progressConditionTypeEnum.valueOfPrams(params));
+            int confId = mission.getConfId();
+            MissionResource missionResource = missionResources.get(confId);
+            int missionType = missionResource.getMissionType();
+            MissionTypeEnum missionGroupEnum = MissionTypeEnum.getMissionGroupEnum(missionType);
+            if (missionGroupEnum == null) {
+                throw new RuntimeException("mission update Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+            }
+            missionGroupEnum.updateMission(roleId, mission, missionResource, progressConditionTypeEnum.valueOfPrams(params));
         }
         missionEntityCache.update(missionEntity);
     }
