@@ -2,6 +2,9 @@ package com.hello.gamemodule.mission.missiongroup;
 
 import com.hello.gamemodule.mission.entity.MissionEntity;
 import com.hello.gamemodule.mission.missiongroup.handler.CommonMissionGroupHandler;
+import com.hello.gamemodule.mission.struct.Mission;
+
+import java.util.List;
 
 /**
  * 任务组枚举
@@ -41,7 +44,12 @@ public enum MissionGroupEnum implements IMissionGroupHandler {
     }
 
     @Override
-    public void initMissionGroup(long roleId, int groupId, MissionEntity missionEntity) {
-        missionGroupHandler.initMissionGroup(roleId, groupId, missionEntity);
+    public List<Mission> initMissionGroup(long roleId, int groupId, MissionEntity missionEntity) {
+       return missionGroupHandler.initMissionGroup(roleId, groupId, missionEntity);
+    }
+
+    @Override
+    public boolean autoInit() {
+        return missionGroupHandler.autoInit();
     }
 }

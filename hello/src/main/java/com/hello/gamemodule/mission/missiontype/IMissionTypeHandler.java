@@ -3,6 +3,9 @@ package com.hello.gamemodule.mission.missiontype;
 import com.hello.gamemodule.mission.progresscondition.IProgressConditionParams;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
+import com.hello.resource.model.Reward;
+
+import java.util.List;
 
 /**
  * 任务类型 处理器
@@ -25,10 +28,10 @@ public interface IMissionTypeHandler {
     /**
      * 完成任务
      */
-    void completeMission(long roleId, Mission mission, MissionResource missionResource);
+    List<Reward> completeMission(long roleId, Mission mission, MissionResource missionResource);
 
     /**
-     * 完成任务
+     * 能否完成任务
      */
     boolean canCompleteMission(long roleId, Mission mission, MissionResource missionResource);
 
@@ -36,5 +39,7 @@ public interface IMissionTypeHandler {
      * 触发下一个任务
      */
     boolean isTriggerNextMission(MissionResource missionResource);
+
+    boolean isCompleteDeleteMission();
 
 }

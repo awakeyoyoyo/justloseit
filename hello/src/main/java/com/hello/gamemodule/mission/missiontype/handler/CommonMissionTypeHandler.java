@@ -6,6 +6,9 @@ import com.hello.gamemodule.mission.constant.MissionStatus;
 import com.hello.gamemodule.mission.missiontype.IMissionTypeHandler;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
+import com.hello.resource.model.Reward;
+
+import java.util.List;
 
 /**
  * 通用任务类型
@@ -42,8 +45,10 @@ public class CommonMissionTypeHandler implements IMissionTypeHandler {
     }
 
     @Override
-    public void completeMission(long roleId, Mission mission, MissionResource missionResource) {
-
+    public List<Reward> completeMission(long roleId, Mission mission, MissionResource missionResource) {
+        mission.setStatus(MissionStatus.MISSION_COMPLETE_STATUS);
+        //发奖励
+        return missionResource.getRewards();
     }
 
     @Override
@@ -55,5 +60,11 @@ public class CommonMissionTypeHandler implements IMissionTypeHandler {
     public boolean isTriggerNextMission(MissionResource missionResource) {
         return missionResource.getNextMissionId() != 0;
     }
+
+    @Override
+    public boolean isCompleteDeleteMission() {
+        return true;
+    }
+
 
 }

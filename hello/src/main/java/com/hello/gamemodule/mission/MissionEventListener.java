@@ -2,7 +2,6 @@ package com.hello.gamemodule.mission;
 
 import com.awake.event.anno.EventReceiver;
 import com.hello.gamemodule.function.FunctionOpenEvent;
-import com.hello.gamemodule.mission.progresscondition.ProgressConditionTypeEnum;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -19,9 +18,7 @@ public class MissionEventListener {
 
     @EventReceiver
     public void handlerFunctionOpen(FunctionOpenEvent event){
-        missionService.initMissionGroup(event.roleId,event.functionId);
-
-        missionService.updateMission(event.roleId, ProgressConditionTypeEnum.RoleLevel);
+        missionService.autoInitMissionGroup(event.roleId,event.functionId);
     }
 
 }

@@ -3,6 +3,9 @@ package com.hello.gamemodule.mission.missiontype;
 import com.hello.gamemodule.mission.progresscondition.IProgressConditionParams;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
+import com.hello.resource.model.Reward;
+
+import java.util.List;
 
 /**
  * 任务类型
@@ -29,7 +32,7 @@ public enum MissionTypeEnum implements IMissionTypeHandler {
         return missionTypeHandler;
     }
 
-    public static MissionTypeEnum getMissionGroupEnum(int missionTypeId) {
+    public static MissionTypeEnum getMissionTypeEnum(int missionTypeId) {
         for (MissionTypeEnum typeEnum : values()) {
             if (typeEnum.getMissionTypeId() == missionTypeId) {
                 return typeEnum;
@@ -49,8 +52,8 @@ public enum MissionTypeEnum implements IMissionTypeHandler {
     }
 
     @Override
-    public void completeMission(long roleId, Mission mission, MissionResource missionResource) {
-        missionTypeHandler.completeMission(roleId, mission, missionResource);
+    public List<Reward> completeMission(long roleId, Mission mission, MissionResource missionResource) {
+        return missionTypeHandler.completeMission(roleId, mission, missionResource);
     }
 
     @Override
@@ -61,5 +64,10 @@ public enum MissionTypeEnum implements IMissionTypeHandler {
     @Override
     public boolean isTriggerNextMission(MissionResource missionResource) {
         return missionTypeHandler.isTriggerNextMission(missionResource);
+    }
+
+    @Override
+    public boolean isCompleteDeleteMission() {
+        return missionTypeHandler.isCompleteDeleteMission();
     }
 }

@@ -1,6 +1,9 @@
 package com.hello.gamemodule.mission.missiongroup;
 
 import com.hello.gamemodule.mission.entity.MissionEntity;
+import com.hello.gamemodule.mission.struct.Mission;
+
+import java.util.List;
 
 /**
  * 任务组 处理器
@@ -19,5 +22,11 @@ public interface IMissionGroupHandler {
      * @param groupId
      * @param missionEntity
      */
-    void initMissionGroup(long roleId, int groupId, MissionEntity missionEntity);
+    List<Mission> initMissionGroup(long roleId, int groupId, MissionEntity missionEntity);
+
+    /**
+     * 随着功能开发自动初始化
+     * @return
+     */
+    boolean autoInit();
 }

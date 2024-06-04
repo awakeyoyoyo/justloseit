@@ -52,4 +52,15 @@ public class MissionEntity implements IEntity<Long> {
         groupId2MissionGroup.computeIfAbsent(groupId, k -> new HashMap<>()).put(mission.getConfId(), mission);
         conditionType2Mission.computeIfAbsent(conditionType, k -> new ArrayList<>()).add(mission);
     }
+
+    /**
+     * 删除任务
+     * @param groupId
+     * @param conditionType
+     * @param mission
+     */
+    public void removeMission(int groupId, int conditionType, Mission mission) {
+        groupId2MissionGroup.computeIfAbsent(groupId, k -> new HashMap<>()).remove(mission.getConfId());
+        conditionType2Mission.computeIfAbsent(conditionType, k -> new ArrayList<>()).remove(mission);
+    }
 }

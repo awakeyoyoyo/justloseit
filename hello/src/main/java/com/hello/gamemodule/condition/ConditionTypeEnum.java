@@ -1,5 +1,7 @@
 package com.hello.gamemodule.condition;
 
+import com.hello.gamemodule.condition.handler.RoleLvConditionHandler;
+import com.hello.gamemodule.mission.missiongroup.MissionGroupEnum;
 import com.hello.resource.model.Condition;
 
 /**
@@ -8,8 +10,11 @@ import com.hello.resource.model.Condition;
  * @Date：2024/6/3 16:53
  */
 public enum ConditionTypeEnum implements IConditionHandler {
+    /**
+     * 玩家等级条件
+     */
+    ROLE_LV(1, RoleLvConditionHandler.getIns());
 
-    ;
     /**
      * 进度条件类型
      */
@@ -26,8 +31,25 @@ public enum ConditionTypeEnum implements IConditionHandler {
         this.conditionHandler = conditionHandler;
     }
 
+    public int getConditionType() {
+        return conditionType;
+    }
+
+    public IConditionHandler getConditionHandler() {
+        return conditionHandler;
+    }
+
     @Override
     public boolean verify(long roleId, Condition condition) {
         return conditionHandler.verify(roleId, condition);
+    }
+
+    public static ConditionTypeEnum getConditionTypeEnum(int conditionType) {
+        for (ConditionTypeEnum typeEnum : values()) {
+            if (typeEnum.getConditionType() == conditionType) {
+                return typeEnum;
+            }
+        }
+        return null;
     }
 }

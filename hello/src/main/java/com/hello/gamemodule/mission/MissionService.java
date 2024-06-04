@@ -11,6 +11,8 @@ import com.hello.gamemodule.mission.missiongroup.MissionGroupEnum;
 import com.hello.gamemodule.mission.missiontype.MissionTypeEnum;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
+import com.hello.resource.model.Reward;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -47,8 +49,27 @@ public class MissionService {
 
 
     /**
-     * 初始化任务组
+     * 自动初始化任务组
      *
+     * @param roleId
+     * @param groupId
+     */
+    public void autoInitMissionGroup(long roleId, int groupId) {
+        MissionGroupEnum missionGroupEnum = MissionGroupEnum.getMissionGroupEnum(groupId);
+        if (missionGroupEnum == null) {
+            throw new RuntimeException("mission initMissionGroup error. roleId:" + roleId + "groupId:" + groupId);
+        }
+        if (!missionGroupEnum.autoInit()){
+            return;
+        }
+        MissionEntity missionEntity = missionEntityCache.load(roleId);
+        List<Mission> missions = missionGroupEnum.initMissionGroup(roleId, groupId, missionEntity);
+        missionEntityCache.update(missionEntity);
+        //TODO 通知新增任务
+    }
+
+    /**
+     * 初始化任务组
      *
      * @param roleId
      * @param groupId
@@ -59,8 +80,38 @@ public class MissionService {
             throw new RuntimeException("mission initMissionGroup error. roleId:" + roleId + "groupId:" + groupId);
         }
         MissionEntity missionEntity = missionEntityCache.load(roleId);
-        missionGroupEnum.initMissionGroup(roleId, groupId, missionEntity);
+        List<Mission> missions = missionGroupEnum.initMissionGroup(roleId, groupId, missionEntity);
         missionEntityCache.update(missionEntity);
+        //TODO 通知新增任务
+    }
+
+    /**
+     * 完成任务
+     */
+    public List<Reward> completedMission(long roleId, Mission mission) {
+        MissionResource missionResource = missionResources.get(mission.getConfId());
+        int missionType = missionResource.getMissionType();
+        MissionTypeEnum missionTypeEnum = MissionTypeEnum.getMissionTypeEnum(missionType);
+        if (missionTypeEnum == null) {
+            throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+        }
+        if (!missionTypeEnum.canCompleteMission(roleId, mission, missionResource)) {
+            return Lists.newArrayList();
+        }
+        List<Reward> rewards = missionTypeEnum.completeMission(roleId, mission, missionResource);
+        MissionEntity missionEntity = missionEntityCache.load(roleId);
+        //完成后是否需要保留任务
+        if (missionTypeEnum.isCompleteDeleteMission()) {
+            missionEntity.removeMission(missionResource.getGroupId(), missionResource.getProgressConditionType(), mission);
+            //TODO 通知任务删除
+        }
+        //是否触发下一个任务
+        if (missionTypeEnum.isTriggerNextMission(missionResource)) {
+            Mission nextMission = initMission(roleId, missionResource.getNextMissionId());
+            missionEntity.addMission(missionResource.getGroupId(), missionResource.getProgressConditionType(), nextMission);
+            //TODO 通知新增任务
+        }
+        return rewards;
     }
 
 
@@ -74,11 +125,11 @@ public class MissionService {
     public Mission initMission(long roleId, int missionConfId) {
         MissionResource missionResource = missionResources.get(missionConfId);
         int missionType = missionResource.getMissionType();
-        MissionTypeEnum missionGroupEnum = MissionTypeEnum.getMissionGroupEnum(missionType);
-        if (missionGroupEnum == null) {
+        MissionTypeEnum missionTypeEnum = MissionTypeEnum.getMissionTypeEnum(missionType);
+        if (missionTypeEnum == null) {
             throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
         }
-        return missionGroupEnum.initMission(roleId,missionResource);
+        return missionTypeEnum.initMission(roleId, missionResource);
     }
 
 
@@ -97,11 +148,11 @@ public class MissionService {
             int confId = mission.getConfId();
             MissionResource missionResource = missionResources.get(confId);
             int missionType = missionResource.getMissionType();
-            MissionTypeEnum missionGroupEnum = MissionTypeEnum.getMissionGroupEnum(missionType);
-            if (missionGroupEnum == null) {
+            MissionTypeEnum missionTypeEnum = MissionTypeEnum.getMissionTypeEnum(missionType);
+            if (missionTypeEnum == null) {
                 throw new RuntimeException("mission update Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
             }
-            missionGroupEnum.updateMission(roleId, mission, missionResource, progressConditionTypeEnum.valueOfPrams(params));
+            missionTypeEnum.updateMission(roleId, mission, missionResource, progressConditionTypeEnum.valueOfPrams(params));
         }
         missionEntityCache.update(missionEntity);
     }
