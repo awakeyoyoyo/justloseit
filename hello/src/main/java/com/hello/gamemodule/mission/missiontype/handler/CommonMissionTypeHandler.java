@@ -1,5 +1,6 @@
 package com.hello.gamemodule.mission.missiontype.handler;
 
+import com.hello.gamemodule.mission.missiongroup.handler.CommonMissionGroupHandler;
 import com.hello.gamemodule.mission.progresscondition.IProgressConditionParams;
 import com.hello.gamemodule.mission.progresscondition.ProgressConditionTypeEnum;
 import com.hello.gamemodule.mission.constant.MissionStatus;
@@ -17,6 +18,14 @@ import java.util.List;
  * @Date：2024/5/30 16:03
  */
 public class CommonMissionTypeHandler implements IMissionTypeHandler {
+    private static final CommonMissionTypeHandler ins = new CommonMissionTypeHandler();
+
+    CommonMissionTypeHandler() {
+    }
+
+    public static CommonMissionTypeHandler getIns() {
+        return ins;
+    }
 
     @Override
     public Mission initMission(long roleId, MissionResource missionResource) {

@@ -1,5 +1,7 @@
 package com.hello.gamemodule.mission.missiontype;
 
+import com.hello.gamemodule.mission.missiongroup.handler.CommonMissionGroupHandler;
+import com.hello.gamemodule.mission.missiontype.handler.CommonMissionTypeHandler;
 import com.hello.gamemodule.mission.progresscondition.IProgressConditionParams;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
@@ -14,7 +16,8 @@ import java.util.List;
  * @Date：2024/5/30 15:39
  */
 public enum MissionTypeEnum implements IMissionTypeHandler {
-    ;
+    CommonMission(1, CommonMissionTypeHandler.getIns());
+
     private int missionTypeId;
 
     private IMissionTypeHandler missionTypeHandler;
