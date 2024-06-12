@@ -18,7 +18,7 @@ import java.util.Map;
 @Component
 public class MissionManager {
 
-    @StorageAutowired
+//    @StorageAutowired
     public IStorage<Integer, MissionResource> missionResources;
 
     /**

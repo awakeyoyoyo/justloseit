@@ -28,7 +28,7 @@ public class MissionService {
     private MissionManager missionManager;
     @EntityCacheAutowired
     private EntityCache<Long, MissionEntity> missionEntityCache;
-    @StorageAutowired
+//    @StorageAutowired
     public IStorage<Integer, MissionResource> missionResources;
 
     public void acceptMission(Session session, int missionConfId) {

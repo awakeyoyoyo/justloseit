@@ -14,10 +14,13 @@ import com.awake.orm.model.IEntity;
 import com.awake.orm.model.IndexDef;
 import com.awake.orm.model.IndexTextDef;
 import com.awake.util.AssertionUtils;
+import com.awake.util.FieldUtils;
 import com.awake.util.JsonUtils;
 import com.awake.util.ReflectionUtils;
+import com.awake.util.base.ArrayUtils;
 import com.awake.util.base.CollectionUtils;
 import com.awake.util.base.StringUtils;
+import com.awake.util.math.RandomUtils;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -27,10 +30,12 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import lombok.Data;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -40,6 +45,7 @@ import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -261,6 +267,10 @@ public class OrmManager implements IOrmManager {
     }
 
     public EntityDef parserEntityDef(Class<? extends IEntity<?>> clazz) {
+
+
+        analyze(clazz);
+
         var cacheStrategies = ormConfig.getCaches();
         var persisterStrategies = ormConfig.getPersisters();
 
@@ -276,7 +286,6 @@ public class OrmManager implements IOrmManager {
 
         var idField = ReflectionUtils.getFieldsByAnnoInPOJOClass(clazz, Id.class)[0];
         ReflectionUtils.makeAccessible(idField);
-
         var persister = entityCache.persister();
         var persisterStrategyOptional = persisterStrategies.stream().filter(it -> it.getStrategy().equals(persister.value())).findFirst();
         // 实体类Entity需要有持久化策略
@@ -310,4 +319,225 @@ public class OrmManager implements IOrmManager {
         return EntityDef.valueOf(idField, clazz, cacheSize, expireMillisecond, persisterStrategy, indexDefMap, indexTextDefMap);
     }
 
+    private void analyze(Class<? extends IEntity<?>> clazz) {
+        // 是否实现了IEntity接口
+        AssertionUtils.isTrue(IEntity.class.isAssignableFrom(clazz), "The entity:[{}] annotated by the [{}] annotation does not implement the interface [{}]"
+                , com.awake.orm.anno.EntityCache.class.getName(), clazz.getCanonicalName(), IEntity.class.getCanonicalName());
+        // 实体类Entity必须被注解EntityCache标注
+        AssertionUtils.notNull(clazz.getAnnotation(com.awake.orm.anno.EntityCache.class),
+                "The Entity[{}] must be annotated with the annotation [{}].", clazz.getCanonicalName(), com.awake.orm.anno.EntityCache.class.getName());
+
+        // 校验entity格式
+        checkEntity(clazz);
+
+        // 校验id字段和id()方法的格式，一个Entity类只能有一个@Id注解
+        var idFields = ReflectionUtils.getFieldsByAnnoInPOJOClass(clazz, Id.class);
+        AssertionUtils.isTrue(ArrayUtils.isNotEmpty(idFields) && idFields.length == 1
+                , "The Entity[{}] must have only one Id annotation (if it is indeed marked with an Id annotation, be careful not to use the Stored Id annotation)", clazz.getSimpleName());
+        var idField = idFields[0];
+        // idField必须用private修饰
+        AssertionUtils.isTrue(Modifier.isPrivate(idField.getModifiers()), "The id of the Entity[{}] must be private", clazz.getSimpleName());
+
+        // 随机给id字段赋值，然后调用id()方法，看看两者的返回值是不是一样的，避免出错
+        var entityInstance = ReflectionUtils.newInstance(clazz);
+        var idFieldType = idField.getType();
+        Object idFiledValue = null;
+        if (idFieldType.equals(int.class) || idFieldType.equals(Integer.class)) {
+            idFiledValue = RandomUtils.randomInt();
+        } else if (idFieldType.equals(long.class) || idFieldType.equals(Long.class)) {
+            idFiledValue = RandomUtils.randomLong();
+        } else if (idFieldType.equals(float.class) || idFieldType.equals(Float.class)) {
+            idFiledValue = (float) RandomUtils.randomDouble();
+        } else if (idFieldType.equals(double.class) || idFieldType.equals(Double.class)) {
+            idFiledValue = RandomUtils.randomDouble();
+        } else if (idFieldType.equals(String.class)) {
+            idFiledValue = RandomUtils.randomString(10);
+        } else if (idFieldType.equals(ObjectId.class)) {
+            idFiledValue = new ObjectId();
+        } else {
+            throw new RunException("orm only supports int long float double String");
+        }
+
+        if (!idField.getName().equals("id")) {
+            throw new RunException("@Id filed must name with id");
+        }
+
+        ReflectionUtils.makeAccessible(idField);
+        ReflectionUtils.setField(idField, entityInstance, idFiledValue);
+        var idMethodOptional = Arrays.stream(ReflectionUtils.getAllMethods(clazz)).filter(it -> it.getName().equalsIgnoreCase("id"))
+                .filter(it -> it.getParameterCount() <= 0)
+                .findFirst();
+        // 实体类Entity必须重写id()方法
+        AssertionUtils.isTrue(idMethodOptional.isPresent(), "The Entity[{}] must override the id() method", clazz.getSimpleName());
+        var idMethod = idMethodOptional.get();
+        ReflectionUtils.makeAccessible(idMethod);
+        var idMethodReturnValue = ReflectionUtils.invokeMethod(entityInstance, idMethod);
+        // 实体类Entity的id字段的返回值field和id方法的返回值method必须相等
+        AssertionUtils.isTrue(idFiledValue.equals(idMethodReturnValue), "The return value id [field:{}] of the Entity[{}] and the return value id [method:{}] are not equal, please check whether the id() method is implemented correctly"
+                , clazz.getSimpleName(), idFiledValue, idMethodReturnValue);
+
+        // 校验gvs()方法和svs()方法的格式
+        var gvsMethodOptional = Arrays.stream(ReflectionUtils.getAllMethods(clazz))
+                .filter(it -> it.getName().equals("gvs"))
+                .filter(it -> it.getParameterCount() <= 0)
+                .findFirst();
+
+        var svsMethodOptional = Arrays.stream(ReflectionUtils.getAllMethods(clazz))
+                .filter(it -> it.getName().equals("svs"))
+                .filter(it -> it.getParameterCount() == 1)
+                .filter(it -> it.getParameterTypes()[0].equals(long.class))
+                .findFirst();
+        // gvs和svs要实现都实现，不实现都不实现
+        if (gvsMethodOptional.isEmpty() || svsMethodOptional.isEmpty()) {
+            // 实体类Entity的gvs和svs方法要实现都实现，不实现都不实现
+            AssertionUtils.isTrue(gvsMethodOptional.isEmpty() && svsMethodOptional.isEmpty()
+                    , "The gvs and svs methods of the Entity[{}] should be implemented together", clazz.getSimpleName());
+            return;
+        }
+
+        var gvsMethod = gvsMethodOptional.get();
+        var svsMethod = svsMethodOptional.get();
+        var vsValue = RandomUtils.randomLong();
+        ReflectionUtils.invokeMethod(entityInstance, svsMethod, vsValue);
+        var gvsReturnValue = ReflectionUtils.invokeMethod(entityInstance, gvsMethod);
+        // 实体类Entity的gvs方法和svs方法定义格式不正确
+        AssertionUtils.isTrue(gvsReturnValue.equals(vsValue), "The gvs and svs methods of the Entity[{}] are not correctly", clazz.getSimpleName());
+    }
+
+    private void checkEntity(Class<?> clazz) {
+        // 是否为一个简单的javabean，为了防止不同层对象混用造成潜在的并发问题，特别是网络层和po层混用
+        ReflectionUtils.assertIsPojoClass(clazz);
+        // 不能是泛型类
+        AssertionUtils.isTrue(ArrayUtils.isEmpty(clazz.getTypeParameters()), "[class:{}] can't be a generic class", clazz.getCanonicalName());
+        // 必须要有一个空的构造器
+        ReflectionUtils.publicEmptyConstructor(clazz);
+
+        // 不能使用Storage的Index注解
+        var storageIndexes = ReflectionUtils.getFieldsByAnnoNameInPOJOClass(clazz, "com.zfoo.storage.anno.Index");
+        if (ArrayUtils.isNotEmpty(storageIndexes)) {
+            // 在Orm中只能使用Orm的Index注解，不能使用Storage的Index注解，为了避免不必要的误解和增强项目的健壮性，禁止这样使用
+            throw new RunException("only the Index annotation of Orm can be used, not the Index annotation of Storage, and it is forbidden to use it in order to avoid unnecessary misunderstandings and enhance the robustness of the project");
+        }
+
+        var filedList = ReflectionUtils.notStaticAndTransientFields(clazz);
+
+        for (var field : filedList) {
+//            // entity必须包含属性的get和set方法
+//            FieldUtils.fieldToGetMethod(clazz, field);
+//            FieldUtils.fieldToSetMethod(clazz, field);
+//
+            // 是一个基本类型变量
+            var fieldType = field.getType();
+            if (isBaseType(fieldType)) {
+                // do nothing
+            } else if (fieldType.isArray()) {
+                // 是一个数组
+                Class<?> arrayClazz = fieldType.getComponentType();
+                // ORM的数组类型只支持byte[]
+                AssertionUtils.isTrue(arrayClazz == byte.class, "The array type of ORM[class:{}] only supports byte[]", clazz.getCanonicalName());
+            } else if (Set.class.isAssignableFrom(fieldType)) {
+                // 必须是Set接口类型
+                AssertionUtils.isTrue(fieldType.equals(Set.class), "[class:{}] type declaration is incorrect, and it must be of the Set interface type", clazz.getCanonicalName());
+
+                var type = field.getGenericType();
+                // field必须泛型类
+                AssertionUtils.isTrue(type instanceof ParameterizedType, "[class:{}] type declaration is incorrect, not a generic class[field:{}]", clazz.getCanonicalName(), field.getName());
+
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+                // 必须声明Set的泛型类
+                AssertionUtils.isTrue(types.length == 1, "Set type declaration in [class:{}] is incorrect, and the generic class must be declared in [field:{}]", clazz.getCanonicalName(), field.getName());
+                checkSubEntity(clazz, types[0]);
+            } else if (List.class.isAssignableFrom(fieldType)) {
+                // 是一个List
+                AssertionUtils.isTrue(fieldType.equals(List.class), "[class:{}] type declaration is incorrect, and it must be of the List interface type", clazz.getCanonicalName());
+
+                var type = field.getGenericType();
+                // field必须泛型类
+                AssertionUtils.isTrue(type instanceof ParameterizedType, "[class:{}] type declaration is incorrect, not a generic class[field:{}]", clazz.getCanonicalName(), field.getName());
+
+                // 必须声明List的泛型类
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+                AssertionUtils.isTrue(types.length == 1, "List type declaration in [class:{}] is incorrect, and the generic class must be declared in [field:{}]", clazz.getCanonicalName(), field.getName());
+
+                checkSubEntity(clazz, types[0]);
+            } else if (Map.class.isAssignableFrom(fieldType)) {
+                // 必须是Map接口类型
+                if (!fieldType.equals(Map.class)) {
+                    throw new RunException("[class:{}] type declaration is incorrect, and it must be a Map interface type", clazz.getCanonicalName());
+                }
+
+                var type = field.getGenericType();
+
+                if (!(type instanceof ParameterizedType)) {
+                    throw new RunException("Map type declaration in [class:{}] is incorrect, and the generic class must be declared in [field:{}]", clazz.getCanonicalName(), field.getName());
+                }
+
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+
+                if (types.length != 2) {
+                    throw new RunException("Map type declaration in [class:{}] is incorrect, and the generic class must be declared in [field:{}]", clazz.getCanonicalName(), field.getName());
+                }
+
+                var keyType = types[0];
+                var valueType = types[1];
+
+                if (!String.class.isAssignableFrom((Class<?>) keyType)) {
+                    throw new RunException("[class:{}] type declaration is incorrect, and the key type of the Map must be the String type", clazz.getCanonicalName());
+                }
+
+                checkSubEntity(clazz, valueType);
+            } else if (ObjectId.class.isAssignableFrom(fieldType)) {
+                // do nothing
+            } else {
+                checkEntity(fieldType);
+            }
+        }
+    }
+
+    private void checkSubEntity(Class<?> currentEntityClass, Type type) {
+        if (type instanceof ParameterizedType) {
+            // 泛型类
+            Class<?> clazz = (Class<?>) ((ParameterizedType) type).getRawType();
+            if (Set.class.equals(clazz)) {
+                // Set<Set<String>>
+                checkSubEntity(currentEntityClass, ((ParameterizedType) type).getActualTypeArguments()[0]);
+                return;
+            } else if (List.class.equals(clazz)) {
+                // List<List<String>>
+                checkSubEntity(currentEntityClass, ((ParameterizedType) type).getActualTypeArguments()[0]);
+                return;
+            } else if (Map.class.equals(clazz)) {
+                // Map<List<String>, List<String>>
+                var types = ((ParameterizedType) type).getActualTypeArguments();
+                var keyType = types[0];
+                var valueType = types[1];
+                if (!String.class.isAssignableFrom((Class<?>) keyType)) {
+                    // ORM中Map的key必须是String类型
+                    throw new RunException("The key of the map in the ORM must be of the String type");
+                }
+                checkSubEntity(currentEntityClass, valueType);
+                return;
+            }
+        } else if (type instanceof Class) {
+            Class<?> clazz = ((Class<?>) type);
+            if (isBaseType(clazz)) {
+                // do nothing
+                return;
+            } else if (clazz.getComponentType() != null) {
+                // ORM不支持多维数组或集合嵌套数组类型，仅支持一维数组
+                throw new RunException("[type:{}] does not support multi-dimensional arrays or nested arrays, and only supports one-dimensional arrays", type);
+            } else if (clazz.equals(List.class) || clazz.equals(Set.class) || clazz.equals(Map.class)) {
+                // ORM不支持集合嵌套数组类型
+                throw new RunException("ORMs do not support the combination of arrays and collections with the [type:{}] type", type);
+            } else {
+                checkEntity(clazz);
+                return;
+            }
+        }
+        throw new RunException("[type:{}] is incorrect", type);
+    }
+
+    private boolean isBaseType(Class<?> clazz) {
+        return clazz.isPrimitive() || Number.class.isAssignableFrom(clazz) || String.class.isAssignableFrom(clazz);
+    }
 }

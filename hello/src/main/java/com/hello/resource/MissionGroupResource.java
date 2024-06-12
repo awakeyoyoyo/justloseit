@@ -12,7 +12,7 @@ import java.util.List;
  * @Author：lqh
  * @Date：2024/5/28 20:33
  */
-@Storage
+//@Storage
 @Data
 public class MissionGroupResource {
 

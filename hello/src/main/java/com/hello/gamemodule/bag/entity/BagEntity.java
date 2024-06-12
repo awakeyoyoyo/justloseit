@@ -17,18 +17,18 @@ import java.util.Map;
 public class BagEntity implements IEntity<Long> {
 
     @Id
-    private long roleId;
+    private long id;
 
 
-    private Map<Integer, BagData> bagDataMap;
+    private Map<String, BagData> bagDataMap;
 
     @Override
     public Long id() {
-        return roleId;
+        return id;
     }
 
     @Override
     public void setId(Long id) {
-        this.roleId = id;
+        this.id = id;
     }
 }

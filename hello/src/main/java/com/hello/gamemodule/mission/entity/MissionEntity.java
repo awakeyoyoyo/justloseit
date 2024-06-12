@@ -19,26 +19,26 @@ import java.util.Map;
 @Data
 public class MissionEntity implements IEntity<Long> {
     @Id
-    private long roleId;
+    private long id;
 
     /**
      * 任务组id 对应任务
      */
-    private Map<Integer, Map<Integer, Mission>> groupId2MissionGroup=new HashMap<>();
+    private Map<String, Map<String, Mission>> groupId2MissionGroup=new HashMap<>();
 
     /**
      * 条件Type 对应任务
      */
-    private Map<Integer, List<Mission>> conditionType2Mission = new HashMap<>();
+    private Map<String, List<Mission>> conditionType2Mission = new HashMap<>();
 
     @Override
     public Long id() {
-        return roleId;
+        return id;
     }
 
     @Override
     public void setId(Long id) {
-        this.roleId=id;
+        this.id =id;
     }
 
 
@@ -49,8 +49,8 @@ public class MissionEntity implements IEntity<Long> {
      * @param mission
      */
     public void addMission(int groupId, int conditionType, Mission mission) {
-        groupId2MissionGroup.computeIfAbsent(groupId, k -> new HashMap<>()).put(mission.getConfId(), mission);
-        conditionType2Mission.computeIfAbsent(conditionType, k -> new ArrayList<>()).add(mission);
+        groupId2MissionGroup.computeIfAbsent(String.valueOf(groupId), k -> new HashMap<>()).put(String.valueOf(mission.getConfId()), mission);
+        conditionType2Mission.computeIfAbsent(String.valueOf(conditionType), k -> new ArrayList<>()).add(mission);
     }
 
     /**
@@ -60,7 +60,7 @@ public class MissionEntity implements IEntity<Long> {
      * @param mission
      */
     public void removeMission(int groupId, int conditionType, Mission mission) {
-        groupId2MissionGroup.computeIfAbsent(groupId, k -> new HashMap<>()).remove(mission.getConfId());
-        conditionType2Mission.computeIfAbsent(conditionType, k -> new ArrayList<>()).remove(mission);
+        groupId2MissionGroup.computeIfAbsent(String.valueOf(groupId), k -> new HashMap<>()).remove(String.valueOf(mission.getConfId()));
+        conditionType2Mission.computeIfAbsent(String.valueOf(conditionType), k -> new ArrayList<>()).remove(mission);
     }
 }

@@ -17,7 +17,7 @@ public class MissionEventListener {
     private MissionService missionService;
 
     @EventReceiver
-    public void handlerFunctionOpen(FunctionOpenEvent event){
+    public void onFunctionOpenEvent(FunctionOpenEvent event){
         missionService.autoInitMissionGroup(event.roleId,event.functionId);
     }
 
