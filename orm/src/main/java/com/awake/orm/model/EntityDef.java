@@ -1,6 +1,7 @@
 package com.awake.orm.model;
 
 
+import com.awake.orm.anno.Id;
 import com.awake.orm.config.PersisterStrategy;
 import com.awake.util.ReflectionUtils;
 import lombok.Data;
@@ -50,4 +51,10 @@ public class EntityDef {
         return entity;
     }
 
+    public <PK extends Comparable<PK>> IEntity<?> newEntity(PK id) {
+        var entity = ReflectionUtils.newInstance(clazz);
+        var idFields = ReflectionUtils.getFieldsByAnnoInPOJOClass(clazz, Id.class);
+        ReflectionUtils.setField(idFields[0], entity, id);
+        return entity;
+    }
 }

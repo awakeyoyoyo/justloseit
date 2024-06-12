@@ -52,7 +52,7 @@ public class RoleService {
                 return;
             }
         }
-        RoleEntity roleEntity = roleEntityEntityCache.loadAndInsert(userName);
+        RoleEntity roleEntity = roleEntityEntityCache.loadOrCreate(userName);
 //        if (!StringUtils.isEmpty(roleEntity.id())) {
 //            NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
 //                    ErrorFactory.create(ErrorCode.USER_NAME_EXIT));

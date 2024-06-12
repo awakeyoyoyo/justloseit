@@ -91,13 +91,13 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public E load(PK pk) {
         AssertionUtils.notNull(pk);
         var pnode = cache.get(pk);
         if (pnode != null) {
             return pnode.getEntity();
         }
-        @SuppressWarnings("unchecked")
         var entity = (E) OrmContext.getAccessor().load(pk, (Class<IEntity<?>>) entityDef.getClazz());
         // 如果数据库中不存在则给一个默认值
         if (entity == null) {
@@ -110,18 +110,18 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
     }
 
     @Override
-    public E loadAndInsert(PK pk) {
+    @SuppressWarnings("unchecked")
+    public E loadOrCreate(PK pk) {
         AssertionUtils.notNull(pk);
         var pnode = cache.get(pk);
         if (pnode != null) {
             return pnode.getEntity();
         }
-        @SuppressWarnings("unchecked")
         var entity = (E) OrmContext.getAccessor().load(pk, (Class<IEntity<?>>) entityDef.getClazz());
 
         // 如果数据库中不存在则初始化一个
         if (entity == null) {
-            entity = (E) entityDef.newEntity();
+            entity = (E) entityDef.newEntity(pk);
             entity.setId(pk);
             OrmContext.getAccessor().insert(entity);
         }
