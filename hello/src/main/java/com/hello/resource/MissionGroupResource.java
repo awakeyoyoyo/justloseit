@@ -4,6 +4,7 @@ import com.awake.storage.anno.Id;
 import com.awake.storage.anno.Storage;
 import com.hello.resource.model.Condition;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -12,15 +13,15 @@ import java.util.List;
  * @Author：lqh
  * @Date：2024/5/28 20:33
  */
-//@Storage
-@Data
+@Storage
+@Getter
 public class MissionGroupResource {
 
     /**
-     * 配置id
+     * 任务组id
      */
     @Id
-    private int confId;
+    private int groupId;
 
     /**
      * 功能Id

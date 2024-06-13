@@ -1,14 +1,19 @@
 package com.hello.resource;
 
+import com.awake.storage.anno.Id;
+import com.awake.storage.anno.Storage;
+
 /**
  * @Author：lqh
  * @Date：2024/6/4 16:36
  */
+@Storage
 public class ItemResource {
 
     /**
      * 道具id
      */
+    @Id
     private int id;
     /**
      * 背包类型
@@ -25,5 +30,5 @@ public class ItemResource {
     /**
      * 额外参数
      */
-    private int extraParams;
+    private String extraParams;
 }

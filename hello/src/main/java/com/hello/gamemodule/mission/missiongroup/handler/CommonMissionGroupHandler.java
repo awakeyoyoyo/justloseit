@@ -37,9 +37,7 @@ public class CommonMissionGroupHandler implements IMissionGroupHandler {
         List<Mission> missions=new ArrayList<>();
         for (Integer missionId : missionIdList) {
             MissionResource missionResource = missionManager.getMissionResource(missionId);
-            Condition acceptCondition = missionResource.getAcceptCondition();
-            ConditionTypeEnum conditionTypeEnum = ConditionTypeEnum.getConditionTypeEnum(acceptCondition.getConditionType());
-            if (!conditionTypeEnum.verify(roleId, acceptCondition)) {
+            if (!verityCanAccept(roleId, missionResource)){
                 continue;
             }
             Mission mission = missionService.initMission(roleId, missionId);

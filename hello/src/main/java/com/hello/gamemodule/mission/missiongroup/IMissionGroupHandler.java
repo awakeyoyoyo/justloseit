@@ -1,7 +1,10 @@
 package com.hello.gamemodule.mission.missiongroup;
 
+import com.hello.gamemodule.condition.ConditionTypeEnum;
 import com.hello.gamemodule.mission.entity.MissionEntity;
 import com.hello.gamemodule.mission.struct.Mission;
+import com.hello.resource.MissionResource;
+import com.hello.resource.model.Condition;
 
 import java.util.List;
 
@@ -29,4 +32,21 @@ public interface IMissionGroupHandler {
      * @return
      */
     boolean autoInit();
+
+    /**
+     * 校验是否可领取
+     * @param roleId
+     * @param missionResource
+     * @return
+     */
+    default boolean verityCanAccept(long roleId, MissionResource missionResource) {
+        List<Condition> acceptConditions = missionResource.getAcceptConditions();
+        for (Condition acceptCondition : acceptConditions) {
+            ConditionTypeEnum conditionTypeEnum = ConditionTypeEnum.getConditionTypeEnum(acceptCondition.getConditionType());
+            if (!conditionTypeEnum.verify(roleId, acceptCondition)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

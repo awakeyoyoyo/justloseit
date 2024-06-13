@@ -5,6 +5,7 @@ import com.awake.storage.anno.Storage;
 import com.hello.resource.model.Condition;
 import com.hello.resource.model.Reward;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -12,8 +13,8 @@ import java.util.List;
  * @Author：lqh
  * @Date：2024/5/28 20:02
  */
-//@Storage
-@Data
+@Storage
+@Getter
 public class MissionResource {
 
     /**
@@ -55,7 +56,7 @@ public class MissionResource {
     /**
      * 接取任务条件
      */
-    private Condition acceptCondition;
+    private List<Condition> acceptConditions;
 
     /**
      * 下一场任务id
