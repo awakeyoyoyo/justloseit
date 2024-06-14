@@ -481,9 +481,9 @@ public class OrmManager implements IOrmManager {
                 var keyType = types[0];
                 var valueType = types[1];
 
-                if (!String.class.isAssignableFrom((Class<?>) keyType)) {
-                    throw new RunException("[class:{}] type declaration is incorrect, and the key type of the Map must be the String type", clazz.getCanonicalName());
-                }
+//                if (!String.class.isAssignableFrom((Class<?>) keyType)) {
+//                    throw new RunException("[class:{}] type declaration is incorrect, and the key type of the Map must be the String type", clazz.getCanonicalName());
+//                }
 
                 checkSubEntity(clazz, valueType);
             } else if (ObjectId.class.isAssignableFrom(fieldType)) {
@@ -511,10 +511,10 @@ public class OrmManager implements IOrmManager {
                 var types = ((ParameterizedType) type).getActualTypeArguments();
                 var keyType = types[0];
                 var valueType = types[1];
-                if (!String.class.isAssignableFrom((Class<?>) keyType)) {
-                    // ORM中Map的key必须是String类型
-                    throw new RunException("The key of the map in the ORM must be of the String type");
-                }
+//                if (!String.class.isAssignableFrom((Class<?>) keyType)) {
+//                    // ORM中Map的key必须是String类型
+//                    throw new RunException("The key of the map in the ORM must be of the String type");
+//                }
                 checkSubEntity(currentEntityClass, valueType);
                 return;
             }
