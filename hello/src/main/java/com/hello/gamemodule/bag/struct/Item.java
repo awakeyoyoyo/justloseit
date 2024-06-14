@@ -4,15 +4,22 @@ import lombok.Data;
 
 /**
  * @Author：lqh
- * @Date：2024/6/13 20:38
+ * @Date：2024/6/14 15:24
  */
-public interface Item {
+@Data
+public class Item {
+    /**
+     * 唯一id
+     */
+    private long unitId;
+    /**
+     * 道具id
+     */
+    private int itemId;
 
-    long getUnitId();
-
-    int getItemId();
-
-    long getNum();
-
+    /**
+     * 数量
+     */
+    private int num;
 
 }
