@@ -20,6 +20,9 @@ public class BagEntity implements IEntity<Long> {
     private long id;
 
 
+    /**
+     * 背包类型 ->背包数据
+     */
     private Map<String, BagData> bagDataMap;
 
     @Override

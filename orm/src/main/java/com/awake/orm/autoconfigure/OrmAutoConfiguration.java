@@ -3,6 +3,7 @@ package com.awake.orm.autoconfigure;
 import com.awake.orm.OrmContext;
 import com.awake.orm.accessor.MongodbAccessor;
 import com.awake.orm.cache.PersisterBus;
+import com.awake.orm.codec.MapCodecProvider;
 import com.awake.orm.config.OrmProperties;
 import com.awake.orm.manager.OrmManager;
 import com.awake.orm.query.MongodbQuery;
@@ -40,12 +41,13 @@ public class OrmAutoConfiguration {
     public PersisterBus persisterBus() {
         return new PersisterBus();
     }
-
     @Bean
     public MongoClient mongoClient(OrmProperties ormConfig) {
         CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
-                CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+                CodecRegistries.fromProviders(
+                        PojoCodecProvider.builder().automatic(true)
+                                .register(new MapCodecProvider()).build()));
 
         var mongoBuilder = MongoClientSettings
                 .builder()

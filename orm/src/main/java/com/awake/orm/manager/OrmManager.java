@@ -489,7 +489,7 @@ public class OrmManager implements IOrmManager {
             } else if (ObjectId.class.isAssignableFrom(fieldType)) {
                 // do nothing
             } else {
-                checkEntity(fieldType);
+//                checkEntity(fieldType);
             }
         }
     }
@@ -530,7 +530,7 @@ public class OrmManager implements IOrmManager {
                 // ORM不支持集合嵌套数组类型
                 throw new RunException("ORMs do not support the combination of arrays and collections with the [type:{}] type", type);
             } else {
-                checkEntity(clazz);
+//                checkEntity(clazz);
                 return;
             }
         }

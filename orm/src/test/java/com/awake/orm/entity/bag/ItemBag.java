@@ -16,12 +16,12 @@ public class ItemBag {
     private int id;
     private String desc;
 
-    private Map<String, Item> itemMap;
+    private Map<Long, Item> itemMap;
 
     public ItemBag() {
     }
 
-    public ItemBag(int id, String desc, Map<String, Item> itemMap) {
+    public ItemBag(int id, String desc, Map<Long, Item> itemMap) {
         this.id = id;
         this.desc = desc;
         this.itemMap = itemMap;

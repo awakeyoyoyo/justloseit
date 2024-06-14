@@ -87,10 +87,10 @@ public class AccessorTest {
         var bagMap = new HashMap<String, ItemBag>();
         entity.setBagMap(bagMap);
 
-        var itemMap = new HashMap<String, Item>();
-        itemMap.put("1", new Item(1, "item1"));
-        itemMap.put("2", new Item(2, "item1"));
-        itemMap.put("3", new Item(3, "item1"));
+        var itemMap = new HashMap<Long, Item>();
+        itemMap.put(1L, new Item(1, "item1"));
+        itemMap.put(2L, new Item(2, "item1"));
+        itemMap.put(3L, new Item(3, "item1"));
 
         var bagItem1 = new ItemBag(1, "desc1", itemMap);
         var bagItem2 = new ItemBag(2, "desc2", itemMap);
