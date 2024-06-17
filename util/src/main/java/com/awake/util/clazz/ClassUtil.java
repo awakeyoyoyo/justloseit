@@ -356,7 +356,7 @@ public class ClassUtil {
         throw new RunException("[type:{}]类型不正确", type);
     }
 
-    private static boolean isBaseType(Class<?> clazz) {
+    public static boolean isBaseType(Class<?> clazz) {
         return clazz.isPrimitive()
                 || Number.class.isAssignableFrom(clazz)
                 || String.class.isAssignableFrom(clazz)
