@@ -27,6 +27,18 @@ public class MapEntity implements IEntity<Long> {
 
     private Map<String, Map<String, String>> baseMap = new HashMap<>();
 
+    private Map<Long, String> longStringMap = new HashMap<>();
+    private Map<Integer, String> intStringMap = new HashMap<>();
+    private Map<Integer, Map<Integer, String>> intBaseMap = new HashMap<>();
+    private Map<Character, ItemBag> charBagMap = new HashMap<>();
+    private Map<Boolean, ItemBag> boolBagMap = new HashMap<>();
+    private Map<Byte, ItemBag> byteBagMap = new HashMap<>();
+    private Map<Short, ItemBag> shortBagMap = new HashMap<>();
+    private Map<Integer, ItemBag> intBagMap = new HashMap<>();
+    private Map<Long, ItemBag> longBagMap = new HashMap<>();
+    private Map<Float, ItemBag> floatBagMap = new HashMap<>();
+    private Map<Double, ItemBag> doubleBagMap = new HashMap<>();
+
     @Override
     public Long id() {
         return id;

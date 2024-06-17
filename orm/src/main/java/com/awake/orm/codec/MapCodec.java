@@ -1,3 +1,14 @@
+/*
+ * Copyright (C) 2020 The zfoo Authors
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
 package com.awake.orm.codec;
 
 import org.bson.BsonReader;
@@ -9,34 +20,36 @@ import org.bson.codecs.EncoderContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * 基础类型作为key的map解析器 (key 默认不能为null)
+ *
  * @Author：lqh
  * @Date：2024/6/17 13:55
  */
-public class BaseTypeKeyMapCodec<K,V> implements Codec<Map<K, V>> {
+public class MapCodec<K, V> implements Codec<Map<K, V>> {
 
     private final Class<Map<K, V>> encoderClass;
     private final Codec<K> keyCodec;
     private final Codec<V> valueCodec;
+    private final Function<String, K> keyDecodeFunction;
 
-    BaseTypeKeyMapCodec(final Class<Map<K, V>> encoderClass, final Codec<K> keyCodec, final Codec<V> valueCodec) {
+    @SuppressWarnings("unchecked")
+    MapCodec(Class<Map<K, V>> encoderClass, Codec<K> keyCodec, Codec<V> valueCodec) {
         this.encoderClass = encoderClass;
         this.keyCodec = keyCodec;
         this.valueCodec = valueCodec;
+        this.keyDecodeFunction = (Function<String, K>) MapKeyCodecEnum.keyDecode(keyCodec.getEncoderClass());
     }
 
     @Override
-    @SuppressWarnings({"unchecked"})
-    public void encode(final BsonWriter writer, final Map<K, V> map, final EncoderContext encoderContext) {
+    public void encode(BsonWriter writer, Map<K, V> map, EncoderContext encoderContext) {
         writer.writeStartDocument();
         for (var entry : map.entrySet()) {
             var key = entry.getKey();
             var value = entry.getValue();
-            MapKeyCodec<K> codec = (MapKeyCodec<K>) BaseTypeEnum.getCodec(keyCodec.getEncoderClass());
-            String keyValue = codec.encode(key);
-            writer.writeName(keyValue);
+            writer.writeName(key.toString());
             if (value == null) {
                 writer.writeNull();
             } else {
@@ -47,15 +60,13 @@ public class BaseTypeKeyMapCodec<K,V> implements Codec<Map<K, V>> {
     }
 
     @Override
-    @SuppressWarnings({"unchecked"})
-    public Map<K, V> decode(final BsonReader reader, final DecoderContext context) {
-        reader.readStartDocument();
+    public Map<K, V> decode(BsonReader reader, DecoderContext context) {
         var map = new HashMap<K, V>();
-        while (!BsonType.END_OF_DOCUMENT.equals(reader.readBsonType())) {
-            MapKeyCodec<K> codec = (MapKeyCodec<K>) BaseTypeEnum.getCodec(keyCodec.getEncoderClass());
-            K key = codec.decode(reader.readName());
+        reader.readStartDocument();
+        while (BsonType.END_OF_DOCUMENT != reader.readBsonType()) {
+            K key = keyDecodeFunction.apply(reader.readName());
             V value = null;
-            if (BsonType.NULL.equals(reader.getCurrentBsonType())) {
+            if (BsonType.NULL == reader.getCurrentBsonType()) {
                 reader.readNull();
             } else {
                 value = valueCodec.decode(reader, context);
