@@ -36,7 +36,7 @@ public class RoleService {
                     ErrorFactory.create(ErrorCode.ERROR_PARAMS));
             return;
         }
-
+        session.setUserId(roleEntity.getRid());
         NetContext.getRouter().send(session, GameProtoId.LoginResponse,
                 LoginMsg.LoginResponse.newBuilder()
                         .setRid(roleEntity.getRid())
