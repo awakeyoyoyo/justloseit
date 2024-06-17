@@ -2,6 +2,7 @@ package com.hello.gamemodule.role;
 
 import com.awake.net2.NetContext;
 import com.awake.net2.session.Session;
+import com.awake.net2.session.SessionManager;
 import com.awake.orm.OrmContext;
 import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.cache.EntityCache;
@@ -15,6 +16,7 @@ import com.hello.gamemodule.role.entity.RoleEntity;
 import com.hello.common.GameProtoId;
 import com.hello.packet.LoginMsg;
 import com.hello.resource.FilterWordResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,6 +31,9 @@ public class RoleService {
     @StorageAutowired
     public IStorage<Integer, FilterWordResource> filterWordResources;
 
+    @Autowired
+    private RoleManager roleManager;
+
     public void atLoginRequest(Session session, String userName, String password) {
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
         if (StringUtils.isEmpty(roleEntity.id()) || !roleEntity.getPassword().equals(password)) {
@@ -37,6 +42,10 @@ public class RoleService {
             return;
         }
         session.setUserId(roleEntity.getRid());
+        Session oldSession = roleManager.getSession(roleEntity.getRid());
+        if (oldSession!=null){
+            //
+        }
         NetContext.getRouter().send(session, GameProtoId.LoginResponse,
                 LoginMsg.LoginResponse.newBuilder()
                         .setRid(roleEntity.getRid())

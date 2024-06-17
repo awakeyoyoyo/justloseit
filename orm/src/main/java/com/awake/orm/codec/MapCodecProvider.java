@@ -15,11 +15,17 @@ public class MapCodecProvider implements PropertyCodecProvider {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     public <T> Codec<T> get(final TypeWithTypeParameters<T> type, final PropertyCodecRegistry registry) {
-        if (Map.class.isAssignableFrom(type.getType()) && type.getTypeParameters().size() == 2) {
-            return new MapCodec(
-                    type.getType(),
-                    registry.get(type.getTypeParameters().get(0)),
-                    registry.get(type.getTypeParameters().get(1)));
+        if (!Map.class.isAssignableFrom(type.getType())) {
+            return null;
+        }
+        var typeParameters = type.getTypeParameters();
+        if (type.getTypeParameters().size() != 2) {
+            return null;
+        }
+        var keyType = typeParameters.get(0);
+        var valueType = typeParameters.get(1);
+        if (BaseTypeEnum.containsKeyType(keyType.getType())){
+            return new BaseTypeKeyMapCodec(type.getType(), registry.get(keyType), registry.get(valueType));
         }
         return null;
     }
