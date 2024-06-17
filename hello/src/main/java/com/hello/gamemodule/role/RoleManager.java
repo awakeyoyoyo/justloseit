@@ -16,8 +16,6 @@ public class RoleManager {
 
     private Map<Long, Session> roleId2Session=new ConcurrentHashMap<>();
 
-
-
     public Session getSession(long roleId){
         return roleId2Session.get(roleId);
     }

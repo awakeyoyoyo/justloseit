@@ -1,8 +1,8 @@
 package com.hello.gamemodule.role;
 
+import com.awake.event.manger.EventBus;
 import com.awake.net2.NetContext;
 import com.awake.net2.session.Session;
-import com.awake.net2.session.SessionManager;
 import com.awake.orm.OrmContext;
 import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.cache.EntityCache;
@@ -12,6 +12,8 @@ import com.awake.util.base.StringUtils;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
 import com.hello.common.ErrorFactory;
+import com.hello.gamemodule.event.LoginEvent;
+import com.hello.gamemodule.event.LogoutEvent;
 import com.hello.gamemodule.role.entity.RoleEntity;
 import com.hello.common.GameProtoId;
 import com.hello.packet.LoginMsg;
@@ -43,9 +45,14 @@ public class RoleService {
         }
         session.setUserId(roleEntity.getRid());
         Session oldSession = roleManager.getSession(roleEntity.getRid());
-        if (oldSession!=null){
-            //
+        if (oldSession != null) {
+            //手动登出处理
+            doLogout(oldSession);
+            //关闭连接
+            oldSession.close();
         }
+        //执行登录逻辑
+        doLogin(session);
         NetContext.getRouter().send(session, GameProtoId.LoginResponse,
                 LoginMsg.LoginResponse.newBuilder()
                         .setRid(roleEntity.getRid())
@@ -78,5 +85,29 @@ public class RoleService {
                 .setUserName(roleEntity.getId());
         NetContext.getRouter().send(session, GameProtoId.RegisterResponse,
                 response.build());
+    }
+
+    /**
+     * 登出
+     *
+     * @param session
+     */
+    public void doLogout(Session session) {
+        if (session.getUserId() == 0) {
+            return;
+        }
+        //抛出登出事件
+        EventBus.publicEvent(LogoutEvent.valueOf(session));
+    }
+
+    /**
+     * 登录
+     *
+     * @param session
+     */
+    private void doLogin(Session session) {
+        roleManager.addSession(session.getUserId(), session);
+        //登录事件
+        EventBus.publicEvent(LoginEvent.valueOf(session));
     }
 }
