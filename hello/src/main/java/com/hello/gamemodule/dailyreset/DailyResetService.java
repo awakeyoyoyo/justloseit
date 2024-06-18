@@ -3,19 +3,17 @@ package com.hello.gamemodule.dailyreset;
 import com.awake.event.manger.EventBus;
 import com.awake.net2.router.TaskBus;
 import com.awake.net2.session.Session;
-import com.awake.scheduler.SchedulerContext;
 import com.awake.scheduler.anno.Scheduler;
-import com.awake.scheduler.manager.SchedulerBus;
 import com.hello.gamemodule.dailyreset.event.DailyResetEvent;
 import com.hello.gamemodule.dailyreset.event.OneMinEvent;
-import com.hello.gamemodule.dailyreset.event.RoleDailyResetEvent;
 import com.hello.gamemodule.role.RoleManager;
 import com.hello.gamemodule.role.RoleService;
 import com.hello.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author：lqh
@@ -24,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class DailyResetService {
 
-
+    private static final Logger logger = LoggerFactory.getLogger(DailyResetService.class);
     private final RoleManager roleManager;
     private final RoleService roleService;
     public DailyResetService(RoleManager roleManager,RoleService roleService) {
@@ -36,7 +34,8 @@ public class DailyResetService {
      * 每日0点执行
      */
     @Scheduler(cron = "0 0 0 * * ?")
-    public void cronDayReset() {
+    public void cronDailyReset() {
+        logger.info("DailyResetService dailyReset execute");
         EventBus.publicEvent(DailyResetEvent.valueOf());
 
         List<Session> onlineRole = roleManager.getOnlineRole();
@@ -51,6 +50,7 @@ public class DailyResetService {
      */
     @Scheduler(cron = "0 */1 * * * ?")
     public void cronOneMin(){
+        logger.info("DailyResetService oneMin execute");
         EventBus.publicEvent(OneMinEvent.valueOf(DateUtil.getHour(), DateUtil.getMin()));
     }
 
