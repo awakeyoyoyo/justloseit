@@ -42,7 +42,6 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
 
     private static ApplicationContext applicationContext;
 
-
     private static IRpcManager rpcManager;
 
 

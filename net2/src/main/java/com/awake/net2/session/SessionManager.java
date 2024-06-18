@@ -1,8 +1,11 @@
 package com.awake.net2.session;
 
+import com.awake.net2.util.SessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -29,51 +32,85 @@ public class SessionManager implements ISessionManager {
 
     @Override
     public void addServerSession(Session session) {
-
+        if (serverSessionMap.containsKey(session.getSessionId())) {
+            logger.error("Server received duplicate [session:{}]", SessionUtils.sessionInfo(session));
+            return;
+        }
+        serverSessionMap.put(session.getSessionId(), session);
     }
 
     @Override
     public void removeServerSession(Session session) {
-
+        if (!serverSessionMap.containsKey(session.getSessionId())) {
+            logger.error("[session:{}] does not exist", SessionUtils.sessionInfo(session));
+            return;
+        }
+        try {
+            serverSessionMap.remove(session.getSessionId());
+            session.close();
+        } catch (Exception e) {
+            logger.error("[session:{}] remove exception", e);
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public Session getServerSession(long id) {
-        return null;
+    public Session getServerSession(long sid) {
+        return serverSessionMap.get(sid);
     }
 
     @Override
     public int serverSessionSize() {
-        return 0;
+        return serverSessionMap.size();
     }
 
     @Override
     public void forEachServerSession(Consumer<Session> consumer) {
-
+        for (Map.Entry<Long, Session> entry : serverSessionMap.entrySet()) {
+            Session session = entry.getValue();
+            consumer.accept(session);
+        }
     }
 
     @Override
     public void addClientSession(Session session) {
-
+        if (clientSessionMap.containsKey(session.getSessionId())) {
+            logger.error("client received duplicate [session:{}]", SessionUtils.sessionInfo(session));
+            return;
+        }
+        clientSessionMap.put(session.getSessionId(), session);
     }
 
     @Override
     public void removeClientSession(Session session) {
-
+        if (!clientSessionMap.containsKey(session.getSessionId())) {
+            logger.error("[session:{}] does not exist", SessionUtils.sessionInfo(session));
+            return;
+        }
+        try {
+            clientSessionMap.remove(session.getSessionId());
+            session.close();
+        } catch (Exception e) {
+            logger.error("[session:{}] remove exception", e);
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public Session getClientSession(long id) {
-        return null;
+    public Session getClientSession(long sid) {
+        return clientSessionMap.get(sid);
     }
 
     @Override
     public void forEachClientSession(Consumer<Session> consumer) {
-
+        for (Map.Entry<Long, Session> entry : clientSessionMap.entrySet()) {
+            Session session = entry.getValue();
+            consumer.accept(session);
+        }
     }
 
     @Override
     public int clientSessionSize() {
-        return 0;
+        return clientSessionMap.size();
     }
 }
