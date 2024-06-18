@@ -4,20 +4,24 @@ import com.awake.event.manger.EventBus;
 import com.awake.net2.NetContext;
 import com.awake.net2.session.Session;
 import com.awake.orm.OrmContext;
+import com.awake.orm.accessor.MongodbAccessor;
 import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.cache.EntityCache;
+import com.awake.orm.query.IQueryBuilder;
 import com.awake.storage.anno.StorageAutowired;
 import com.awake.storage.model.IStorage;
 import com.awake.util.base.StringUtils;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
 import com.hello.common.ErrorFactory;
+import com.hello.gamemodule.dailyreset.event.RoleDailyResetEvent;
 import com.hello.gamemodule.role.event.LoginEvent;
 import com.hello.gamemodule.role.event.LogoutEvent;
 import com.hello.gamemodule.role.entity.RoleEntity;
 import com.hello.common.GameProtoId;
 import com.hello.packet.LoginMsg;
 import com.hello.resource.FilterWordResource;
+import com.hello.util.DateUtil;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,7 +31,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleService {
     @EntityCacheAutowired
-    private EntityCache<String, RoleEntity> roleEntityEntityCache;
+    private EntityCache<Long, RoleEntity> roleEntityEntityCache;
 
     @StorageAutowired
     public IStorage<Integer, FilterWordResource> filterWordResources;
@@ -39,14 +43,15 @@ public class RoleService {
     }
 
     public void atLoginRequest(Session session, String userName, String password) {
-        RoleEntity roleEntity = roleEntityEntityCache.load(userName);
-        if (StringUtils.isEmpty(roleEntity.id()) || !roleEntity.getPassword().equals(password)) {
+        RoleEntity roleEntity = OrmContext.getQuery(RoleEntity.class).eq("password", password).eq("userName", userName).queryFirst();
+        if (roleEntity == null) {
             NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
                     ErrorFactory.create(ErrorCode.ERROR_PARAMS));
             return;
         }
-        session.setUserId(roleEntity.getRid());
-        Session oldSession = roleManager.getSession(roleEntity.getRid());
+        roleEntity = roleEntityEntityCache.load(roleEntity.id());
+        session.setUserId(roleEntity.id());
+        Session oldSession = roleManager.getSession(roleEntity.id());
         if (oldSession != null) {
             //手动登出处理
             doLogout(oldSession);
@@ -57,9 +62,9 @@ public class RoleService {
         doLogin(session);
         NetContext.getRouter().send(session, GameProtoId.LoginResponse,
                 LoginMsg.LoginResponse.newBuilder()
-                        .setRid(roleEntity.getRid())
+                        .setRid(roleEntity.id())
                         .setPassword(roleEntity.getPassword())
-                        .setUserName(roleEntity.getId()).build());
+                        .setUserName(roleEntity.getUserName()).build());
     }
 
     public void atRegisterRequest(Session session, String userName, String password) {
@@ -70,21 +75,23 @@ public class RoleService {
                 return;
             }
         }
-        RoleEntity roleEntity = roleEntityEntityCache.load(userName);
-        if (!StringUtils.isEmpty(roleEntity.id())) {
+
+        RoleEntity roleEntity = OrmContext.getQuery(RoleEntity.class).eq("userName", userName).queryFirst();
+        if (roleEntity != null) {
             NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
                     ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
             return;
         }
 
-        roleEntity.setRid(GameContext.getIns().getIdManager().generalRoleId());
+        roleEntity=roleEntityEntityCache.loadOrCreate(GameContext.getIns().getIdManager().generalRoleId());
+        roleEntity.setId(GameContext.getIns().getIdManager().generalRoleId());
+        roleEntity.setUserName(userName);
         roleEntity.setPassword(password);
-        roleEntity.setId(userName);
 
-        OrmContext.getAccessor().insert(roleEntity);
+        OrmContext.getAccessor().update(roleEntity);
 
-        LoginMsg.RegisterResponse.Builder response = LoginMsg.RegisterResponse.newBuilder().setRid(roleEntity.getRid()).setPassword(roleEntity.getPassword())
-                .setUserName(roleEntity.getId());
+        LoginMsg.RegisterResponse.Builder response = LoginMsg.RegisterResponse.newBuilder().setRid(roleEntity.id()).setPassword(roleEntity.getPassword())
+                .setUserName(roleEntity.getUserName());
         NetContext.getRouter().send(session, GameProtoId.RegisterResponse,
                 response.build());
     }
@@ -109,7 +116,27 @@ public class RoleService {
      */
     private void doLogin(Session session) {
         roleManager.addSession(session.getUserId(), session);
+        //每日重置下
+        doRoleDailyReset(session);
+
         //登录事件
         EventBus.publicEvent(LoginEvent.valueOf(session));
+    }
+
+    /**
+     * 玩家每日重置
+     *
+     * @param session
+     */
+    public void doRoleDailyReset(Session session) {
+        RoleEntity roleEntity = roleEntityEntityCache.load(session.getUserId());
+        long currTime = DateUtil.getCurrentTime();
+        if (DateUtil.isSameDay(currTime, roleEntity.getDailyResetTime())) {
+            return;
+        }
+        roleEntity.setDailyResetTime(currTime);
+        roleEntityEntityCache.update(roleEntity);
+
+        EventBus.publicEvent(RoleDailyResetEvent.valueOf(session));
     }
 }

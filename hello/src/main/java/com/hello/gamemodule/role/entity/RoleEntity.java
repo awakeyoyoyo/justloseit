@@ -9,32 +9,32 @@ import com.awake.orm.model.IEntity;
  * @Date：2024/4/2 10:00
  */
 @EntityCache
-public class RoleEntity implements IEntity<String> {
+public class RoleEntity implements IEntity<Long> {
     @Id
-    private String id;
-    private long rid;
+    private long id;
+    private String userName;
     private String password;
 
+    private long dailyResetTime;
+
     @Override
-    public String id() {
+    public Long id() {
         return id;
     }
 
-    public long getRid() {
-        return rid;
-    }
-
-    public void setRid(long rid) {
-        this.rid = rid;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
+    @Override
+    public void setId(Long id) {
         this.id = id;
     }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
 
     public String getPassword() {
         return password;
@@ -42,6 +42,14 @@ public class RoleEntity implements IEntity<String> {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public long getDailyResetTime() {
+        return dailyResetTime;
+    }
+
+    public void setDailyResetTime(long dailyResetTime) {
+        this.dailyResetTime = dailyResetTime;
     }
 }
 

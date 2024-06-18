@@ -191,7 +191,7 @@ public class SchedulerBus {
         refreshMinTriggerTimestamp();
     }
 
-    public static void removerScheduler(String schedulerName, SchedulerDefinition scheduler) {
-        schedulerDefMap.remove(schedulerName, scheduler);
+    public static void removerScheduler(String schedulerName) {
+        schedulerDefMap.remove(schedulerName);
     }
 }
