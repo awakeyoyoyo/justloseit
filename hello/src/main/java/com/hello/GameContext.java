@@ -22,12 +22,16 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
 
     private static GameContext ins;
 
-    @Autowired
-    private GameServerProperties gameServerProperties;
-    @Autowired
-    private ApplicationContext applicationContext;
-    @Autowired
-    private IdManager idManager;
+
+    private final GameServerProperties gameServerProperties;
+    private final ApplicationContext applicationContext;
+    private final IdManager idManager;
+
+    public GameContext(GameServerProperties gameServerProperties, ApplicationContext applicationContext, IdManager idManager) {
+        this.gameServerProperties = gameServerProperties;
+        this.applicationContext = applicationContext;
+        this.idManager = idManager;
+    }
 
     public GameServerProperties getGameServerProperties() {
         return gameServerProperties;

@@ -12,13 +12,12 @@ import com.awake.util.base.StringUtils;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
 import com.hello.common.ErrorFactory;
-import com.hello.gamemodule.event.LoginEvent;
-import com.hello.gamemodule.event.LogoutEvent;
+import com.hello.gamemodule.role.event.LoginEvent;
+import com.hello.gamemodule.role.event.LogoutEvent;
 import com.hello.gamemodule.role.entity.RoleEntity;
 import com.hello.common.GameProtoId;
 import com.hello.packet.LoginMsg;
 import com.hello.resource.FilterWordResource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,8 +32,11 @@ public class RoleService {
     @StorageAutowired
     public IStorage<Integer, FilterWordResource> filterWordResources;
 
-    @Autowired
-    private RoleManager roleManager;
+    private final RoleManager roleManager;
+
+    public RoleService(RoleManager roleManager) {
+        this.roleManager = roleManager;
+    }
 
     public void atLoginRequest(Session session, String userName, String password) {
         RoleEntity roleEntity = roleEntityEntityCache.load(userName);
@@ -68,18 +70,18 @@ public class RoleService {
                 return;
             }
         }
-        RoleEntity roleEntity = roleEntityEntityCache.loadOrCreate(userName);
-//        if (!StringUtils.isEmpty(roleEntity.id())) {
-//            NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
-//                    ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
-//            return;
-//        }
+        RoleEntity roleEntity = roleEntityEntityCache.load(userName);
+        if (!StringUtils.isEmpty(roleEntity.id())) {
+            NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
+                    ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
+            return;
+        }
 
         roleEntity.setRid(GameContext.getIns().getIdManager().generalRoleId());
         roleEntity.setPassword(password);
         roleEntity.setId(userName);
 
-        OrmContext.getAccessor().update(roleEntity);
+        OrmContext.getAccessor().insert(roleEntity);
 
         LoginMsg.RegisterResponse.Builder response = LoginMsg.RegisterResponse.newBuilder().setRid(roleEntity.getRid()).setPassword(roleEntity.getPassword())
                 .setUserName(roleEntity.getId());

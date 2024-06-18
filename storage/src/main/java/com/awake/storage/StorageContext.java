@@ -1,5 +1,6 @@
 package com.awake.storage;
 
+import com.awake.storage.config.StorageProperties;
 import com.awake.storage.manager.IStorageManager;
 import com.awake.storage.util.function.Func1;
 import com.awake.util.time.Stopwatch;

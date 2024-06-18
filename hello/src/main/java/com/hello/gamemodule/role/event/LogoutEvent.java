@@ -1,7 +1,6 @@
-package com.hello.gamemodule.event;
+package com.hello.gamemodule.role.event;
 
 import com.awake.event.model.IEvent;
-import com.awake.net2.event.ServerSessionInactiveEvent;
 import com.awake.net2.session.Session;
 
 /**

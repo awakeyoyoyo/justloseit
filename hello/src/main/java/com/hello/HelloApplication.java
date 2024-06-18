@@ -17,9 +17,8 @@ public class HelloApplication
 {
     public static final int SERVER_PORT = 18000;
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args){
         SpringApplication.run(HelloApplication.class, args);
-        System.out.println("hello world");
         var tcpServer = new TcpServer(HostAndPort.valueOf(NetUtils.getLocalhostStr(), SERVER_PORT));
         tcpServer.start();
     }

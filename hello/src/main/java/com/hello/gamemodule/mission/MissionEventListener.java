@@ -13,8 +13,12 @@ import javax.annotation.Resource;
 @Component
 public class MissionEventListener {
 
-    @Resource
-    private MissionService missionService;
+
+    private final MissionService missionService;
+
+    public MissionEventListener(MissionService missionService) {
+        this.missionService = missionService;
+    }
 
     @EventReceiver
     public void onFunctionOpenEvent(FunctionOpenEvent event){

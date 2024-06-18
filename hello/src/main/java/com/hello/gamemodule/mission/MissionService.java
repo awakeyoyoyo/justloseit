@@ -24,8 +24,6 @@ import java.util.List;
  */
 @Service
 public class MissionService {
-    @Resource
-    private MissionManager missionManager;
     @EntityCacheAutowired
     private EntityCache<Long, MissionEntity> missionEntityCache;
     @StorageAutowired

@@ -16,8 +16,6 @@ public class StorageProperties {
 
     public static final String PREFIX = "awake.storage";
 
-    private String id;
-
     private String scanPackage;
 
     private String resourceLocation;

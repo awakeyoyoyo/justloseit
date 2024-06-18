@@ -18,8 +18,13 @@ import org.springframework.stereotype.Component;
 public class ShutdownHandler implements ApplicationListener<ApplicationContextEvent>, Ordered {
     private static final Logger logger = LoggerFactory.getLogger(ShutdownHandler.class);
 
-    @Autowired
-    private IdManager idManager;
+
+    private final IdManager idManager;
+
+    public ShutdownHandler(IdManager idManager) {
+        this.idManager = idManager;
+    }
+
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         //最高优先级处理， 先关闭游戏上下文 再对组件一一关闭

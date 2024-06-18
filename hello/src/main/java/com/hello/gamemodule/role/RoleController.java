@@ -14,8 +14,12 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class RoleController {
 
-    @Autowired
-    private  RoleService roleService;
+
+    private final RoleService roleService;
+
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     @PacketReceiver(protoId = GameProtoId.LoginRequest)
     public void atLoginRequest(Session session, LoginMsg.LoginRequest loginRequest) throws Exception {
