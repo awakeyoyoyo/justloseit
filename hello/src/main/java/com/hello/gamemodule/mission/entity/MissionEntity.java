@@ -63,4 +63,19 @@ public class MissionEntity implements IEntity<Long> {
         groupId2MissionGroup.computeIfAbsent(groupId, k -> new HashMap<>()).remove(mission.getConfId());
         conditionType2Mission.computeIfAbsent(conditionType, k -> new ArrayList<>()).remove(mission);
     }
+
+    /**
+     * 获取任务组任务列表
+     * @param groupId
+     * @return
+     */
+    public List<Mission> getGroupMissionList(int groupId) {
+        List<Mission> ret=new ArrayList<>();
+        Map<Integer, Mission> groupMission = groupId2MissionGroup.get(groupId);
+        if (groupMission==null||groupMission.isEmpty()){
+            return ret;
+        }
+        ret.addAll(groupMission.values());
+        return ret;
+    }
 }

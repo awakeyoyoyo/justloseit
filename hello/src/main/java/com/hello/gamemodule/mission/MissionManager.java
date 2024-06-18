@@ -1,7 +1,10 @@
 package com.hello.gamemodule.mission;
 
+import com.awake.orm.anno.EntityCacheAutowired;
+import com.awake.orm.cache.EntityCache;
 import com.awake.storage.anno.StorageAutowired;
 import com.awake.storage.model.IStorage;
+import com.hello.gamemodule.mission.entity.MissionEntity;
 import com.hello.resource.MissionResource;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,9 @@ public class MissionManager {
 
     @StorageAutowired
     public IStorage<Integer, MissionResource> missionResources;
+
+    @EntityCacheAutowired
+    private EntityCache<Long, MissionEntity> missionEntityCache;
 
     /**
      * 任务组id-任务id集合
@@ -42,4 +48,7 @@ public class MissionManager {
     public MissionResource getMissionResource(Integer missionId) {
         return missionResources.get(missionId);
     }
+
+
+
 }

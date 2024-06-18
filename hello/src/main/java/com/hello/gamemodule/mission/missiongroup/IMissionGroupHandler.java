@@ -1,7 +1,6 @@
 package com.hello.gamemodule.mission.missiongroup;
 
 import com.hello.gamemodule.condition.ConditionTypeEnum;
-import com.hello.gamemodule.mission.entity.MissionEntity;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
 import com.hello.resource.model.Condition;
@@ -22,10 +21,9 @@ public interface IMissionGroupHandler {
      * 等等... 应对后续策划奇葩逻辑
      *
      * @param roleId
-     * @param groupId
-     * @param missionEntity
+     * @param missionGroupId
      */
-    List<Mission> initMissionGroup(long roleId, int groupId, MissionEntity missionEntity);
+    List<Mission> initMissionGroup(long roleId, int missionGroupId);
 
     /**
      * 随着功能开发自动初始化
@@ -34,19 +32,18 @@ public interface IMissionGroupHandler {
     boolean autoInit();
 
     /**
-     * 校验是否可领取
+     * 清除任务组
      * @param roleId
-     * @param missionResource
+     * @param groupId
+     */
+    void clearMissionGroup(long roleId,int groupId);
+
+    /**
+     * 获取任务组任务
+     * @param roleId
+     * @param groupId
      * @return
      */
-    default boolean verityCanAccept(long roleId, MissionResource missionResource) {
-        List<Condition> acceptConditions = missionResource.getAcceptConditions();
-        for (Condition acceptCondition : acceptConditions) {
-            ConditionTypeEnum conditionTypeEnum = ConditionTypeEnum.getConditionTypeEnum(acceptCondition.getConditionType());
-            if (!conditionTypeEnum.verify(roleId, acceptCondition)) {
-                return false;
-            }
-        }
-        return true;
-    }
+    List<Mission> getAllMission(long roleId, int groupId);
+
 }

@@ -15,7 +15,6 @@ import com.hello.resource.model.Reward;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -28,6 +27,10 @@ public class MissionService {
     private EntityCache<Long, MissionEntity> missionEntityCache;
     @StorageAutowired
     public IStorage<Integer, MissionResource> missionResources;
+
+    public EntityCache<Long, MissionEntity> getMissionEntityCache() {
+        return missionEntityCache;
+    }
 
     public void acceptMission(Session session, int missionConfId) {
 
@@ -61,7 +64,7 @@ public class MissionService {
             return;
         }
         MissionEntity missionEntity = missionEntityCache.load(roleId);
-        List<Mission> missions = missionGroupEnum.initMissionGroup(roleId, groupId, missionEntity);
+        List<Mission> missions = missionGroupEnum.initMissionGroup(roleId);
         missionEntityCache.update(missionEntity);
         //TODO 通知新增任务
     }
@@ -78,7 +81,7 @@ public class MissionService {
             throw new RuntimeException("mission initMissionGroup error. roleId:" + roleId + "groupId:" + groupId);
         }
         MissionEntity missionEntity = missionEntityCache.load(roleId);
-        List<Mission> missions = missionGroupEnum.initMissionGroup(roleId, groupId, missionEntity);
+        List<Mission> missions = missionGroupEnum.initMissionGroup(roleId);
         missionEntityCache.update(missionEntity);
         //TODO 通知新增任务
     }
@@ -106,6 +109,9 @@ public class MissionService {
         //是否触发下一个任务
         if (missionTypeEnum.isTriggerNextMission(missionResource)) {
             Mission nextMission = initMission(roleId, missionResource.getNextMissionId());
+            if (nextMission==null){
+                return rewards;
+            }
             missionEntity.addMission(missionResource.getGroupId(), missionResource.getProgressConditionType(), nextMission);
             //TODO 通知新增任务
         }
@@ -126,6 +132,9 @@ public class MissionService {
         MissionTypeEnum missionTypeEnum = MissionTypeEnum.getMissionTypeEnum(missionType);
         if (missionTypeEnum == null) {
             throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+        }
+        if (!missionTypeEnum.verityCanAccept(roleId, missionResource)) {
+            return null;
         }
         return missionTypeEnum.initMission(roleId, missionResource);
     }
