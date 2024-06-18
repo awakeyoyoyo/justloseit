@@ -40,6 +40,9 @@ public interface IMissionTypeHandler {
      */
     boolean isTriggerNextMission(MissionResource missionResource);
 
+    /**
+     * 完成后是否删除任务
+     */
     boolean isCompleteDeleteMission();
 
 }
