@@ -81,7 +81,6 @@ public class RoleService {
         }
 
         roleEntity=roleEntityEntityCache.loadOrCreate(GameContext.getIns().getIdManager().generalRoleId());
-        roleEntity.setId(GameContext.getIns().getIdManager().generalRoleId());
         roleEntity.setUserName(userName);
         roleEntity.setPassword(password);
 

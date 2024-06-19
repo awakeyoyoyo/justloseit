@@ -3,19 +3,24 @@ package com.hello.util;
 import com.awake.storage.StorageContext;
 import com.awake.storage.manager.AbstractStorage;
 import com.awake.util.FileUtils;
+import com.awake.util.HotSwapUtils;
+import com.awake.util.IOUtils;
 import com.awake.util.base.StringUtils;
+import com.awake.util.clazz.ClassUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 热更配置和类 工具类
  * @Author：lqh
  * @Date：2024/5/21 11:31
  */
@@ -59,9 +64,23 @@ public class HotUtil {
         if (!hotswapExcelList.isEmpty()) {
             StorageContext.getStorageManager().inject();
         }
-        logger.info("[HotUtil] hotswap success ! update excel:{}", hotswapExcelList);
+        logger.info("[HotUtil] hotswap excel success ! update excel:{}", hotswapExcelList);
     }
 
-
+    /**
+     * 热更class
+     *
+     * @param classPaths
+     * @throws IOException
+     */
+    public static void startHotSwapClass(List<String> classPaths) throws IOException {
+        for (String classPath : classPaths) {
+            logger.info("[HotUtil] hotswap class:{} begin", classPath);
+            InputStream inputStream = ClassUtil.getFileFromClassPath(classPath);
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+            HotSwapUtils.hotswapClass(byteArray);
+            logger.info("[HotUtil] hotswap class:{} end", classPath);
+        }
+    }
 
 }

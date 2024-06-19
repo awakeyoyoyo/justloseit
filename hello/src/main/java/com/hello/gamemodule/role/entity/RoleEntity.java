@@ -51,5 +51,13 @@ public class RoleEntity implements IEntity<Long> {
     public void setDailyResetTime(long dailyResetTime) {
         this.dailyResetTime = dailyResetTime;
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }
 

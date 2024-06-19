@@ -53,7 +53,7 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
             // 注意此时所有组件都已经注销完了，此时一般不做任何处理
             ins =this;
             idManager.initIdValue();
-            logger.info("Game started successfully.");
+            logger.info("[Game] started successfully.");
         }
     }
 

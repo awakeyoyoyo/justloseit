@@ -1,7 +1,11 @@
 package com.hello.cross.provider.user;
 
+import com.awake.net2.router.Router;
+import com.awake.net2.router.TaskBus;
 import com.awake.net2.rpc.anno.RpcServiceImpl;
 import io.grpc.stub.StreamObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,11 +15,15 @@ import org.springframework.stereotype.Service;
 @RpcServiceImpl
 @Service
 public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase{
-
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Override
     public void findUserInfo(User.UserRequest request, StreamObserver<User.UserResponse> responseObserver) {
-        responseObserver.onNext(handlerFindUser(request));
-        responseObserver.onCompleted();
+        logger.info("UserServiceImpl atFindUserInfo");
+        TaskBus.execute(10, () -> {
+            responseObserver.onNext(handlerFindUser(request));
+            responseObserver.onCompleted();
+            logger.info("UserServiceImpl execute findUserInfo");
+        });
     }
 
     private User.UserResponse handlerFindUser(User.UserRequest request) {
