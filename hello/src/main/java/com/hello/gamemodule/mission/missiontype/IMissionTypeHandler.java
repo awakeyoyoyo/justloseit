@@ -57,8 +57,7 @@ public interface IMissionTypeHandler {
     default boolean verityCanAccept(long roleId, MissionResource missionResource) {
         List<Condition> acceptConditions = missionResource.getAcceptConditions();
         for (Condition acceptCondition : acceptConditions) {
-            ConditionTypeEnum conditionTypeEnum = ConditionTypeEnum.getConditionTypeEnum(acceptCondition.getConditionType());
-            if (!conditionTypeEnum.verify(roleId, acceptCondition)) {
+            if (!acceptCondition.verify(roleId, acceptCondition)) {
                 return false;
             }
         }

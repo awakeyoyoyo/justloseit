@@ -1,5 +1,7 @@
 package com.hello.resource.model;
 
+import com.hello.gamemodule.condition.ConditionTypeEnum;
+import com.hello.gamemodule.condition.IConditionHandler;
 import lombok.Getter;
 
 /**
@@ -7,7 +9,7 @@ import lombok.Getter;
  * @Date：2024/6/3 20:10
  */
 @Getter
-public class Condition {
+public class Condition  {
 
     /**
      * 条件类型
@@ -19,4 +21,9 @@ public class Condition {
      */
     private String params;
 
+
+    public boolean verify(long roleId, Condition condition) {
+        ConditionTypeEnum conditionTypeEnum = ConditionTypeEnum.getConditionTypeEnum(condition.getConditionType());
+        return conditionTypeEnum.verify(roleId, condition);
+    }
 }

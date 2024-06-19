@@ -9,7 +9,7 @@ import com.hello.resource.model.Condition;
  * @Author：lqh
  * @Date：2024/6/3 16:53
  */
-public enum ConditionTypeEnum implements IConditionHandler {
+public enum ConditionTypeEnum{
     /**
      * 玩家等级条件
      */
@@ -39,7 +39,7 @@ public enum ConditionTypeEnum implements IConditionHandler {
         return conditionHandler;
     }
 
-    @Override
+
     public boolean verify(long roleId, Condition condition) {
         return conditionHandler.verify(roleId, condition);
     }
