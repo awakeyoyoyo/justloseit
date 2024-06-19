@@ -4,16 +4,13 @@ import com.awake.event.manger.EventBus;
 import com.awake.net2.NetContext;
 import com.awake.net2.session.Session;
 import com.awake.orm.OrmContext;
-import com.awake.orm.accessor.MongodbAccessor;
 import com.awake.orm.anno.EntityCacheAutowired;
 import com.awake.orm.cache.EntityCache;
-import com.awake.orm.query.IQueryBuilder;
 import com.awake.storage.anno.StorageAutowired;
 import com.awake.storage.model.IStorage;
-import com.awake.util.base.StringUtils;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
-import com.hello.common.ErrorFactory;
+import com.hello.common.ErrorResponseFactory;
 import com.hello.gamemodule.dailyreset.event.RoleDailyResetEvent;
 import com.hello.gamemodule.role.event.LoginEvent;
 import com.hello.gamemodule.role.event.LogoutEvent;
@@ -46,7 +43,7 @@ public class RoleService {
         RoleEntity roleEntity = OrmContext.getQuery(RoleEntity.class).eq("password", password).eq("userName", userName).queryFirst();
         if (roleEntity == null) {
             NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
-                    ErrorFactory.create(ErrorCode.ERROR_PARAMS));
+                    ErrorResponseFactory.create(ErrorCode.ERROR_PARAMS));
             return;
         }
         roleEntity = roleEntityEntityCache.load(roleEntity.id());
@@ -71,7 +68,7 @@ public class RoleService {
         for (FilterWordResource filterWordResource : filterWordResources.getAll()) {
             if (userName.contains(filterWordResource.getFilter())) {
                 NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
-                        ErrorFactory.create(ErrorCode.USER_NAME_ILLEGAL));
+                        ErrorResponseFactory.create(ErrorCode.USER_NAME_ILLEGAL));
                 return;
             }
         }
@@ -79,7 +76,7 @@ public class RoleService {
         RoleEntity roleEntity = OrmContext.getQuery(RoleEntity.class).eq("userName", userName).queryFirst();
         if (roleEntity != null) {
             NetContext.getRouter().send(session, GameProtoId.ErrorResponse,
-                    ErrorFactory.create(ErrorCode.USER_NAME_EXIT));
+                    ErrorResponseFactory.create(ErrorCode.USER_NAME_EXIT));
             return;
         }
 

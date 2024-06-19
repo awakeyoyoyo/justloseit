@@ -8,7 +8,7 @@ import java.util.List;
  * @Author：lqh
  * @Date：2024/5/17 15:08
  */
-public class ErrorFactory {
+public class ErrorResponseFactory {
 
     public static RpcMsg.ErrorResponse create(int errorCode){
         return RpcMsg.ErrorResponse.newBuilder().setErrorCode(errorCode).build();
