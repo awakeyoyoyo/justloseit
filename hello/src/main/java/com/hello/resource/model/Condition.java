@@ -22,8 +22,8 @@ public class Condition  {
     private String params;
 
 
-    public boolean verify(long roleId, Condition condition) {
-        ConditionTypeEnum conditionTypeEnum = ConditionTypeEnum.getConditionTypeEnum(condition.getConditionType());
-        return conditionTypeEnum.verify(roleId, condition);
+    public boolean verify(long roleId) {
+        ConditionTypeEnum conditionTypeEnum = ConditionTypeEnum.getConditionTypeEnum(getConditionType());
+        return conditionTypeEnum.verify(roleId, this);
     }
 }
