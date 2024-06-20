@@ -19,12 +19,12 @@ public class RoleController {
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
     @PacketReceiver(protoId = GameModule.LoginResponse)
     public void atLoginResponse(Session session, LoginMsg.LoginResponse loginResponse) throws Exception {
-        logger.info("login response:{}",loginResponse.toString());
+//        logger.info("login response:{}",loginResponse.toString());
     }
 
     @PacketReceiver(protoId = GameModule.RegisterResponse)
     public void atRegisterResponse(Session session, LoginMsg.RegisterResponse registerResponse) throws Exception {
-        logger.info("register response:{}",registerResponse.toString());
+//        logger.info("register response:{}",registerResponse.toString());
     }
 
 

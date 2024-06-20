@@ -35,10 +35,8 @@ public class UserClient extends AbstractGrpcClient {
         logger.info("Will try to greet " + name + " ...");
         User.UserRequest request = User.UserRequest.newBuilder().setName(name).build();
         User.UserResponse response;
-        logger.info("greet1");
         try {
             response = blockingStub.findUserInfo(request);
-            logger.info("greet2");
         } catch (StatusRuntimeException e) {
             logger.info("RPC failed: {0}", e.getStatus());
             return;

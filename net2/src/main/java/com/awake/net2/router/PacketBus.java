@@ -76,6 +76,7 @@ public class PacketBus {
             logger.error("proto parse err, protoId=" + protoId + ", e=", e);
             return;
         }
+        logger.info("atReceiver msg, packet class=[{}] protoId=[{}],packet info:\n[\n{}]",packet.getClass().getSimpleName(), protoId, packet);
         receiver.invoke(session, packet);
     }
 
