@@ -135,7 +135,7 @@ public class SchedulerContext implements ApplicationListener<ApplicationContextE
             return;
         }
 
-        logger.info("Scheduler shutdown gracefully.");
+        logger.info("[Scheduler] shutdown gracefully.");
     }
 
     @Override

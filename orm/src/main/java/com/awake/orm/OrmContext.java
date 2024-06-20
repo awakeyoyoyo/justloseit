@@ -86,7 +86,7 @@ public class OrmContext implements ApplicationListener<ApplicationContextEvent>,
             shutdownBefore();
             shutdownBetween();
             shutdownAfter();
-            logger.info("Orm shutdown gracefully.");
+            logger.info("[Orm] shutdown gracefully.");
         }
     }
 

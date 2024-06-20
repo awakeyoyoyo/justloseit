@@ -49,7 +49,7 @@ public class EventContext implements ApplicationListener<ApplicationContextEvent
 //            return;
 //        }
 
-        logger.info("Event shutdown gracefully.");
+        logger.info("[Event] shutdown gracefully.");
     }
 
     @Override

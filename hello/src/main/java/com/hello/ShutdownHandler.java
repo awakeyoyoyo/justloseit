@@ -32,7 +32,7 @@ public class ShutdownHandler implements ApplicationListener<ApplicationContextEv
 
             idManager.saveIdValue();
 
-            logger.info("Game shutdown gracefully.");
+            logger.info("[Game] shutdown gracefully.");
         }
     }
 

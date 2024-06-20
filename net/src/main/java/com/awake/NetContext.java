@@ -124,7 +124,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             logger.error("Net thread pool failed shutdown: " + ExceptionUtils.getMessage(e));
             return;
         }
-        logger.info("Net shutdown gracefully.");
+        logger.info("[Net] shutdown gracefully.");
     }
 
     public static ApplicationContext getApplicationContext() {
