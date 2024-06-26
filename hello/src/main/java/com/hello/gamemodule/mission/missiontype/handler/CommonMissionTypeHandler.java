@@ -37,6 +37,9 @@ public class CommonMissionTypeHandler implements IMissionTypeHandler {
             throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
         }
         conditionTypeEnum.initProgress(roleId, mission);
+        if (mission.getProgress() >= missionResource.getTargetProgress()) {
+            mission.setStatus(MissionStatus.MISSION_CAN_COMPLETE_STATUS);
+        }
         return mission;
     }
 

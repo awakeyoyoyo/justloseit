@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+
 /**
  * @version : 1.0
  * @ClassName: EntityCachesTest
@@ -27,6 +29,9 @@ public class EntityCachesTest {
     @Test
     public void test() {
 
+        var collection = OrmContext.getOrmManager().getCollection(UserEntity.class);
+        collection.drop();
+        batchInsert();
         // 动态去拿到UserEntity的EntityCaches
         @SuppressWarnings("unchecked")
         var userEntityCaches = (IEntityCache<Long, UserEntity>) OrmContext.getOrmManager().getEntityCaches(UserEntity.class);
@@ -48,5 +53,14 @@ public class EntityCachesTest {
         var result = collection.updateOne(Filters.eq("_id", 1), new Document("$inc", new Document("p", 1L)));
         System.out.println(result);
         ThreadUtils.sleep(Long.MAX_VALUE);
+    }
+
+    public void batchInsert() {
+        var listUser = new ArrayList<UserEntity>();
+        for (var i = 1; i <= 10; i++) {
+            var userEntity = new UserEntity(i, (byte) 1, (short) i, i, true, "helloOrm" + i, "helloOrm" + i);
+            listUser.add(userEntity);
+        }
+        OrmContext.getAccessor().batchInsert(listUser);
     }
 }

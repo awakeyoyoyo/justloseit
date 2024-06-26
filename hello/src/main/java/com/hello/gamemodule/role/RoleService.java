@@ -11,6 +11,7 @@ import com.awake.storage.model.IStorage;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
 import com.hello.common.ErrorResponseFactory;
+import com.hello.gamemodule.dailyreset.DailyResetService;
 import com.hello.gamemodule.dailyreset.event.RoleDailyResetEvent;
 import com.hello.gamemodule.role.event.LoginEvent;
 import com.hello.gamemodule.role.event.LogoutEvent;
@@ -130,6 +131,10 @@ public class RoleService {
         if (DateUtil.isSameDay(currTime, roleEntity.getDailyResetTime())) {
             return;
         }
+        //每日数据重置
+        DailyResetService dailyResetService = GameContext.getIns().getComponet(DailyResetService.class);
+        dailyResetService.resetDailyValue(session.getUserId());
+
         roleEntity.setDailyResetTime(currTime);
         roleEntityEntityCache.update(roleEntity);
 

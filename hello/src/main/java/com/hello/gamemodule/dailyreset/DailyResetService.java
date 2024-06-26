@@ -3,9 +3,13 @@ package com.hello.gamemodule.dailyreset;
 import com.awake.event.manger.EventBus;
 import com.awake.net2.router.TaskBus;
 import com.awake.net2.session.Session;
+import com.awake.orm.anno.EntityCacheAutowired;
+import com.awake.orm.cache.EntityCache;
 import com.awake.scheduler.anno.Scheduler;
+import com.hello.gamemodule.dailyreset.entity.DailyRoleDataEntity;
 import com.hello.gamemodule.dailyreset.event.DailyResetEvent;
 import com.hello.gamemodule.dailyreset.event.OneMinEvent;
+import com.hello.gamemodule.mission.entity.MissionEntity;
 import com.hello.gamemodule.role.RoleManager;
 import com.hello.gamemodule.role.RoleService;
 import com.hello.util.DateUtil;
@@ -29,6 +33,44 @@ public class DailyResetService {
         this.roleManager = roleManager;
         this.roleService=roleService;
     }
+    @EntityCacheAutowired
+    private EntityCache<Long, DailyRoleDataEntity> dataEntityEntityCache;
+
+    /**
+     * 更新每日值
+     * @param roleId
+     * @param id
+     * @param value
+     */
+    public void saveDailyValue(long roleId, int id, long value) {
+        DailyRoleDataEntity dailyRoleDataEntity = dataEntityEntityCache.loadOrCreate(roleId);
+        dailyRoleDataEntity.getId2ValueMap().put(id, value);
+        dataEntityEntityCache.update(dailyRoleDataEntity);
+    }
+
+    /**
+     * 获取每日值
+     * @param roleId
+     * @param id
+     * @return
+     */
+    public long getDailyValue(long roleId, int id) {
+        DailyRoleDataEntity dailyRoleDataEntity = dataEntityEntityCache.loadOrCreate(roleId);
+        return dailyRoleDataEntity.getId2ValueMap().getOrDefault(id, 0L);
+    }
+
+    /**
+     * 重置每日数据
+     * @param roleId
+     */
+    public void resetDailyValue(long roleId) {
+        DailyRoleDataEntity dailyRoleDataEntity = dataEntityEntityCache.load(roleId);
+        if (dailyRoleDataEntity==null){
+            return;
+        }
+        dailyRoleDataEntity.getId2ValueMap().clear();
+    }
+
 
     /**
      * 每日0点执行
