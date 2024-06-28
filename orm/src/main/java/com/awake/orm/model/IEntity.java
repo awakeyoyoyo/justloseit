@@ -2,11 +2,13 @@ package com.awake.orm.model;
 
 import com.awake.util.base.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * 每个实体类都需要有id字段来替代 mongodb的_id  不然mongodb会自动生成唯一id
  * @author awakeyoyoyo
  */
-public interface IEntity<PK extends Comparable<PK>>   {
+public interface IEntity<PK extends Comparable<PK>>  extends Serializable {
     /**
      * 一个文档的主键 primary key
      */

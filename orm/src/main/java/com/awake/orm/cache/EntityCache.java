@@ -16,6 +16,7 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOneModel;
+import org.apache.commons.lang.SerializationUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
                         }
 
                         // 缓存失效之前，将数据写入数据库
-                        var entity = pnode.getEntity();
+                        var entity = pnode.getCloneEntity();
                         @SuppressWarnings("unchecked")
                         var entityClass = (Class<E>) entityDef.getClazz();
                         var collection = OrmContext.getOrmManager().getCollection(entityClass);
@@ -131,6 +132,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void update(E entity) {
         AssertionUtils.notNull(entity);
 
@@ -139,6 +141,8 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
         if (currentPnode == null) {
             currentPnode = new PNode<>(entity);
             cache.put(entity.id(), currentPnode);
+        }else{
+            currentPnode.setCloneEntity(entity);
         }
 
         var pnodeThreadId = currentPnode.getThreadId();
@@ -182,7 +186,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
             var updateList = new ArrayList<E>();
             var currentTime = TimeUtils.currentTimeMillis();
             for (var pnode : allPnodes) {
-                var entity = pnode.getEntity();
+                var entity = pnode.getCloneEntity();
                 if (pnode.getModifiedTime() != pnode.getWriteToDbTime()) {
                     pnode.setWriteToDbTime(currentTime);
                     pnode.setModifiedTime(currentTime);
@@ -191,7 +195,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
                 }
 
                 if (currentTime - pnode.getModifiedTime() >= entityDef.getExpireMillisecond()) {
-                    invalidate(pnode.getEntity().id());
+                    invalidate(pnode.getCloneEntity().id());
                 }
             }
 
