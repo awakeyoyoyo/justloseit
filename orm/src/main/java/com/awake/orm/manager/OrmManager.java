@@ -37,6 +37,8 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -58,6 +60,12 @@ import java.util.stream.Collectors;
  * @author awakeyoyoyo
  */
 public class OrmManager implements IOrmManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrmManager.class);
+
+    private static final Set<Class<?>> unsafeCollections = Set.of(List.class, ArrayList.class, LinkedList.class, Set.class, HashSet.class, TreeSet.class, Map.class, HashMap.class, TreeMap.class);
+
+
     @Autowired
     private OrmProperties ormConfig;
 
@@ -422,6 +430,7 @@ public class OrmManager implements IOrmManager {
 
         var filedList = ReflectionUtils.notStaticAndTransientFields(clazz);
 
+        boolean hasUnsafeCollection = false;
         for (var field : filedList) {
 //            // entity必须包含属性的get和set方法
 //            FieldUtils.fieldToGetMethod(clazz, field);
@@ -437,9 +446,8 @@ public class OrmManager implements IOrmManager {
                 // ORM的数组类型只支持byte[]
                 AssertionUtils.isTrue(arrayClazz == byte.class, "The array type of ORM[class:{}] only supports byte[]", clazz.getCanonicalName());
             } else if (Set.class.isAssignableFrom(fieldType)) {
-                // 必须是Set接口类型
-                AssertionUtils.isTrue(fieldType.equals(Set.class), "[class:{}] type declaration is incorrect, and it must be of the Set interface type", clazz.getCanonicalName());
-
+                // 是一个Set
+                hasUnsafeCollection |= unsafeCollections.contains(fieldType);
                 var type = field.getGenericType();
                 // field必须泛型类
                 AssertionUtils.isTrue(type instanceof ParameterizedType, "[class:{}] type declaration is incorrect, not a generic class[field:{}]", clazz.getCanonicalName(), field.getName());
@@ -450,8 +458,7 @@ public class OrmManager implements IOrmManager {
                 checkSubEntity(clazz, types[0]);
             } else if (List.class.isAssignableFrom(fieldType)) {
                 // 是一个List
-                AssertionUtils.isTrue(fieldType.equals(List.class), "[class:{}] type declaration is incorrect, and it must be of the List interface type", clazz.getCanonicalName());
-
+                hasUnsafeCollection |= unsafeCollections.contains(fieldType);
                 var type = field.getGenericType();
                 // field必须泛型类
                 AssertionUtils.isTrue(type instanceof ParameterizedType, "[class:{}] type declaration is incorrect, not a generic class[field:{}]", clazz.getCanonicalName(), field.getName());
@@ -462,10 +469,8 @@ public class OrmManager implements IOrmManager {
 
                 checkSubEntity(clazz, types[0]);
             } else if (Map.class.isAssignableFrom(fieldType)) {
-                // 必须是Map接口类型
-                if (!fieldType.equals(Map.class)) {
-                    throw new RunException("[class:{}] type declaration is incorrect, and it must be a Map interface type", clazz.getCanonicalName());
-                }
+                // 是Map接口类型
+                hasUnsafeCollection |= unsafeCollections.contains(fieldType);
 
                 var type = field.getGenericType();
 
@@ -485,29 +490,30 @@ public class OrmManager implements IOrmManager {
                 if (!ClassUtil.isBaseType((Class<?>) keyType)) {
                     throw new RunException("[class:{}] type declaration is incorrect, and the key type of the Map must be the String type", clazz.getCanonicalName());
                 }
-
-                checkSubEntity(clazz, valueType);
+                hasUnsafeCollection |= checkSubEntity(clazz, valueType);
             } else if (ObjectId.class.isAssignableFrom(fieldType)) {
                 // do nothing
             } else {
                 checkEntity(fieldType);
             }
         }
+        if (!hasUnsafeCollection) {
+            logger.warn("class[{}] has collection not declared with specified implementation, deserialization defaults to using the thread unsafe implementation", clazz.getSimpleName());
+        }
     }
 
-    private void checkSubEntity(Class<?> currentEntityClass, Type type) {
+    private boolean checkSubEntity(Class<?> currentEntityClass, Type type) {
         if (type instanceof ParameterizedType) {
             // 泛型类
             Class<?> clazz = (Class<?>) ((ParameterizedType) type).getRawType();
-            if (Set.class.equals(clazz)) {
+            if (Set.class.isAssignableFrom(clazz)) {
                 // Set<Set<String>>
-                checkSubEntity(currentEntityClass, ((ParameterizedType) type).getActualTypeArguments()[0]);
-                return;
-            } else if (List.class.equals(clazz)) {
+                return unsafeCollections.contains(clazz) | checkSubEntity(currentEntityClass, ((ParameterizedType) type).getActualTypeArguments()[0]);
+            } else if (List.class.isAssignableFrom(clazz)) {
                 // List<List<String>>
-                checkSubEntity(currentEntityClass, ((ParameterizedType) type).getActualTypeArguments()[0]);
-                return;
-            } else if (Map.class.equals(clazz)) {
+                return unsafeCollections.contains(clazz) | checkSubEntity(currentEntityClass, ((ParameterizedType) type).getActualTypeArguments()[0]);
+
+            } else if (Map.class.isAssignableFrom(clazz)) {
                 // Map<List<String>, List<String>>
                 var types = ((ParameterizedType) type).getActualTypeArguments();
                 var keyType = types[0];
@@ -516,14 +522,13 @@ public class OrmManager implements IOrmManager {
                     // ORM中Map的key必须是Base类型
                     throw new RunException("The key of the map in the ORM must be of the Base type");
                 }
-                checkSubEntity(currentEntityClass, valueType);
-                return;
+                return unsafeCollections.contains(clazz) | checkSubEntity(currentEntityClass, ((ParameterizedType) type).getActualTypeArguments()[0]);
             }
         } else if (type instanceof Class) {
             Class<?> clazz = ((Class<?>) type);
             if (isBaseType(clazz)) {
                 // do nothing
-                return;
+                return true;
             } else if (clazz.getComponentType() != null) {
                 // ORM不支持多维数组或集合嵌套数组类型，仅支持一维数组
                 throw new RunException("[type:{}] does not support multi-dimensional arrays or nested arrays, and only supports one-dimensional arrays", type);
@@ -531,8 +536,8 @@ public class OrmManager implements IOrmManager {
                 // ORM不支持集合嵌套数组类型
                 throw new RunException("ORMs do not support the combination of arrays and collections with the [type:{}] type", type);
             } else {
-//                checkEntity(clazz);
-                return;
+                checkEntity(clazz);
+                return true;
             }
         }
         throw new RunException("[type:{}] is incorrect", type);
