@@ -176,77 +176,67 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
     @Override
     public void persistAll() {
 //        logger.info("EntityCache:[{}] persist All", this.entityDef.getClazz());
-        try {
-            var allPnodes = cache.asMap().values();
+        var allPnodes = cache.asMap().values();
 
-            if (allPnodes.isEmpty()) {
-                return;
+        if (allPnodes.isEmpty()) {
+            return;
+        }
+
+        var updateList = new ArrayList<E>();
+        var currentTime = TimeUtils.currentTimeMillis();
+        for (var pnode : allPnodes) {
+            var entity = pnode.getCloneEntity();
+            if (pnode.getModifiedTime() != pnode.getWriteToDbTime()) {
+                pnode.setWriteToDbTime(currentTime);
+                pnode.setModifiedTime(currentTime);
+                updateList.add(entity);
+                continue;
             }
 
-            var updateList = new ArrayList<E>();
-            var currentTime = TimeUtils.currentTimeMillis();
-            for (var pnode : allPnodes) {
-                var entity = pnode.getCloneEntity();
-                if (pnode.getModifiedTime() != pnode.getWriteToDbTime()) {
-                    pnode.setWriteToDbTime(currentTime);
-                    pnode.setModifiedTime(currentTime);
-                    updateList.add(entity);
+            if (currentTime - pnode.getModifiedTime() >= entityDef.getExpireMillisecond()) {
+                invalidate(pnode.getCloneEntity().id());
+            }
+        }
+
+        // 执行更新
+        if (updateList.isEmpty()) {
+            return;
+        }
+
+        var page = Page.valueOf(1, BATCH_SIZE, updateList.size());
+        var maxPageSize = page.totalPage();
+        for (var currentPage = 1; currentPage <= maxPageSize; currentPage++) {
+            page.setPage(currentPage);
+            var currentUpdateList = page.currentPageList(updateList);
+            try {
+                @SuppressWarnings("unchecked")
+                var entityClass = (Class<E>) entityDef.getClazz();
+                var collection = OrmContext.getOrmManager().getCollection(entityClass).withWriteConcern(WriteConcern.ACKNOWLEDGED);
+
+                var batchList = currentUpdateList.stream()
+                        .map(it -> {
+                            var version = it.gvs();
+                            it.svs(version + 1);
+
+                            var filter = it.gvs() > 0
+                                    ? Filters.and(Filters.eq("_id", it.id()), Filters.eq("vs", version))
+                                    : Filters.eq("_id", it.id());
+
+                            return new ReplaceOneModel<>(filter, it);
+                        }).collect(Collectors.toList());
+
+                var result = collection.bulkWrite(batchList, new BulkWriteOptions().ordered(false));
+                if (result.getModifiedCount() == batchList.size()) {
                     continue;
                 }
-
-                if (currentTime - pnode.getModifiedTime() >= entityDef.getExpireMillisecond()) {
-                    invalidate(pnode.getCloneEntity().id());
-                }
+                // 开始执行容错操作（大部分原因都是因为需要更新的文档和数据库的文档相同）
+                logger.warn("在数据库[{}]的批量更新操作中需要更新的数量[{}]和最终更新的数量[{}]不相同，开始执行容错操作（大部分原因都是因为需要更新的文档和数据库的文档相同）"
+                        , entityDef.getClazz().getSimpleName(), currentUpdateList.size(), result.getModifiedCount());
+            } catch (Throwable t) {
+                logger.error("数据库[{}]批量更新操作未知异常，开始执行容错操作", entityDef.getClazz().getSimpleName(), t);
+                persistAllAndCompare(currentUpdateList);
             }
-
-            // 执行更新
-            if (updateList.isEmpty()) {
-                return;
-            }
-
-            var page = Page.valueOf(1, BATCH_SIZE, updateList.size());
-            var maxPageSize = page.totalPage();
-            for (var currentPage = 1; currentPage <= maxPageSize; currentPage++) {
-                page.setPage(currentPage);
-                var currentUpdateList = page.currentPageList(updateList);
-                try {
-                    @SuppressWarnings("unchecked")
-                    var entityClass = (Class<E>) entityDef.getClazz();
-                    var collection = OrmContext.getOrmManager().getCollection(entityClass).withWriteConcern(WriteConcern.ACKNOWLEDGED);
-
-                    var batchList = currentUpdateList.stream()
-                            .map(it -> {
-                                var version = it.gvs();
-                                it.svs(version + 1);
-
-                                var filter = it.gvs() > 0
-                                        ? Filters.and(Filters.eq("_id", it.id()), Filters.eq("vs", version))
-                                        : Filters.eq("_id", it.id());
-
-                                return new ReplaceOneModel<>(filter, it);
-                            }).collect(Collectors.toList());
-
-                    var result = collection.bulkWrite(batchList, new BulkWriteOptions().ordered(false));
-                    if (result.getModifiedCount() == batchList.size()) {
-                        continue;
-                    }
-
-                    logger.warn("在数据库[{}]的批量更新操作中需要更新的数量[{}]和最终更新的数量[{}]不相同，开始执行容错操作（大部分原因都是因为需要更新的文档和数据库的文档相同）"
-                            , entityDef.getClazz().getSimpleName(), currentUpdateList.size(), result.getModifiedCount());
-                    persistAllAndCompare(currentUpdateList);
-                } catch (Throwable t) {
-                    logger.error("数据库[{}]批量更新操作未知异常，开始执行容错操作", entityDef.getClazz().getSimpleName(), t);
-                    persistAllAndCompare(currentUpdateList);
-                }
-            }
-
-            updateList.clear();
-
-        } catch (Exception e) {
-            logger.error("数据库持久化器[{}]的持久化过程中exception异常退出", entityDef.getClazz().getSimpleName(), e);
-        } catch (Throwable t) {
-            logger.error("数据库持久化器[{}]的持久化过程中throwable异常退出", entityDef.getClazz().getSimpleName(), t);
-        } finally {
+            persistAllAndCompare(currentUpdateList);
         }
     }
     private void persistAllAndCompare(List<E> updateList) {
@@ -262,23 +252,23 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
             var dbList = OrmContext.getQuery(entityClass).in("_id", ids).queryAll();
             var dbMap = dbList.stream().collect(Collectors.toMap(key -> key.id(), value -> value));
             for (var entity : updateList) {
+
                 var dbEntity = dbMap.get(entity.id());
 
                 if (dbEntity == null) {
                     cache.invalidate(entity.id());
+                    logger.warn("[database:{}] not found entity [id:{}]", entityClass.getSimpleName(),  entity.id());
                     continue;
                 }
 
                 // 如果没有版本号，则写入数据库并清除缓存
                 if (entity.gvs() <= 0) {
                     OrmContext.getAccessor().update(entity);
-                    cache.invalidate(entity.id());
                     continue;
                 }
 
                 // 如果版本号相同，说明已经更新到
                 if (dbEntity.gvs() == entity.gvs()) {
-                    cache.invalidate(entity.id());
                     continue;
                 }
 
@@ -291,7 +281,6 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
                 // 如果数据库版本号较小，说明缓存的数据是最新的，直接写入数据库
                 if (dbEntity.gvs() < entity.gvs()) {
                     OrmContext.getAccessor().update(entity);
-                    cache.invalidate(entity.id());
                     continue;
                 }
             }

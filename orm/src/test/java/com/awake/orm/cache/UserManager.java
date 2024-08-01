@@ -22,4 +22,6 @@ public class UserManager {
 
     @EntityCacheAutowired
     public IEntityCache<Long, MapEntity> mapEntityIEntityCache;
+
+
 }

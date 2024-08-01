@@ -5,7 +5,12 @@ import com.awake.util.AssertionUtils;
 import com.awake.util.base.CollectionUtils;
 import com.awake.util.base.StringUtils;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -18,7 +23,7 @@ import java.util.function.Consumer;
  * @Date: 2023/11/22 18:01
  **/
 public class MongoIdUtils {
-
+    private static final Logger logger = LoggerFactory.getLogger(MongoIdUtils.class);
     private static final long INIT_ID = 1L;
 
     private static final String COLLECTION_NAME = "uuid";
@@ -43,13 +48,23 @@ public class MongoIdUtils {
         var document = collection.findOneAndUpdate(Filters.eq("_id", documentName)
                 , new Document("$inc", new Document(COUNT, 1L)));
 
-        if (document == null) {
-            var result = collection.insertOne(new Document("_id", documentName).append(COUNT, INIT_ID));
-            AssertionUtils.notNull(result.getInsertedId());
-            return INIT_ID;
+        if (document != null) {
+            return document.getLong("count") + 1;
+        }
+        Bson query = Filters.eq("_id", documentName);
+        Document inc = new Document("$inc", new Document(COUNT, 1L));
+        Document setOnInsert = new Document("$setOnInsert", new Document("_id", documentName));
+        // 报错后重试创建并获取id，在大并发create的时候mongodb总是会报错一次“duplicate key error!” 所以重试一次
+        for (int i = 0; i < 2; i++) {
+            try {
+                document = collection.findOneAndUpdate(query, Updates.combine(inc, setOnInsert), new FindOneAndUpdateOptions().upsert(true));
+                return null == document ? INIT_ID : document.getLong(COUNT) + 1;
+            } catch (Throwable throwable) {
+                logger.info("getIncrementIdFromMongo error! retry! ", throwable);
+            }
         }
 
-        return document.getLong("count") + 1;
+        throw new RuntimeException("getIncrementIdFromMongo error!");
     }
 
     public static long getIncrementIdFromMongoDefault(String documentName) {

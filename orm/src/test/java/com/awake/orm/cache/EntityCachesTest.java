@@ -28,10 +28,14 @@ public class EntityCachesTest {
 
     @Test
     public void test() {
-
+        //1) 直接通过MongoDB官方驱动提供的Api直接操作数据库
         var collection = OrmContext.getOrmManager().getCollection(UserEntity.class);
         collection.drop();
+
+        //2)通过collection的简易包装类IAccessor和IQuery接口访问数据
         batchInsert();
+
+        //3)缓存Entity定时刷新缓存到数据库
         // 动态去拿到UserEntity的EntityCaches
         @SuppressWarnings("unchecked")
         var userEntityCaches = (IEntityCache<Long, UserEntity>) OrmContext.getOrmManager().getEntityCaches(UserEntity.class);
