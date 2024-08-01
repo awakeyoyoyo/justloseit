@@ -63,7 +63,8 @@ public class OrmManager implements IOrmManager {
 
     private static final Logger logger = LoggerFactory.getLogger(OrmManager.class);
 
-    private static final Set<Class<?>> unsafeCollections = Set.of(List.class, ArrayList.class, LinkedList.class, Set.class, HashSet.class, TreeSet.class, Map.class, HashMap.class, TreeMap.class);
+    private static final Set<Class<?>> unsafeCollections = Set.of(List.class, ArrayList.class, LinkedList.class,
+            Set.class, HashSet.class, TreeSet.class, Map.class, HashMap.class, TreeMap.class);
 
 
     @Autowired
@@ -497,7 +498,7 @@ public class OrmManager implements IOrmManager {
                 checkEntity(fieldType);
             }
         }
-        if (!hasUnsafeCollection) {
+        if (hasUnsafeCollection) {
             logger.warn("class[{}] has collection not declared with specified implementation, deserialization defaults to using the thread unsafe implementation", clazz.getSimpleName());
         }
     }
