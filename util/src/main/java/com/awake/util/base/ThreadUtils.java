@@ -1,14 +1,12 @@
 package com.awake.util.base;
 
 
+import com.awake.orm.model.Pair;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @version : 1.0
@@ -106,11 +104,27 @@ public class ThreadUtils {
             return null;
         };
     }
+    // -----------------------------------------------------------------------------------------------------------------
+    // threadId -> (Thread, Executor)
+    private static final ConcurrentHashMap<Long,Pair<Thread, Executor>> threadExecutorMap = new ConcurrentHashMap<>();
+
+    public static void registerSingleThreadExecutor(Thread thread, Executor executor) {
+        threadExecutorMap.put(thread.getId(), new Pair<>(thread, executor));
+    }
+
+    public static Executor executorByThreadId(long threadId) {
+        var threadExecutor = threadExecutorMap.get(threadId);
+        return threadExecutor == null ? null : threadExecutor.getValue();
+    }
 
     /**
-     * 通过线程号寻找对应的线程
+     * search for the corresponding thread by the thread id
      */
     public static Thread findThread(long threadId) {
+        var threadExecutor = threadExecutorMap.get(threadId);
+        if (threadExecutor != null) {
+            return threadExecutor.getKey();
+        }
         var group = Thread.currentThread().getThreadGroup();
         while (group != null) {
             var threads = new Thread[group.activeCount() * 2];

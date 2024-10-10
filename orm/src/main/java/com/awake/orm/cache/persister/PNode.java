@@ -2,7 +2,6 @@ package com.awake.orm.cache.persister;
 
 import com.awake.orm.model.IEntity;
 import com.awake.util.time.TimeUtils;
-import org.apache.commons.lang.SerializationUtils;
 
 /**
  * @version : 1.0
@@ -23,8 +22,6 @@ public class PNode<E extends IEntity<?>> {
 
     private volatile E entity;
 
-    private E cloneEntity;
-
     /**
      * 记录最初访问时的线程信息
      */
@@ -32,7 +29,6 @@ public class PNode<E extends IEntity<?>> {
 
     public PNode(E entity) {
         this.entity = entity;
-        this.cloneEntity = (E) SerializationUtils.clone(entity);
         var currentTime = TimeUtils.now();
         this.writeToDbTime = currentTime;
         this.modifiedTime = currentTime;
@@ -46,13 +42,6 @@ public class PNode<E extends IEntity<?>> {
         this.entity = entity;
     }
 
-    public E getCloneEntity() {
-        return cloneEntity;
-    }
-
-    public void setCloneEntity(E cloneEntity) {
-        this.cloneEntity = cloneEntity;
-    }
 
     public long getWriteToDbTime() {
         return writeToDbTime;

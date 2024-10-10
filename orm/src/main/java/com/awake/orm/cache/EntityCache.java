@@ -16,15 +16,12 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOneModel;
-import org.apache.commons.lang.SerializationUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -53,7 +50,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
                         }
 
                         // 缓存失效之前，将数据写入数据库
-                        var entity = pnode.getCloneEntity();
+                        var entity = pnode.getEntity();
                         @SuppressWarnings("unchecked")
                         var entityClass = (Class<E>) entityDef.getClazz();
                         var collection = OrmContext.getOrmManager().getCollection(entityClass);
@@ -141,8 +138,6 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
         if (currentPnode == null) {
             currentPnode = new PNode<>(entity);
             cache.put(entity.id(), currentPnode);
-        }else{
-            currentPnode.setCloneEntity(entity);
         }
 
         var pnodeThreadId = currentPnode.getThreadId();
@@ -182,27 +177,44 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
             return;
         }
 
-        var updateList = new ArrayList<E>();
+        Map<Long, List<E>> updateMap = new HashMap<>();
         var currentTime = TimeUtils.currentTimeMillis();
         for (var pnode : allPnodes) {
-            var entity = pnode.getCloneEntity();
+            var entity = pnode.getEntity();
             if (pnode.getModifiedTime() != pnode.getWriteToDbTime()) {
                 pnode.setWriteToDbTime(currentTime);
                 pnode.setModifiedTime(currentTime);
-                updateList.add(entity);
+                updateMap.computeIfAbsent(pnode.getThreadId(), k -> new ArrayList<>()).add(entity);
                 continue;
             }
 
             if (currentTime - pnode.getModifiedTime() >= entityDef.getExpireMillisecond()) {
-                invalidate(pnode.getCloneEntity().id());
+                invalidate(pnode.getEntity().id());
             }
         }
 
         // 执行更新
-        if (updateList.isEmpty()) {
+        if (updateMap.isEmpty()) {
             return;
         }
+        for (Map.Entry<Long, List<E>> entry : updateMap.entrySet()) {
+            Long threadId = entry.getKey();
+            List<E> updateList = entry.getValue();
+            var executor = ThreadUtils.executorByThreadId(threadId);
+            if (executor == null) {
+                doPersist(updateList);
+            } else {
+                //分配到指定线程池中执行
+                executor.execute(() -> doPersist(updateList));
+            }
+        }
+    }
 
+    /**
+     * 执行持久化
+     * @param updateList
+     */
+    public void doPersist(List<E> updateList) {
         var page = Page.valueOf(1, BATCH_SIZE, updateList.size());
         var maxPageSize = page.totalPage();
         for (var currentPage = 1; currentPage <= maxPageSize; currentPage++) {
@@ -239,6 +251,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
             persistAllAndCompare(currentUpdateList);
         }
     }
+
     private void persistAllAndCompare(List<E> updateList) {
         if (CollectionUtils.isEmpty(updateList)) {
             return;
@@ -257,7 +270,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
 
                 if (dbEntity == null) {
                     cache.invalidate(entity.id());
-                    logger.warn("[database:{}] not found entity [id:{}]", entityClass.getSimpleName(),  entity.id());
+                    logger.warn("[database:{}] not found entity [id:{}]", entityClass.getSimpleName(), entity.id());
                     continue;
                 }
 
@@ -288,6 +301,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
             logger.error("数据库[{}]容错操作异常,", entityDef.getClazz().getSimpleName(), t);
         }
     }
+
     @Override
     public List<E> allPresentCaches() {
         var allPnodes = cache.asMap().values();
@@ -305,7 +319,7 @@ public class EntityCache<PK extends Comparable<PK>, E extends IEntity<PK>> imple
 
     @Override
     public long size() {
-        return  cache.estimatedSize();
+        return cache.estimatedSize();
     }
 
     @Override
