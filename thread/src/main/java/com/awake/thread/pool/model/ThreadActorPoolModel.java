@@ -38,6 +38,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         for (ExecutorService executor : executors) {
             executor.submit(() -> {
                 threadId2ExecutorMap.put(Thread.currentThread().getId(), executor);
+                ThreadUtils.registerSingleThreadExecutor(Thread.currentThread(),executor);
             });
         }
     }
