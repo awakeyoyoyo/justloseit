@@ -29,6 +29,7 @@
         <module>orm</module>
         <module>storage</module>
         <module>net2</module>
+        <module>rpc</module>
 
     </modules>
 

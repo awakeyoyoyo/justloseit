@@ -169,6 +169,7 @@ public class RpcManager implements IRpcManager {
             for (GrpcClientDefinition grpcClientDefinition : grpcClientDefinitions) {
                 ManagedChannel channel = hostAndPortChannelMap.computeIfAbsent(grpcClientDefinition.getHostAndPort(),
                         k -> Grpc.newChannelBuilder(hostAndPort.toHostAndPortStr(), InsecureChannelCredentials.create()).build());
+                //模块id对应channel
                 moduleId2Channel.put(grpcClientDefinition.getModuleId(), channel);
             }
         }
