@@ -3,6 +3,8 @@ package com.awake.rpc.properties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 /**
  * @Author：lqh
  * @Date：2024/4/18 16:00
@@ -12,9 +14,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RpcProperties {
     public static final String PREFIX = "awake.net.rpc";
 
-    private String rpcProviderPort;      //提供服务的端口 命名格式 moduleId_port,moduleId_port,moduleId_port
+    private List<Integer> providerModuleIds;      //提供服务的端口 命名格式 moduleId,moduleId,moduleId
 
-    private String rpcConsumerHosts;     //消费的服务  命名格式 moduleId_host:port,moduleId_host:port
+    private int providerPort;      //提供服务的端口 命名格式 port
+
+
+    private List<Integer>  consumerModuleIds;     //消费的服务  命名格式 moduleId,moduleId,moduleId
+
+    private String center;
+
+    private String centerHost;
+
 }
 
 /**

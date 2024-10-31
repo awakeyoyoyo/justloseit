@@ -1,6 +1,10 @@
 package com.awake.rpc.registry;
 
 
+import com.awake.exception.RunException;
+import com.awake.rpc.RpcContext;
+import com.awake.rpc.anno.RpcServiceImpl;
+import com.awake.rpc.server.GrpcServer;
 import com.awake.util.AssertionUtils;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.IOUtils;
@@ -10,6 +14,7 @@ import com.awake.util.base.CollectionUtils;
 import com.awake.util.base.StringUtils;
 import com.awake.util.base.ThreadUtils;
 import com.awake.util.net.HostAndPort;
+import io.grpc.BindableService;
 import io.netty.util.concurrent.FastThreadLocalThread;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -28,14 +33,13 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static org.apache.curator.framework.state.ConnectionState.LOST;
 
 /**
  * @version : 1.0
@@ -54,16 +58,16 @@ public class ZookeeperRegistry implements IRegistry {
 
     private static final long RETRY_SECONDS = 5;
 
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor(new ConfigThreadFactory());
+    private static final ExecutorService executor = Executors.newSingleThreadExecutor(new RegistryConfigThreadFactory());
 
-    private static class ConfigThreadFactory implements ThreadFactory {
+    private static class RegistryConfigThreadFactory implements ThreadFactory {
         private static final AtomicInteger poolNumber = new AtomicInteger(1);
         private final ThreadGroup group;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
         private final String namePrefix;
 
         // zookeeper-p1-t1 = zookeeper-pool-1-thread-1
-        ConfigThreadFactory() {
+        RegistryConfigThreadFactory() {
             this.group = Thread.currentThread().getThreadGroup();
             namePrefix = "zookeeper-pool" + poolNumber.getAndIncrement() + "-thread";
         }
@@ -106,7 +110,7 @@ public class ZookeeperRegistry implements IRegistry {
      */
     @Override
     public void start() {
-        var registryConfig = NetContext.getConfigManager().getNetConfig().getRegistryConfig();
+        var registryConfig = RpcContext.getInstance().getRpcProperties();
         if (Objects.isNull(registryConfig)) {
             logger.info("Stand alone startup of singleton");
             return;
@@ -484,25 +488,46 @@ public class ZookeeperRegistry implements IRegistry {
      */
     private void startProvider() {
         // 这个ProviderConfig包含了这个进程服务提供者信息
-        var providerConfig = NetContext.getConfigManager().getNetConfig().getProvider();
-
+        var registryConfig = RpcContext.getInstance().getRpcProperties();
+        var providerModuleIds = registryConfig.getProviderModuleIds();
+        int providerPort = registryConfig.getProviderPort();
         // 这句意思是：提供了注册中心的配置(zk)，但是却没有服务提供者
-        if (Objects.isNull(providerConfig) || Objects.isNull(providerConfig.getProviders())) {
+        if (Objects.isNull(providerModuleIds)||providerModuleIds.isEmpty()) {
             logger.info("Distributed startup with no providers");
             return;
         }
+        if (providerPort<=0){
+            logger.info("Distributed startup with no port");
+            return;
+        }
+        //扫描所有注解
+        var serviceBeans = RpcContext.getApplicationContext().getBeansWithAnnotation(RpcServiceImpl.class);
+        List<BindableService> serviceList=new ArrayList<>();
+        for (var bean : serviceBeans.values()) {
+            if (!(bean instanceof BindableService)) {
+                throw new RunException("The RpcServiceImpl is no gprc impl, please check that [rpcServiceImpl class:{}] and application.properties", bean);
+            }
+            RpcServiceImpl rpcService = bean.getClass().getAnnotation(RpcServiceImpl.class);
+            if (!providerModuleIds.contains(rpcService.moduleId())) {
+                logger.warn("The RpcServiceImpl is no provide,please check that [rpcServiceImpl class:{}] and application.properties", bean);
+            }
+            serviceList.add((BindableService) bean);
+        }
 
-        // 服务提供者也仅仅是一个TcpServer
-        // 这里可以看出并没有指定接口，是找一个可用的端口
-        var providerServer = new TcpServer(providerConfig.localHostAndPortOrDefault());
-        providerServer.start();
+        //启动服务提供者
+        var providerServer = new GrpcServer(providerPort,serviceList);
+        try {
+            providerServer.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 启动curator框架，并且在zk客户端连接上zk服务器时：保证创建好/zfoo /provider /consumer 3个“持久化”节点
      */
     private void startCurator() {
-        var registryConfig = NetContext.getConfigManager().getNetConfig().getRegistryConfig();
+        var registryConfig = RpcContext.getInstance().getRpcProperties();
 
         if (!registryConfig.getCenter().toLowerCase().matches("zookeeper")) {
             throw new IllegalArgumentException(StringUtils
@@ -510,7 +535,7 @@ public class ZookeeperRegistry implements IRegistry {
         }
 
         // 读取zk的配置，连接zk服务器
-        var zookeeperConnectStr = HostAndPort.toHostAndPortListStr(HostAndPort.toHostAndPortList(registryConfig.getAddress().values()));
+        var zookeeperConnectStr = HostAndPort.toHostAndPortListStr(HostAndPort.toHostAndPortList(registryConfig.getCenterHost()));
         var builder = CuratorFrameworkFactory.builder();
         builder.connectString(zookeeperConnectStr);
         if (registryConfig.hasZookeeperAuthor()) {

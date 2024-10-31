@@ -1,6 +1,7 @@
 package com.awake.rpc;
 
 import com.awake.rpc.manager.IRpcManager;
+import com.awake.rpc.properties.RpcProperties;
 import com.awake.util.time.Stopwatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,12 @@ public class RpcContext implements ApplicationListener<ApplicationContextEvent>,
     private IRpcManager rpcManager;
     private ApplicationContext applicationContext;
 
+    private RpcProperties rpcProperties;
+
+    public static RpcContext getInstance() {
+        return instance;
+    }
+
     public static ApplicationContext getApplicationContext() {
         return instance.applicationContext;
     }
@@ -34,6 +41,10 @@ public class RpcContext implements ApplicationListener<ApplicationContextEvent>,
         return rpcManager;
     }
 
+    public RpcProperties getRpcProperties() {
+        return rpcProperties;
+    }
+
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         if (event instanceof ContextRefreshedEvent) {
@@ -41,7 +52,7 @@ public class RpcContext implements ApplicationListener<ApplicationContextEvent>,
             stopWatch.start();
             RpcContext.instance = this;
             instance.applicationContext = event.getApplicationContext();
-
+            instance.rpcProperties=applicationContext.getBean(RpcProperties.class);
             instance.rpcManager = applicationContext.getBean(IRpcManager.class);
 
             instance.rpcManager.init();

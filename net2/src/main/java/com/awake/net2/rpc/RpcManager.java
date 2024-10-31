@@ -122,7 +122,8 @@ public class RpcManager implements IRpcManager {
             if (moduleIdAndPortPojo == null) {
                 throw new RunException("The RpcServiceImpl does not have port, please check that [rpcServiceImpl class:{}] and application.properties", bean);
             }
-            var grpcServiceDefinition = new GrpcServiceDefinition(moduleIdAndPortPojo.getPort(), moduleIdAndPortPojo.getModuleId(), (BindableService) bean);
+            var grpcServiceDefinition = new GrpcServiceDefinition(moduleIdAndPortPojo.getPort(),
+                    moduleIdAndPortPojo.getModuleId(), (BindableService) bean);
             port2ServiceAndPortMap.computeIfAbsent(moduleIdAndPortPojo.getPort(), k -> new ArrayList<>()).add(grpcServiceDefinition);
         }
         // 生成服务server

@@ -1,18 +1,9 @@
 package com.awake.rpc.manager;
 
-import com.awake.exception.RunException;
-import com.awake.rpc.anno.RpcService;
-import com.awake.rpc.anno.RpcServiceImpl;
-import com.awake.rpc.client.AbstractGrpcClient;
 import com.awake.rpc.pojo.GrpcClientDefinition;
-import com.awake.rpc.pojo.GrpcServiceDefinition;
-import com.awake.rpc.pojo.ModuleIdAndPort;
 import com.awake.rpc.properties.RpcProperties;
 import com.awake.rpc.server.GrpcServer;
 import com.awake.util.net.HostAndPort;
-import io.grpc.BindableService;
-import io.grpc.Grpc;
-import io.grpc.InsecureChannelCredentials;
 import io.grpc.ManagedChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +53,7 @@ public class RpcManager implements IRpcManager {
 
     //初始化
     private void initRpcClient() {
-        var rpcConsumerHosts = rpcProperties.getRpcConsumerHosts();
+        var rpcConsumerHosts = rpcProperties.getConsumerModuleIds();
         if (rpcConsumerHosts==null){
             logger.info("[RpcManager] no rpc service consume");
             return;
