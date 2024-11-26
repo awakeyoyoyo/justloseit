@@ -11,12 +11,13 @@ import com.awake.storage.model.IStorage;
 import com.hello.GameContext;
 import com.hello.common.ErrorCode;
 import com.hello.common.ErrorResponseFactory;
+import com.hello.gamemodule.Id.IdManager;
 import com.hello.gamemodule.dailyreset.DailyResetService;
 import com.hello.gamemodule.dailyreset.event.RoleDailyResetEvent;
 import com.hello.gamemodule.role.event.LoginEvent;
 import com.hello.gamemodule.role.event.LogoutEvent;
 import com.hello.gamemodule.role.entity.RoleEntity;
-import com.hello.common.GameProtoId;
+import com.hello.define.GameProtoId;
 import com.hello.packet.LoginMsg;
 import com.hello.resource.FilterWordResource;
 import com.hello.util.DateUtil;
@@ -58,11 +59,13 @@ public class RoleService {
         }
         //执行登录逻辑
         doLogin(session);
+
+        LoginMsg.LoginResponse loginResp = LoginMsg.LoginResponse.newBuilder()
+                .setRid(roleEntity.id())
+                .setPassword(roleEntity.getPassword())
+                .setUserName(roleEntity.getUserName()).build();
         NetContext.getRouter().send(session, GameProtoId.LoginResponse,
-                LoginMsg.LoginResponse.newBuilder()
-                        .setRid(roleEntity.id())
-                        .setPassword(roleEntity.getPassword())
-                        .setUserName(roleEntity.getUserName()).build());
+                loginResp);
     }
 
     public void atRegisterRequest(Session session, String userName, String password) {
@@ -81,7 +84,7 @@ public class RoleService {
             return;
         }
 
-        roleEntity=roleEntityEntityCache.loadOrCreate(GameContext.getIns().getIdManager().generalRoleId());
+        roleEntity=roleEntityEntityCache.loadOrCreate(GameContext.getIns().getComponet(IdManager.class).generalRoleId());
         roleEntity.setUserName(userName);
         roleEntity.setPassword(password);
 

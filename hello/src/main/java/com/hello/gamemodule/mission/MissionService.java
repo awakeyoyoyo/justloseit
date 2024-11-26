@@ -13,9 +13,13 @@ import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
 import com.hello.resource.model.Reward;
 import org.apache.commons.compress.utils.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author：lqh
@@ -23,6 +27,9 @@ import java.util.List;
  */
 @Service
 public class MissionService {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(MissionService.class);
     @EntityCacheAutowired
     private EntityCache<Long, MissionEntity> missionEntityCache;
     @StorageAutowired
@@ -50,26 +57,6 @@ public class MissionService {
 
 
     /**
-     * 自动初始化任务组
-     *
-     * @param roleId
-     * @param groupId
-     */
-    public void autoInitMissionGroup(long roleId, int groupId) {
-        MissionGroupEnum missionGroupEnum = MissionGroupEnum.getMissionGroupEnum(groupId);
-        if (missionGroupEnum == null) {
-            throw new RuntimeException("mission initMissionGroup error. roleId:" + roleId + "groupId:" + groupId);
-        }
-        if (!missionGroupEnum.autoInit()){
-            return;
-        }
-        MissionEntity missionEntity = missionEntityCache.load(roleId);
-        List<Mission> missions = missionGroupEnum.initMissionGroup(roleId);
-        missionEntityCache.update(missionEntity);
-        //TODO 通知新增任务
-    }
-
-    /**
      * 初始化任务组
      *
      * @param roleId
@@ -78,7 +65,8 @@ public class MissionService {
     public void initMissionGroup(long roleId, int groupId) {
         MissionGroupEnum missionGroupEnum = MissionGroupEnum.getMissionGroupEnum(groupId);
         if (missionGroupEnum == null) {
-            throw new RuntimeException("mission initMissionGroup error. roleId:" + roleId + "groupId:" + groupId);
+            logger.error("mission initMissionGroup missionGroupEnum not exit. roleId:{},groupId:{}", roleId, groupId);
+            return;
         }
         MissionEntity missionEntity = missionEntityCache.load(roleId);
         List<Mission> missions = missionGroupEnum.initMissionGroup(roleId);
@@ -94,7 +82,8 @@ public class MissionService {
         int missionType = missionResource.getMissionType();
         MissionTypeEnum missionTypeEnum = MissionTypeEnum.getMissionTypeEnum(missionType);
         if (missionTypeEnum == null) {
-            throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+            logger.error("mission completedMission missionTypeEnum not exit. roleId:{},missionId:{}", roleId, missionResource.getConfId());
+            return null;
         }
         if (!missionTypeEnum.canCompleteMission(roleId, mission, missionResource)) {
             return Lists.newArrayList();
@@ -103,16 +92,19 @@ public class MissionService {
         MissionEntity missionEntity = missionEntityCache.load(roleId);
         //完成后是否需要保留任务
         if (missionTypeEnum.isCompleteDeleteMission()) {
-            missionEntity.removeMission(missionResource.getGroupId(), missionResource.getProgressConditionType(), mission);
+            missionEntity.removeMission(missionResource.getGroupId(), mission);
             //TODO 通知任务删除
         }
         //是否触发下一个任务
         if (missionTypeEnum.isTriggerNextMission(missionResource)) {
+            if (!missionTypeEnum.verityCanAccept(roleId, missionResource)) {
+                return null;
+            }
             Mission nextMission = initMission(roleId, missionResource.getNextMissionId());
-            if (nextMission==null){
+            if (nextMission == null) {
                 return rewards;
             }
-            missionEntity.addMission(missionResource.getGroupId(), missionResource.getProgressConditionType(), nextMission);
+            missionEntity.addMission(missionResource.getGroupId(), nextMission);
             //TODO 通知新增任务
         }
         return rewards;
@@ -131,7 +123,8 @@ public class MissionService {
         int missionType = missionResource.getMissionType();
         MissionTypeEnum missionTypeEnum = MissionTypeEnum.getMissionTypeEnum(missionType);
         if (missionTypeEnum == null) {
-            throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+            logger.error("mission initMission missionTypeEnum not exit. roleId:{},missionId:{}", roleId, missionResource.getConfId());
+            return null;
         }
         if (!missionTypeEnum.verityCanAccept(roleId, missionResource)) {
             return null;
@@ -150,17 +143,22 @@ public class MissionService {
     public void updateMission(long roleId, ProgressConditionTypeEnum progressConditionTypeEnum, Object... params) {
         int progressConditionType = progressConditionTypeEnum.getProgressConditionType();
         MissionEntity missionEntity = missionEntityCache.load(roleId);
-        List<Mission> missions = missionEntity.getConditionType2Mission().get(progressConditionType);
+        List<Mission> missions = missionEntity.getAllMissions();
         for (Mission mission : missions) {
             int confId = mission.getConfId();
             MissionResource missionResource = missionResources.get(confId);
+            if (progressConditionType != missionResource.getProgressConditionType()) {
+                continue;
+            }
             int missionType = missionResource.getMissionType();
             MissionTypeEnum missionTypeEnum = MissionTypeEnum.getMissionTypeEnum(missionType);
             if (missionTypeEnum == null) {
-                throw new RuntimeException("mission update Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+                logger.error("mission updateMission missionTypeEnum not exit. roleId:{},missionId:{}", roleId, missionResource.getConfId());
+                continue;
             }
             missionTypeEnum.updateMission(roleId, mission, missionResource, progressConditionTypeEnum.valueOfPrams(params));
         }
+        //TODO 通知任务变化
         missionEntityCache.update(missionEntity);
     }
 

@@ -1,5 +1,6 @@
 package com.hello.gamemodule.mission.missiontype.handler;
 
+import com.hello.gamemodule.mission.MissionEventListener;
 import com.hello.gamemodule.mission.missiongroup.handler.CommonMissionGroupHandler;
 import com.hello.gamemodule.mission.progresscondition.IProgressConditionParams;
 import com.hello.gamemodule.mission.progresscondition.ProgressConditionTypeEnum;
@@ -8,6 +9,8 @@ import com.hello.gamemodule.mission.missiontype.IMissionTypeHandler;
 import com.hello.gamemodule.mission.struct.Mission;
 import com.hello.resource.MissionResource;
 import com.hello.resource.model.Reward;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -18,6 +21,7 @@ import java.util.List;
  * @Date：2024/5/30 16:03
  */
 public class CommonMissionTypeHandler implements IMissionTypeHandler {
+    private static final Logger logger = LoggerFactory.getLogger(CommonMissionTypeHandler.class);
     private static final CommonMissionTypeHandler ins = new CommonMissionTypeHandler();
 
     CommonMissionTypeHandler() {
@@ -34,7 +38,8 @@ public class CommonMissionTypeHandler implements IMissionTypeHandler {
 
         ProgressConditionTypeEnum conditionTypeEnum = ProgressConditionTypeEnum.getConditionTypeEnum(missionResource.getProgressConditionType());
         if (conditionTypeEnum == null) {
-            throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+            logger.error("mission init Mission conditionTypeEnum not exit. roleId:{},missionConfigId:{}", roleId, missionResource.getConfId());
+            return null;
         }
         conditionTypeEnum.initProgress(roleId, mission);
         if (mission.getProgress() >= missionResource.getTargetProgress()) {
@@ -48,7 +53,8 @@ public class CommonMissionTypeHandler implements IMissionTypeHandler {
         int progressConditionType = missionResource.getProgressConditionType();
         ProgressConditionTypeEnum conditionTypeEnum = ProgressConditionTypeEnum.getConditionTypeEnum(progressConditionType);
         if (conditionTypeEnum == null) {
-            throw new RuntimeException("mission init Mission error. roleId:" + roleId + "missionConfigId:" + missionResource.getConfId());
+            logger.error("mission update Mission conditionTypeEnum not exit. roleId:{},missionConfigId:{}", roleId, missionResource.getConfId());
+            return;
         }
         conditionTypeEnum.updateProgress(roleId, mission, iProgressConditionParams);
         if (mission.getProgress() >= missionResource.getTargetProgress()) {

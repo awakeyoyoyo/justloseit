@@ -1,16 +1,21 @@
 package com.hello;
 
+import com.hello.frame.manger.IModuleManager;
 import com.hello.gamemodule.Id.IdManager;
 import com.hello.config.GameServerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author：lqh
@@ -37,9 +42,6 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
         return gameServerProperties;
     }
 
-    public IdManager getIdManager() {
-        return idManager;
-    }
 
 
     public static GameContext getIns() {
@@ -48,11 +50,15 @@ public class GameContext implements ApplicationListener<ApplicationContextEvent>
 
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
-        //最低优先级处理，组件初始化完毕再初始化游戏上下文
+        //最低优先级处理，框架组件初始化完毕再初始化游戏上下文组件
         if (event instanceof ContextRefreshedEvent) {
-            // 注意此时所有组件都已经注销完了，此时一般不做任何处理
             ins =this;
-            idManager.initIdValue();
+            Map<String, IModuleManager> beansOfType = event.getApplicationContext().getBeansOfType(IModuleManager.class);
+            List<IModuleManager> iModuleManagers = new ArrayList<>(beansOfType.values());
+            iModuleManagers.sort(Comparator.comparingInt(IModuleManager::order));
+            for (IModuleManager iModuleManager : iModuleManagers) {
+                iModuleManager.init();
+            }
             logger.info("[Game] started successfully.");
         }
     }

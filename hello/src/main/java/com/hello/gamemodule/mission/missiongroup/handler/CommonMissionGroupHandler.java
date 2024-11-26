@@ -40,12 +40,11 @@ public class CommonMissionGroupHandler implements IMissionGroupHandler {
 
         List<Mission> missions = new ArrayList<>();
         for (Integer missionId : missionIdList) {
-            MissionResource missionResource = missionManager.getMissionResource(missionId);
             Mission mission = missionService.initMission(roleId, missionId);
             if (mission == null) {
                 continue;
             }
-            missionEntity.addMission(groupId, missionResource.getProgressConditionType(), mission);
+            missionEntity.addMission(groupId, mission);
             missions.add(mission);
         }
         return missions;
@@ -59,12 +58,10 @@ public class CommonMissionGroupHandler implements IMissionGroupHandler {
     @Override
     public void clearMissionGroup(long roleId, int groupId) {
         MissionService missionService = GameContext.getIns().getComponet(MissionService.class);
-        MissionManager missionManager = GameContext.getIns().getComponet(MissionManager.class);
         MissionEntity missionEntity = missionService.getMissionEntityCache().load(roleId);
         List<Mission> removeMission = missionEntity.getGroupMissionList(groupId);
         for (Mission mission : removeMission) {
-            MissionResource missionResource = missionManager.getMissionResource(mission.getConfId());
-            missionEntity.removeMission(groupId, missionResource.getProgressConditionType(), mission);
+            missionEntity.removeMission(groupId, mission);
         }
     }
 

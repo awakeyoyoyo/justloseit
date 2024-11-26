@@ -1,4 +1,4 @@
-package com.hello.common;
+package com.hello.define;
 
 /**
  * 定义号模块号 以及其协议号
