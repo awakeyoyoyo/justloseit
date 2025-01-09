@@ -4,6 +4,7 @@ import com.awake.orm.anno.EntityCache;
 import com.awake.orm.anno.Id;
 import com.awake.orm.model.IEntity;
 import com.hello.gamemodule.bag.struct.Item;
+import com.hello.gamemodule.bag.struct.ItemBag;
 import lombok.Data;
 
 import java.util.Map;
@@ -20,9 +21,9 @@ public class ItemBagEntity implements IEntity<Long> {
     private long id;
 
     /**
-     * 普通道具背包
+     * bagType-itemBag
      */
-    private Map<Long, Item> itemBag;
+    private Map<Integer, ItemBag> itemBag;
 
     @Override
     public Long id() {

@@ -25,14 +25,38 @@ import java.util.List;
  */
 @Component
 public class DailyResetService {
-
     private static final Logger logger = LoggerFactory.getLogger(DailyResetService.class);
+
     private final RoleManager roleManager;
     private final RoleService roleService;
+    /**
+     * 每日0点执行
+     */
+    @Scheduler(cron = "0 0 0 * * ?")
+    public void cronDailyReset() {
+        logger.info("DailyResetService dailyReset execute");
+        EventBus.publicEvent(DailyResetEvent.valueOf());
+
+        List<Session> onlineRole = roleManager.getOnlineRole();
+        for (Session session : onlineRole) {
+            TaskBus.execute((int) session.getUserId(), () -> roleService.doRoleDailyReset(session));
+        }
+
+    }
+
+    /**
+     * 每分钟执行
+     */
+    @Scheduler(cron = "0 */1 * * * ?")
+    public void cronOneMin(){
+        logger.info("DailyResetService oneMin execute");
+        EventBus.publicEvent(OneMinEvent.valueOf(DateUtil.getHour(), DateUtil.getMin()));
+    }
     public DailyResetService(RoleManager roleManager,RoleService roleService) {
         this.roleManager = roleManager;
         this.roleService=roleService;
     }
+
     @EntityCacheAutowired
     private EntityCache<Long, DailyRoleDataEntity> dataEntityEntityCache;
 
@@ -71,29 +95,5 @@ public class DailyResetService {
         dailyRoleDataEntity.getId2ValueMap().clear();
     }
 
-
-    /**
-     * 每日0点执行
-     */
-    @Scheduler(cron = "0 0 0 * * ?")
-    public void cronDailyReset() {
-        logger.info("DailyResetService dailyReset execute");
-        EventBus.publicEvent(DailyResetEvent.valueOf());
-
-        List<Session> onlineRole = roleManager.getOnlineRole();
-        for (Session session : onlineRole) {
-            TaskBus.execute((int) session.getUserId(), () -> roleService.doRoleDailyReset(session));
-        }
-
-    }
-
-    /**
-     * 每分钟执行
-     */
-    @Scheduler(cron = "0 */1 * * * ?")
-    public void cronOneMin(){
-        logger.info("DailyResetService oneMin execute");
-        EventBus.publicEvent(OneMinEvent.valueOf(DateUtil.getHour(), DateUtil.getMin()));
-    }
 
 }
