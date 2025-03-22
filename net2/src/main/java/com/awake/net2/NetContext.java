@@ -8,7 +8,7 @@ import com.awake.net2.server.AbstractClient;
 import com.awake.net2.server.AbstractServer;
 import com.awake.net2.session.ISessionManager;
 import com.awake.scheduler.SchedulerContext;
-import com.awake.thread.pool.model.ThreadActorPoolModel;
+import com.awake.thread.pool.model.ActorPoolDispatcher;
 import com.awake.util.ExceptionUtils;
 import com.awake.util.IOUtils;
 import com.awake.util.ReflectionUtils;
@@ -106,7 +106,7 @@ public class NetContext implements ApplicationListener<ApplicationContextEvent>,
             Field field = TaskBus.class.getDeclaredField("executors");
             ReflectionUtils.makeAccessible(field);
 
-            var poolModel = (ThreadActorPoolModel) ReflectionUtils.getField(field, null);
+            var poolModel = (ActorPoolDispatcher) ReflectionUtils.getField(field, null);
             poolModel.shutdown();
         } catch (Throwable e) {
             logger.error("Net thread pool failed shutdown: " + ExceptionUtils.getMessage(e));

@@ -16,9 +16,9 @@ import java.util.concurrent.*;
  * @Auther: awake
  * @Date: 2023/3/10 11:24
  **/
-public class ThreadActorPoolModel implements IThreadPoolModel {
+public class ActorPoolDispatcher implements ThreadPoolStrategy {
 
-    private static final Logger logger = LoggerFactory.getLogger(ThreadActorPoolModel.class);
+    private static final Logger logger = LoggerFactory.getLogger(ActorPoolDispatcher.class);
 
     /**
      * 内部线程池
@@ -35,7 +35,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
      */
     private final ConcurrentHashMap<Long, ExecutorService> threadId2ExecutorMap = new ConcurrentHashMap<>();
 
-    public ThreadActorPoolModel(int poolSize) {
+    public ActorPoolDispatcher(int poolSize) {
         this.poolSize = poolSize;
         executors = new ExecutorService[poolSize];
         for (int i = 0; i < poolSize; i++) {
@@ -58,7 +58,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
      * @param taskExecutorHash
      * @return
      */
-    public int calTaskExecutorHash(int taskExecutorHash) {
+    public int computeDispatchKey(int taskExecutorHash) {
         // Other hash algorithms can be customized to make the distribution more uniform
         return Math.abs(taskExecutorHash) % poolSize;
     }
@@ -69,7 +69,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
      * @param argument
      * @return
      */
-    public int calTaskExecutorHash(Object argument) {
+    public int computeDispatchKey(Object argument) {
         int hash = 0;
         if (argument == null) {
             hash = RandomUtils.randomInt();
@@ -78,24 +78,24 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         } else {
             hash = argument.hashCode();
         }
-        return calTaskExecutorHash(hash);
+        return computeDispatchKey(hash);
     }
 
     @Override
-    public void execute(int executorHash, Runnable runnable) {
-        executors[calTaskExecutorHash(executorHash)].execute(ThreadUtils.safeRunnable(runnable));
+    public void dispatch(int executorHash, Runnable runnable) {
+        executors[computeDispatchKey(executorHash)].execute(ThreadUtils.safeRunnable(runnable));
     }
 
 
     @Override
-    public CompletableFuture<?> asyncExecuteCallable(int callBackExecutorHash, int taskExecutorHash, Callable<?> callable) {
-        ExecutorService executor = executors[calTaskExecutorHash(taskExecutorHash)];
+    public CompletableFuture<?> asyncDispatch(int callBackExecutorHash, int taskExecutorHash, Callable<?> callable) {
+        ExecutorService executor = executors[computeDispatchKey(taskExecutorHash)];
         CompletableFuture<Object> resultFuture = new CompletableFuture<>();
         executor.execute(() -> {
             Object result;
             try {
                 result = ThreadUtils.safeCallable(callable).call();
-                ExecutorService callBackExecutor = executors[calTaskExecutorHash(callBackExecutorHash)];
+                ExecutorService callBackExecutor = executors[computeDispatchKey(callBackExecutorHash)];
                 resultFuture.completeAsync(() -> result, callBackExecutor);
             } catch (Exception e) {
                 logger.error("[ThreadActorPoolModel] asyncExecuteCallable run error, error msg:{}", e.getMessage());
@@ -107,8 +107,8 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
     }
 
     @Override
-    public CompletableFuture<?> asyncExecuteCallable(int taskExecutorHash, Callable<?> callable) {
-        return asyncExecuteCallable(RandomUtils.randomInt(), taskExecutorHash, callable);
+    public CompletableFuture<?> asyncDispatch(int taskExecutorHash, Callable<?> callable) {
+        return asyncDispatch(RandomUtils.randomInt(), taskExecutorHash, callable);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         if (executorService != null) {
             return executorService;
         }
-        return executors[calTaskExecutorHash(RandomUtils.randomInt())];
+        return executors[computeDispatchKey(RandomUtils.randomInt())];
     }
 
 

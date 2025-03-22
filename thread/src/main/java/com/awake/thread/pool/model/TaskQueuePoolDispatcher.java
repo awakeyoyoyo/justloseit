@@ -10,20 +10,20 @@ import java.util.concurrent.CompletableFuture;
  * @Auther: awake
  * @Date: 2023/3/10 11:24
  **/
-public class TaskQueueActorPoolModel implements IThreadPoolModel {
+public class TaskQueuePoolDispatcher implements ThreadPoolStrategy {
 
     @Override
-    public void execute(int taskExecutorHash, Runnable runnable) {
+    public void dispatch(int taskExecutorHash, Runnable runnable) {
 
     }
 
     @Override
-    public CompletableFuture asyncExecuteCallable(int callBackExecutorHash, int taskExecutorHash, Callable callable) {
+    public CompletableFuture asyncDispatch(int callBackExecutorHash, int taskExecutorHash, Callable callable) {
         return null;
     }
 
     @Override
-    public CompletableFuture asyncExecuteCallable(int taskExecutorHash, Callable callable) {
+    public CompletableFuture asyncDispatch(int taskExecutorHash, Callable callable) {
         return null;
     }
 

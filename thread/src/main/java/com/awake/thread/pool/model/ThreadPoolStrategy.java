@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
  * @Auther: awake
  * @Date: 2023/3/7 16:40
  **/
-public interface IThreadPoolModel {
+public interface ThreadPoolStrategy {
 
     /**
      * 执行任务
@@ -19,7 +19,7 @@ public interface IThreadPoolModel {
      * @param taskExecutorHash
      * @param runnable
      */
-    void execute(int taskExecutorHash, Runnable runnable);
+    void dispatch(int taskExecutorHash, Runnable runnable);
 
     /**
      * 異步執行返回 需要指定回调执行的线程标识
@@ -27,7 +27,7 @@ public interface IThreadPoolModel {
      * @param callable
      * @return
      */
-    CompletableFuture<?> asyncExecuteCallable(int callBackExecutorHash,int taskExecutorHash, Callable<?> callable);
+    CompletableFuture<?> asyncDispatch(int callBackExecutorHash, int taskExecutorHash, Callable<?> callable);
 
     /**
      * 用于-同步執行返回 无需指定回调执行的线程标识
@@ -35,7 +35,7 @@ public interface IThreadPoolModel {
      * @param callable
      * @return
      */
-    CompletableFuture<?> asyncExecuteCallable(int taskExecutorHash, Callable<?> callable);
+    CompletableFuture<?> asyncDispatch(int taskExecutorHash, Callable<?> callable);
 
     /**
      * 关闭线程池

@@ -1,6 +1,6 @@
 package com.awake.pool;
 
-import com.awake.thread.pool.model.ThreadActorPoolModel;
+import com.awake.thread.pool.model.ActorPoolDispatcher;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,10 +20,10 @@ public class ThreadActorPoolModelTest {
 
     @Test
     public void threadActorPoolModelAsyncTest() throws IOException {
-        ThreadActorPoolModel poolModel = new ThreadActorPoolModel(10);
-        poolModel.execute(1, () -> {
+        ActorPoolDispatcher poolModel = new ActorPoolDispatcher(10);
+        poolModel.dispatch(1, () -> {
             System.out.println("[发送异步指令(2)-测试线程执行]:" + Thread.currentThread());
-            CompletableFuture<?> future = poolModel.asyncExecuteCallable(2,() -> {
+            CompletableFuture<?> future = poolModel.asyncDispatch(2,() -> {
                 System.out.println("[执行异步指令(3)-测试线程执行]:" + Thread.currentThread());
                 Thread.sleep(1000);
                 return 1;
@@ -43,10 +43,10 @@ public class ThreadActorPoolModelTest {
 
     @Test
     public void threadActorPoolModelSyncTest() throws IOException {
-        ThreadActorPoolModel poolModel = new ThreadActorPoolModel(10);
-        poolModel.execute(1, () -> {
+        ActorPoolDispatcher poolModel = new ActorPoolDispatcher(10);
+        poolModel.dispatch(1, () -> {
             System.out.println("[发送异步指令-测试线程执行]:" + Thread.currentThread());
-            CompletableFuture<?> future = poolModel.asyncExecuteCallable(2, () -> {
+            CompletableFuture<?> future = poolModel.asyncDispatch(2, () -> {
                 System.out.println("[执行异步指令-测试线程执行]:" + Thread.currentThread());
 //                throw  new RuntimeException("ggbond");
                 return "1";
@@ -65,7 +65,7 @@ public class ThreadActorPoolModelTest {
 
     @Test
     public void threadActorPoolModelThreadIdTest() throws IOException {
-        ThreadActorPoolModel poolModel = new ThreadActorPoolModel(10);
+        ActorPoolDispatcher poolModel = new ActorPoolDispatcher(10);
         Map<Long, ExecutorService> executorService = poolModel.getExecutorService();
         for (Map.Entry<Long, ExecutorService> entry : executorService.entrySet()) {
             System.out.println("[线程池]: 线程id:" + entry.getKey()+"线程："+entry.getValue());
