@@ -83,7 +83,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
     @Override
     public void execute(int executorHash, Runnable runnable) {
-        executors[Math.abs(executorHash % poolSize)].execute(ThreadUtils.safeRunnable(runnable));
+        executors[calTaskExecutorHash(executorHash)].execute(ThreadUtils.safeRunnable(runnable));
     }
 
 
@@ -100,6 +100,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
             } catch (Exception e) {
                 logger.error("[ThreadActorPoolModel] asyncExecuteCallable run error, error msg:{}", e.getMessage());
                 e.printStackTrace();
+                resultFuture.completeExceptionally(e); // 添加异常传递
             }
         });
         return resultFuture;
