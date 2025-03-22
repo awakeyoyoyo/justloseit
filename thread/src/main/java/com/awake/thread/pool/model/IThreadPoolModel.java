@@ -27,7 +27,7 @@ public interface IThreadPoolModel {
      * @param callable
      * @return
      */
-    CompletableFuture asyncExecuteCallable(int callBackExecutorHash,int taskExecutorHash, Callable callable);
+    CompletableFuture<?> asyncExecuteCallable(int callBackExecutorHash,int taskExecutorHash, Callable<?> callable);
 
     /**
      * 用于-同步執行返回 无需指定回调执行的线程标识
@@ -35,7 +35,7 @@ public interface IThreadPoolModel {
      * @param callable
      * @return
      */
-    CompletableFuture asyncExecuteCallable(int taskExecutorHash, Callable callable);
+    CompletableFuture<?> asyncExecuteCallable(int taskExecutorHash, Callable<?> callable);
 
     /**
      * 关闭线程池

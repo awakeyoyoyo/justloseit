@@ -20,16 +20,25 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
     private static final Logger logger = LoggerFactory.getLogger(ThreadActorPoolModel.class);
 
-    private ExecutorService[] executors;
+    /**
+     * 内部线程池
+     */
+    private final ExecutorService[] executors;
 
-    public int executorsSize;
+    /**
+     * 线程池大小
+     */
+    public int poolSize;
 
-    private ConcurrentHashMap<Long, ExecutorService> threadId2ExecutorMap = new ConcurrentHashMap<>();
+    /**
+     * 线程id对应线程池
+     */
+    private final ConcurrentHashMap<Long, ExecutorService> threadId2ExecutorMap = new ConcurrentHashMap<>();
 
-    public ThreadActorPoolModel(int executorsSize) {
-        this.executorsSize = executorsSize;
-        executors = new ExecutorService[executorsSize];
-        for (int i = 0; i < executorsSize; i++) {
+    public ThreadActorPoolModel(int poolSize) {
+        this.poolSize = poolSize;
+        executors = new ExecutorService[poolSize];
+        for (int i = 0; i < poolSize; i++) {
             //使用netty自带
             DefaultEventLoop executor = new DefaultEventLoop();
             executors[i] = executor;
@@ -38,16 +47,28 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
         for (ExecutorService executor : executors) {
             executor.submit(() -> {
                 threadId2ExecutorMap.put(Thread.currentThread().getId(), executor);
-                ThreadUtils.registerSingleThreadExecutor(Thread.currentThread(),executor);
+                ThreadUtils.registerSingleThreadExecutor(Thread.currentThread(), executor);
             });
         }
     }
 
+    /**
+     * 计算hash
+     *
+     * @param taskExecutorHash
+     * @return
+     */
     public int calTaskExecutorHash(int taskExecutorHash) {
         // Other hash algorithms can be customized to make the distribution more uniform
-        return Math.abs(taskExecutorHash) % executorsSize;
+        return Math.abs(taskExecutorHash) % poolSize;
     }
 
+    /**
+     * 计算hash
+     *
+     * @param argument
+     * @return
+     */
     public int calTaskExecutorHash(Object argument) {
         int hash = 0;
         if (argument == null) {
@@ -62,20 +83,19 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
     @Override
     public void execute(int executorHash, Runnable runnable) {
-        executors[Math.abs(executorHash % executorsSize)].execute(ThreadUtils.safeRunnable(runnable));
+        executors[Math.abs(executorHash % poolSize)].execute(ThreadUtils.safeRunnable(runnable));
     }
 
 
     @Override
-    public CompletableFuture asyncExecuteCallable(int callBackExecutorHash, int taskExecutorHash, Callable callable) {
-        Callable safeCallable = ThreadUtils.safeCallable(callable);
-        ExecutorService executor = executors[Math.abs(taskExecutorHash % executorsSize)];
-        CompletableFuture resultFuture = new CompletableFuture();
+    public CompletableFuture<?> asyncExecuteCallable(int callBackExecutorHash, int taskExecutorHash, Callable<?> callable) {
+        ExecutorService executor = executors[calTaskExecutorHash(taskExecutorHash)];
+        CompletableFuture<Object> resultFuture = new CompletableFuture<>();
         executor.execute(() -> {
             Object result;
             try {
-                result = safeCallable.call();
-                ExecutorService callBackExecutor = executors[Math.abs(callBackExecutorHash % executorsSize)];
+                result = ThreadUtils.safeCallable(callable).call();
+                ExecutorService callBackExecutor = executors[calTaskExecutorHash(callBackExecutorHash)];
                 resultFuture.completeAsync(() -> result, callBackExecutor);
             } catch (Exception e) {
                 logger.error("[ThreadActorPoolModel] asyncExecuteCallable run error, error msg:{}", e.getMessage());
@@ -86,7 +106,7 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
     }
 
     @Override
-    public CompletableFuture asyncExecuteCallable(int taskExecutorHash, Callable callable) {
+    public CompletableFuture<?> asyncExecuteCallable(int taskExecutorHash, Callable<?> callable) {
         return asyncExecuteCallable(RandomUtils.randomInt(), taskExecutorHash, callable);
     }
 
@@ -104,14 +124,14 @@ public class ThreadActorPoolModel implements IThreadPoolModel {
 
         var threadId = Thread.currentThread().getId();
         ExecutorService executorService = threadId2ExecutorMap.get(threadId);
-        if (executorService!=null){
+        if (executorService != null) {
             return executorService;
         }
         return executors[calTaskExecutorHash(RandomUtils.randomInt())];
     }
 
 
-    public Map<Long, ExecutorService> getExecutorService(){
+    public Map<Long, ExecutorService> getExecutorService() {
         return threadId2ExecutorMap;
     }
 }
